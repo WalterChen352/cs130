@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, TextInput, Button, Switch, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, TextInput, Button, Switch, StyleSheet, Pressable } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { addEvent } from '../scripts/database';
 
 const TaskForm = () => {
   const [title, setTitle] = useState('');
   const [startDate, setStartDate] = useState(new Date());
-  const [startTime, setStartTime] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [endTime, setEndTime] = useState(new Date());
   const [autoSchedule, setAutoSchedule] = useState(false);
-  const [duration, setDuration] = useState('');
+  const [transportationMode, setTransportationMode] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
@@ -18,7 +17,7 @@ const TaskForm = () => {
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView>
       <Text style={styles.title}>Add a task</Text>
 
       {/*Task Title*/}
@@ -33,7 +32,7 @@ const TaskForm = () => {
       <Text style={styles.label}>Select start time</Text>
       <View style={styles.row}>
         <Button title={startDate.toDateString()} onPress={() => setShowStartDatePicker(true)} />
-        <Button title={startTime.toLocaleTimeString()} onPress={() => setShowStartTimePicker(true)} />
+        <Button title={startDate.toLocaleTimeString()} onPress={() => setShowStartTimePicker(true)} />
       </View>
 
       {showStartDatePicker && (
@@ -50,12 +49,12 @@ const TaskForm = () => {
 
       {showStartTimePicker && (
         <DateTimePicker
-          value={startTime}
+          value={startDate}
           mode="time"
           display="default"
           onChange={(event, selectedStartTime) => {
             setShowStartTimePicker(false);
-            if (selectedStartTime) setStartTime(selectedStartTime);
+            if (selectedStartTime) setStartDate(selectedStartTime);
           }}
         />
       )}
@@ -64,12 +63,12 @@ const TaskForm = () => {
       <Text style={styles.label}>Select end time</Text>
       <View style={styles.row}>
         <Button title={endDate.toDateString()} onPress={() => setShowEndDatePicker(true)} />
-        <Button title={endTime.toLocaleTimeString()} onPress={() => setShowEndTimePicker(true)} />
+        <Button title={endDate.toLocaleTimeString()} onPress={() => setShowEndTimePicker(true)} />
       </View>
 
       {showEndDatePicker && (
         <DateTimePicker
-          value={startDate}
+          value={endDate}
           mode="date"
           display="default"
           onChange={(event, selectedEndDate) => {
@@ -81,16 +80,24 @@ const TaskForm = () => {
 
       {showEndTimePicker && (
         <DateTimePicker
-          value={startTime}
+          value={endDate}
           mode="time"
           display="default"
           onChange={(event, selectedEndTime) => {
             setShowEndTimePicker(false);
-            if (selectedEndTime) setEndTime(selectedEndTime);
+            if (selectedEndTime) setEndDate(selectedEndTime);
           }}
         />
       )}
 
+      <Text style={styles.label}>Enter transportation mode</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Car"
+        value={transportationMode}
+        onChangeText={setTransportationMode}
+      />
+      
       <View style={styles.row}>
         <Switch value={autoSchedule} onValueChange={setAutoSchedule} />
         <Text style={styles.label}>Autoschedule?</Text>
@@ -119,7 +126,10 @@ const TaskForm = () => {
         multiline
       />
 
-      <Button title="Save Task" onPress={() => console.log({ title, startDate, startTime, endDate, endTime, autoSchedule, duration, location, description })} />
+      
+      <Pressable style={styles.container} onPress={async () => await addEvent(title, description, formatDate(startDate), formatDate(endDate), transportationMode)}>
+        <Text>Save Task</Text>
+      </Pressable>
     </ScrollView>
     
   );
@@ -128,7 +138,8 @@ const TaskForm = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 40,
+    margin: 20,
     backgroundColor: '#fff',
   },
   title: {
@@ -141,7 +152,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    padding: 10,
+    padding: 15,
     marginBottom: 10,
   },
   textArea: {
@@ -159,5 +170,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+
+{/*date formatting helper function*/}
+const formatDate = (date: Date) => {
+  const datePart = date.toLocaleDateString("en-CA"); // "YYYY-MM-DD" (Canada format)
+  const timePart = date.toLocaleTimeString("en-GB"); // "HH:mm:ss" (24-hour format)
+
+  return `${datePart} ${timePart}`;
+};
 
 export default TaskForm;
