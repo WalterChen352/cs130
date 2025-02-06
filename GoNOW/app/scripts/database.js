@@ -44,8 +44,9 @@ export const getDailyEvents = async()=>{
         console.log('done txn');
         return result;
     }
-    catch{
+    catch (error) {
         console.error('error getting daily events', error);
+        return [];
     }
 }
 
@@ -58,7 +59,7 @@ export const clearEvents = async()=>{
         `)
       console.log('dropped table')
   }
-  catch{
+  catch (error) {
     console.error(' error dropping table', error);
   }
 }
