@@ -36,7 +36,10 @@ export const getDailyEvents = async()=>{
         const DB = await SQLite.openDatabaseAsync('userEvents.db');
         const readOnly=true;
         console.log('db opened for daily events');
-        const result = await DB.getAllAsync("SELECT * FROM events WHERE startTime BETWEEN date('now') AND date('now', '+1 day')");
+        const result = await DB.getAllAsync(` SELECT * FROM events 
+  WHERE date(startTime) = date('now', 'localtime')
+  ORDER BY startTime;`);
+        //const result = await DB.getAllAsync("SELECT * FROM events");
         console.log(result);
         console.log('done txn');
         return result;
@@ -59,3 +62,16 @@ export const clearEvents = async()=>{
     console.error(' error dropping table', error);
   }
 }
+
+export const addEvent = async (name, description, startTime, endTime, latitude, longitude, transportationMode) => {
+  try {
+      const DB = await SQLite.openDatabaseAsync('userEvents.db');
+      console.log('db', DB)
+      await DB.runAsync(`INSERT INTO events 
+              (name, description, startTime, endTime, latitude, longitude, transportationMode) 
+              VALUES (?, ?, ?, ?, ?, ?, ?);`, [name, description, startTime, endTime, latitude, longitude, transportationMode]);
+  } catch (error) {
+      console.error("Error in addEvent function:", error);
+  }
+};
+
