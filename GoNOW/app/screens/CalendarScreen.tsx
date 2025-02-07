@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Button } from 'react-native';
 import { getWeeklyEvents } from '../scripts/database';
 import { useEffect, useState } from 'react';
 import {GestureDetector,Gesture,Directions} from "react-native-gesture-handler";
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from 'react-native-vector-icons';
+
 
 const HOUR_HEIGHT = 20; // Height for each hour in pixels
 const START_HOUR = 0; // 12 AM
@@ -14,12 +17,16 @@ const TIME_LABELS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => {
 });
 
 const CalendarScreen = () => {
+    const navigation = useNavigation();
+
+    const navigateToDaily= () => {
+      navigation.navigate('Daily');
+    };
     const getLastSunday = (d: Date) => {
         var t = new Date(d);
         t.setDate(t.getDate() - t.getDay());
         return t;
     };
-
     const getWeekRange = (startDate: any) => {
         const start = new Date(startDate);
         const end = new Date(start);
@@ -59,6 +66,25 @@ const CalendarScreen = () => {
         });
     }).runOnJS(true);
     
+    const nextWeekPress = ()=>{
+        console.log('button press next week');
+        setStartDate(prev => {
+            const newDate = new Date(prev); // Copy old date
+            newDate.setDate(prev.getDate() + 7);
+            console.log('New Start Date:', newDate); // Log after modification
+            return newDate;
+        });
+    }
+
+    const prevWeekPress = ()=>{
+        console.log('button press next week');
+        setStartDate(prev => {
+            const newDate = new Date(prev); // Copy old date
+            newDate.setDate(prev.getDate() - 7);
+            console.log('New Start Date:', newDate); // Log after modification
+            return newDate;
+        });
+    }
 
     const prevWeek= Gesture.Fling().direction(Directions.RIGHT).onEnd(()=>{
         console.log('swiping right');
@@ -97,9 +123,15 @@ const CalendarScreen = () => {
         <GestureDetector gesture={Gesture.Exclusive(prevWeek, nextWeek)}>
         <View style={styles.container}>
             <View style={styles.header}>
+                <TouchableOpacity onPress={prevWeekPress}>
+                    <Ionicons name={'caret-back-outline'} size= {27} />
+                </TouchableOpacity>
                 <Text style={styles.headerText}>
                     {`${weekRange.start} - ${weekRange.end}`}
                 </Text>
+                <TouchableOpacity onPress={nextWeekPress}>
+                    <Ionicons name={'caret-forward-outline'} size= {27} />
+                </TouchableOpacity>
             </View>
 
             <View style={styles.calendarContainer}>
@@ -149,10 +181,13 @@ const CalendarScreen = () => {
                                                     backgroundColor: 'lightblue'
                                                 }
                                             ]}
-                                            onPress={() => console.log('Clicked event:', event)}
+                                            onPress={() => {
+                                                console.log('Clicked event:', event);
+                                                navigateToDaily();
+                                            }}
                                         >
                                             <Text style={styles.eventText} numberOfLines={1}>
-                                                {event.title || 'Event'}
+                                                {event.name || 'Event'}
                                             </Text>
                                         </TouchableOpacity>
                                     );
@@ -174,7 +209,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     header: {
-        alignItems: 'center',
+        flexDirection:'row',
+        justifyContent: 'center',
         padding: 16,
     },
     headerText: {
