@@ -44,12 +44,12 @@ export const getDailyEvents = async()=>{
         console.log('done txn');
         return result;
     }
-    catch{
+    catch(error){
         console.error('error getting daily events', error);
     }
 }
 
-export const clearEvents = async()=>{
+export const clearEvents = async()=>{ //just for clearing local storage
   console.log('dropping events table');
   try{
       const DB = await SQLite.openDatabaseSync('userEvents.db');
@@ -58,8 +58,30 @@ export const clearEvents = async()=>{
         `)
       console.log('dropped table')
   }
-  catch{
+  catch(error){
     console.error(' error dropping table', error);
+  }
+}
+
+export const getWeeklyEvents = async(date)=>{
+  console.log('getting weekly events for ', date);
+  const startDate= new Date(date);
+  const endDate = new Date(date);
+  endDate.setDate(endDate.getDate()+7);
+  try{
+    const DB = await SQLite.openDatabaseAsync('userEvents.db');
+    const readOnly=true;
+    console.log('db opened for daily events');
+    const result = await DB.getAllAsync(` SELECT * FROM events 
+      WHERE date(startTime) BETWEEN date(?) AND date(?)
+      ORDER BY startTime;`, [startDate.toISOString(),endDate.toISOString()]);
+        //const result = await DB.getAllAsync("SELECT * FROM events");
+        console.log(result);
+        console.log('done txn');
+        return result;
+  }
+  catch(error){
+    console.error('error getting weekly evenets', error);
   }
 }
 
@@ -74,4 +96,5 @@ export const addEvent = async (name, description, startTime, endTime, latitude, 
       console.error("Error in addEvent function:", error);
   }
 };
+
 
