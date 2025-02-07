@@ -35,12 +35,14 @@ const DailyScreen = () => {
     loadEvents();
   }, []);
 
+  const LocalTimeStringOptions = { hour: '2-digit', minute: '2-digit' };
+
   const displayEvent = ({ item }: { item: Event }) => (
     <View style={styles.eventCard}>
       <Text style={styles.eventTitle}>{item.name}</Text>
       <Text style={styles.eventDescription}>{item.description}</Text>
       <Text style={styles.eventTime}>
-        Time: {new Date(item.startTime).toLocaleTimeString()} - {new Date(item.endTime).toLocaleTimeString()}
+        Time: {new Date(item.startTime).toLocaleTimeString([], LocalTimeStringOptions)} - {new Date(item.endTime).toLocaleTimeString([], LocalTimeStringOptions)}
       </Text>
     </View>
   );
