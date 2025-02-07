@@ -1,5 +1,6 @@
 import TabNavigator from './screens/Navigator';
 import { useEffect } from 'react';
+import { Text } from 'react-native';
 import {initializeDatabase, getDailyEvents, clearEvents, addEvent} from './scripts/database';
 
 export default function Index() {
@@ -26,6 +27,6 @@ useEffect(() => {
   setupDatabase();
 }, []);
   return (
-    <TabNavigator></TabNavigator>
+    <TabNavigator/>
   );
 }
