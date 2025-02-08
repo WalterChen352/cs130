@@ -1,4 +1,4 @@
-import TabNavigator from './screens/Navigator';
+import Navigator from './screens/Navigator';
 import { useEffect } from 'react';
 import {initializeDatabase, getDailyEvents, clearEvents, addEvent} from './scripts/database';
 
@@ -26,6 +26,6 @@ useEffect(() => {
   setupDatabase();
 }, []);
   return (
-    <TabNavigator></TabNavigator>
+    <Navigator/>
   );
 }

@@ -41,7 +41,8 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
             onPress={onPress}
             style={styles.tabButton}
           >
-            <Ionicons 
+            <Ionicons
+              testID="tab-icon"
               name={iconName} 
               size={24} 
               color={isFocused ? '#007AFF' : '#8E8E8F'}
@@ -61,7 +62,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   );
 };
 
-export default function TabNavigator() {
+export default function Navigator() {
   return (
     <Tab.Navigator
       tabBar={(props) => <CustomTabBar {...props} />}
