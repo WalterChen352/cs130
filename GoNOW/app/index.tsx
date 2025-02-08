@@ -2,7 +2,6 @@ import TabNavigator from './screens/Navigator';
 import { useEffect } from 'react';
 import { Text } from 'react-native';
 import {initializeDatabase, getDailyEvents, clearEvents, addEvent} from './scripts/database';
-import { GestureHandlerRootView} from 'react-native-gesture-handler';
 export default function Index() {
   
 useEffect(() => {
@@ -27,9 +26,8 @@ useEffect(() => {
   setupDatabase();
 }, []);
   return (
-    <GestureHandlerRootView style={{flex:1}}>
+    
       <TabNavigator></TabNavigator>
-    </GestureHandlerRootView>
     
   );
 }
