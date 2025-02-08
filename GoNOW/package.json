@@ -12,7 +12,10 @@
     "lint": "expo lint"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "moduleNameMapper": {
+      "expo-sqlite": "<rootDir>/__mocks__/expo-sqlite.js"
+    }
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
