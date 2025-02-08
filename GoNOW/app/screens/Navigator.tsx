@@ -69,7 +69,7 @@ export default function TabNavigator() {
         headerShown: false,
       }}
     >
-      <Tab.Screen name="Map" component={MapScreen} />
+      <Tab.Screen name="Map" component={MapScreen}/>
       <Tab.Screen name="Daily" component={DailyScreen} />
       <Tab.Screen 
         name="CreateTask" 
