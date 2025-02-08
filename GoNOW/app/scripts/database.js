@@ -14,9 +14,6 @@ export const initializeDatabase = async () => {
          latitude REAL,
          longitude REAL,
          transportationMode TEXT);
-        --INSERT INTO events (name, description, startTime, endTime, latitude, longitude, transportationMode) VALUES ('Study1', 'Descr1', '2025-02-05 16:00:00', '2025-02-05 16:30:00', 0, 0, 'walking');
-         --INSERT INTO events (name, description, startTime, endTime, latitude, longitude, transportationMode) VALUES ('Study2', 'Descr2', '2025-02-05 12:00:00', '2025-02-05 12:30:00', 0, 0, 'walking');
-         --INSERT INTO events (name, description, startTime, endTime, latitude, longitude, transportationMode) VALUES ('Study3', 'Descr3', '2025-03-05 16:00:00', '2025-03-05 16:30:00', 0, 0, 'walking');
     `);
         
 
@@ -96,5 +93,12 @@ export const addEvent = async (name, description, startTime, endTime, latitude, 
       console.error("Error in addEvent function:", error);
   }
 };
+
+export const foo = (num)=>{
+    if (num%2===0 )
+      return true
+    else
+      return false
+}
 
 
