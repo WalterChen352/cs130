@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import {GestureDetector,Gesture,Directions} from "react-native-gesture-handler";
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from 'react-native-vector-icons';
+import {CalendarStyles} from './screen_styles/CalendarScreen.styles';
 
 
 const HOUR_HEIGHT = 20; // Height for each hour in pixels
@@ -121,12 +122,12 @@ const CalendarScreen = () => {
 
     return (
         <GestureDetector gesture={Gesture.Exclusive(prevWeek, nextWeek)}>
-        <View style={styles.container}>
-            <View style={styles.header}>
+        <View style={CalendarStyles.container}>
+            <View style={CalendarStyles.header}>
                 <TouchableOpacity onPress={prevWeekPress}>
                     <Ionicons name={'caret-back-outline'} size= {27} />
                 </TouchableOpacity>
-                <Text style={styles.headerText}>
+                <Text style={CalendarStyles.headerText}>
                     {`${weekRange.start} - ${weekRange.end}`}
                 </Text>
                 <TouchableOpacity onPress={nextWeekPress}>
@@ -134,36 +135,36 @@ const CalendarScreen = () => {
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.calendarContainer}>
+            <View style={CalendarStyles.calendarContainer}>
                 {/* Day headers */}
-                <View style={styles.headerRow}>
-                    <View style={styles.timeColumn}>
-                        <Text style={styles.timeHeaderText}>Time</Text>
+                <View style={CalendarStyles.headerRow}>
+                    <View style={CalendarStyles.timeColumn}>
+                        <Text style={CalendarStyles.timeHeaderText}>Time</Text>
                     </View>
                     {days.map(day => (
-                        <View key={day} style={styles.dayHeader}>
-                            <Text style={styles.dayText}>{day}</Text>
+                        <View key={day} style={CalendarStyles.dayHeader}>
+                            <Text style={CalendarStyles.dayText}>{day}</Text>
                         </View>
                     ))}
                 </View>
 
                 <ScrollView>
-                    <View style={styles.gridContainer}>
+                    <View style={CalendarStyles.gridContainer}>
                         {/* Time axis */}
-                        <View style={styles.timeColumn}>
+                        <View style={CalendarStyles.timeColumn}>
                             {TIME_LABELS.map((timeLabel, index) => (
-                                <View key={timeLabel} style={styles.timeSlot}>
-                                    <Text style={styles.timeText}>{timeLabel}</Text>
+                                <View key={timeLabel} style={CalendarStyles.timeSlot}>
+                                    <Text style={CalendarStyles.timeText}>{timeLabel}</Text>
                                 </View>
                             ))}
                         </View>
 
                         {/* Day columns with events */}
                         {days.map(day => (
-                            <View key={`col-${day}`} style={styles.dayColumn}>
+                            <View key={`col-${day}`} style={CalendarStyles.dayColumn}>
                                 {/* Hour grid lines */}
                                 {TIME_LABELS.map((_, index) => (
-                                    <View key={`grid-${day}-${index}`} style={styles.gridLine} />
+                                    <View key={`grid-${day}-${index}`} style={CalendarStyles.gridLine} />
                                 ))}
                                 
                                 {/* Events */}
@@ -173,7 +174,7 @@ const CalendarScreen = () => {
                                         <TouchableOpacity
                                             key={`event-${day}-${index}`}
                                             style={[
-                                                styles.event,
+                                                CalendarStyles.event,
                                                 {
                                                     position: 'absolute',
                                                     top: position.top,
@@ -186,7 +187,7 @@ const CalendarScreen = () => {
                                                 navigateToDaily();
                                             }}
                                         >
-                                            <Text style={styles.eventText} numberOfLines={1}>
+                                            <Text style={CalendarStyles.eventText} numberOfLines={1}>
                                                 {event.name || 'Event'}
                                             </Text>
                                         </TouchableOpacity>
@@ -202,88 +203,5 @@ const CalendarScreen = () => {
         
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: 'white',
-    },
-    header: {
-        flexDirection:'row',
-        justifyContent: 'center',
-        padding: 16,
-    },
-    headerText: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#1f2937',
-    },
-    calendarContainer: {
-        flex: 1,
-    },
-    headerRow: {
-        flexDirection: 'row',
-        borderBottomWidth: 1,
-        borderBottomColor: '#e5e7eb',
-        backgroundColor: 'white',
-    },
-    timeColumn: {
-        width: 50,
-        borderRightWidth: 1,
-        borderRightColor: '#e5e7eb',
-    },
-    timeHeaderText: {
-        fontSize: 12,
-        textAlign: 'center',
-        padding: 8,
-        color: '#4b5563',
-    },
-    dayHeader: {
-        flex: 1,
-        alignItems: 'center',
-        padding: 8,
-    },
-    dayText: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#4b5563',
-    },
-    gridContainer: {
-        flexDirection: 'row',
-        height: HOUR_HEIGHT * (END_HOUR - START_HOUR),
-    },
-    timeSlot: {
-        height: HOUR_HEIGHT,
-        justifyContent: 'flex-start',
-        paddingTop: 4,
-    },
-    timeText: {
-        fontSize: 12,
-        color: '#6b7280',
-        textAlign: 'center',
-    },
-    dayColumn: {
-        flex: 1,
-        borderRightWidth: 1,
-        borderRightColor: '#e5e7eb',
-    },
-    gridLine: {
-        height: HOUR_HEIGHT,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f3f4f6',
-    },
-    event: {
-        position: 'absolute',
-        left: 2,
-        right: 2,
-        borderRadius: 4,
-        padding: 4,
-        overflow: 'hidden',
-    },
-    eventText: {
-        fontSize: 11,
-        color: '#1f2937',
-    },
-});
 
 export default CalendarScreen;

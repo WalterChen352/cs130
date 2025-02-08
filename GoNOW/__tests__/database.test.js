@@ -1,4 +1,4 @@
-import { initializeDatabase, getDailyEvents, clearEvents, getWeeklyEvents, addEvent } from "./database";
+import { initializeDatabase, getDailyEvents, clearEvents, getWeeklyEvents, addEvent } from "../app/scripts/database";
 import * as SQLite from "expo-sqlite";
 
 jest.mock("expo-sqlite");
@@ -43,9 +43,5 @@ describe("Database Functions", () => {
         const dbMock = SQLite.openDatabaseSync.mock.results[0].value;
         expect(dbMock.execAsync).toHaveBeenCalledWith(expect.stringContaining("DROP TABLE events"));
     });
-
-    test("getting weekly events for a given week", async()=>{
-
-    })
 
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from 'react-native-vector-icons';
 import MapScreen from './MapScreen';
@@ -7,13 +7,14 @@ import ProfileScreen from './ProfileScreen';
 import CalendarScreen from './CalendarScreen';
 import DailyScreen from './DailyScreen';
 import CreateTaskScreen from './CreateTaskScreen';
+import {NavigatorStyles} from './screen_styles/Navigator.styles'
 
 const Tab = createBottomTabNavigator();
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   return (
-    <View style={styles.container}>
+    <View style={NavigatorStyles.container}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
@@ -39,7 +40,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           <TouchableOpacity
             key={index}
             onPress={onPress}
-            style={styles.tabButton}
+            style={NavigatorStyles.tabButton}
           >
             <Ionicons 
               name={iconName} 
@@ -52,7 +53,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
       
       {/* Create Task Button */}
       <TouchableOpacity
-        style={styles.createButton}
+        style={NavigatorStyles.createButton}
         onPress={() => navigation.navigate('CreateTask')}
       >
         <Ionicons name="add" size={30} color="white" />
@@ -85,39 +86,3 @@ export default function TabNavigator() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    backgroundColor: 'lightblue',
-    height: 80,
-    paddingBottom: 20,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  tabButton: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  createButton: {
-    backgroundColor: 'lightblue',
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    left: SCREEN_WIDTH / 2 - 28, // Centers button by offsetting by half its width
-    top: -28,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    borderWidth: 4,
-    borderColor: 'white',
-  },
-});
