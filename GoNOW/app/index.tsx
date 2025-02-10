@@ -1,12 +1,17 @@
 import TabNavigator from './screens/Navigator';
+import { initDatabase } from './scripts/Database';
 import { useEffect } from 'react';
 import {initializeDatabase, getDailyEvents, clearEvents, addEvent} from './scripts/database';
 
 export default function Index() {
-  
+
+
 useEffect(() => {
   const setupDatabase = async () => {
-      try {
+
+    await initDatabase(); // Initialize DB for all tables needed
+    
+    try {
           await initializeDatabase(); // Ensure DB is initialized before adding events
           console.log("Database initialized.");
 

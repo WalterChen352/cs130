@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from 'react-native-vector-icons';
 import MapScreen from './MapScreen';
 import ProfileScreen from './ProfileScreen';
+import WorkflowScreen from './WorkflowScreen';
 import CalendarScreen from './CalendarScreen';
 import DailyScreen from './DailyScreen';
 import CreateTaskScreen from './CreateTaskScreen';
@@ -17,6 +18,10 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
+
+        if (route.name === 'Workflow') {
+          return null;
+        }
 
         const onPress = () => {
           const event = navigation.emit({
@@ -81,6 +86,7 @@ export default function TabNavigator() {
       />
       <Tab.Screen name="Calendar" component={CalendarScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Workflow" component={WorkflowScreen} />
     </Tab.Navigator>
   );
 }
