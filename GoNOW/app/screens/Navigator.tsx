@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from 'react-native-vector-icons';
 import MapScreen from './MapScreen';

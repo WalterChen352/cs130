@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View, Text, TextInput, Button, Switch, StyleSheet, Pressable } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { addEvent } from '../scripts/database';
 
@@ -90,12 +91,23 @@ const TaskForm = () => {
         />
       )}
 
-      <Text style={styles.label}>Enter transportation mode</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Car"
-        value={transportationMode}
-        onChangeText={setTransportationMode}
+      <Text style={styles.label}>Select transportation mode</Text>
+      <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            data={data}
+            search
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder="Select item"
+            searchPlaceholder="Search..."
+            value={value}
+            onChange={item => {
+              setValue(item.value);
+            }}
       />
       
       <View style={styles.row}>
