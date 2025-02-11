@@ -3,19 +3,29 @@ import { ScrollView, View, Text, TextInput, Button, Switch, StyleSheet, Pressabl
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { addEvent } from '../scripts/database';
+import { styles } from "./screen_styles/CreateTaskScreen.styles"
 
-const TaskForm = () => {
+const CreateTaskScreen = () => {
   const [title, setTitle] = useState('');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [autoSchedule, setAutoSchedule] = useState(false);
   const [transportationMode, setTransportationMode] = useState('');
-  const [location, setLocation] = useState('');
+  const [longitude, setLongitude] = useState('');
+  const [latitude, setLatitude] = useState('');
   const [description, setDescription] = useState('');
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
+  
+  const dropdownOptions = [
+    { label: 'Walk', value: 'walk' },
+    { label: 'Public Transit', value: 'transit' },
+    { label: 'Bike', value: 'bike' },
+    { label: 'Car', value: 'car' },
+  ];
+
 
   return (
     <ScrollView>
@@ -94,19 +104,16 @@ const TaskForm = () => {
       <Text style={styles.label}>Select transportation mode</Text>
       <Dropdown
             style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            data={data}
+            data={dropdownOptions}
             search
             maxHeight={300}
             labelField="label"
             valueField="value"
             placeholder="Select item"
             searchPlaceholder="Search..."
-            value={value}
+            value={transportationMode}
             onChange={item => {
-              setValue(item.value);
+              setTransportationMode(item.value);
             }}
       />
       
@@ -118,15 +125,15 @@ const TaskForm = () => {
       <Text style={styles.label}>Enter latitude</Text>
       <TextInput
         style={styles.input}
-        value={location}
-        onChangeText={setLocation}
+        value={latitude}
+        onChangeText={setLatitude}
       />
 
       <Text style={styles.label}>Enter longitude</Text>
       <TextInput
         style={styles.input}
-        value={location}
-        onChangeText={setLocation}
+        value={longitude}
+        onChangeText={setLongitude}
       />
 
       <Text style={styles.label}>Description</Text>
@@ -147,42 +154,6 @@ const TaskForm = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 40,
-    margin: 20,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 15,
-    marginBottom: 10,
-  },
-  textArea: {
-    height: 80,
-    textAlignVertical: 'top',
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-});
-
 {/*date formatting helper function*/}
 const formatDate = (date: Date) => {
   const datePart = date.toLocaleDateString("en-CA"); // "YYYY-MM-DD" (Canada format)
@@ -191,4 +162,4 @@ const formatDate = (date: Date) => {
   return `${datePart} ${timePart}`;
 };
 
-export default TaskForm;
+export default CreateTaskScreen;
