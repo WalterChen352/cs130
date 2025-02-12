@@ -73,7 +73,7 @@ export const getWeeklyEvents = async(date)=>{
       ORDER BY startTime;`, [startDate.toISOString(),endDate.toISOString()]);
         //const result = await DB.getAllAsync("SELECT * FROM events");
         console.log(result);
-        console.log('done txn');
+        console.log('searching for events between ', startDate.toISOString(), endDate.toISOString());
         return result;
   }
   catch(error){
