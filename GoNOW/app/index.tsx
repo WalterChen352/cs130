@@ -1,6 +1,6 @@
 import Navigator from './screens/Navigator';
 import { useEffect, JSX } from 'react';
-import {initializeDatabase, getDailyEvents, clearEvents, addEvent} from './scripts/database';
+import {initializeDatabase} from './scripts/database';
 
 export default function Index(): JSX.Element {
   
@@ -15,10 +15,10 @@ useEffect(() => {
           // await addEvent('Study3', 'Descr3', '2025-03-05 16:00:00', '2025-03-05 16:30:00', 0, 0, 'walking');
           // console.log("Events added.");
 
-          const events = await getDailyEvents(); // Fetch events after adding
-          console.log('Daily events:', events);
-          await clearEvents(); // Clear events after fetching
-          console.log('Events cleared.');
+          //const events = await getDailyEvents(); // Fetch events after adding
+          //console.log('Daily events:', events);
+          //await clearEvents(); // Clear events after fetching
+          //console.log('Events cleared.');
       } catch (error) {
           console.error('Error in database setup:', error);
       }

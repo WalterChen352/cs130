@@ -1,11 +1,12 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Button } from 'react-native';
+import React, {JSX} from 'react';
+import { View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import { getWeeklyEvents } from '../scripts/database';
 import { useEffect, useState } from 'react';
-import {GestureDetector,Gesture,Directions} from "react-native-gesture-handler";
+import {GestureDetector,Gesture,Directions} from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from 'react-native-vector-icons';
 import {CalendarStyles} from './screen_styles/CalendarScreen.styles';
+import Event from '../interfaces/event.interface';
 
 
 const HOUR_HEIGHT = 20; // Height for each hour in pixels
@@ -15,20 +16,21 @@ const TIME_LABELS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => {
   const hour = (START_HOUR + i) % 12 || 12;
   const ampm = (START_HOUR + i) < 12 ? 'AM' : 'PM';
   return `${hour}${ampm}`;
+
 });
 
-const CalendarScreen = () => {
+const CalendarScreen = (): JSX.Element=> {
     const navigation = useNavigation();
 
-    const navigateToDaily= () => {
+    const navigateToDaily= ():void => {
       navigation.navigate('Daily');
     };
-    const getLastSunday = (d: Date) => {
+    const getLastSunday = (d: Date) :Date => {
         var t = new Date(d);
         t.setDate(t.getDate() - t.getDay());
         return t;
     };
-    const getWeekRange = (startDate: any) => {
+    const getWeekRange = (startDate: Date): { start: string; end: string } => {
         const start = new Date(startDate);
         const end = new Date(start);
         end.setDate(start.getDate() + 6);
@@ -42,15 +44,15 @@ const CalendarScreen = () => {
     const [startDate, setStartDate]=useState(getLastSunday(new Date(Date.now())));
     const [weekRange, setWeekRange]= useState(getWeekRange(startDate));
     useEffect(() => {
-        const fetchEvents = async () => {
+        const fetchEvents = async ():Promise<void> => {
             try {
-                const e: any = await getWeeklyEvents(startDate);
+                const e: Event[] = await getWeeklyEvents(startDate);
                 setEvents(e);
                 setWeekRange(getWeekRange(startDate));
             } catch(error) {
                 console.error('error fetching events', error);
             }
-        }
+        };
         fetchEvents();
     }, [startDate]);
 
@@ -67,7 +69,7 @@ const CalendarScreen = () => {
         });
     }).runOnJS(true);
     
-    const nextWeekPress = ()=>{
+    const nextWeekPress = (): void=>{
         console.log('button press next week');
         setStartDate(prev => {
             const newDate = new Date(prev); // Copy old date
@@ -75,9 +77,9 @@ const CalendarScreen = () => {
             console.log('New Start Date:', newDate); // Log after modification
             return newDate;
         });
-    }
+    };
 
-    const prevWeekPress = ()=>{
+    const prevWeekPress = (): void=>{
         console.log('button press next week');
         setStartDate(prev => {
             const newDate = new Date(prev); // Copy old date
@@ -85,7 +87,7 @@ const CalendarScreen = () => {
             console.log('New Start Date:', newDate); // Log after modification
             return newDate;
         });
-    }
+    };
 
     const prevWeek= Gesture.Fling().direction(Directions.RIGHT).onEnd(()=>{
         console.log('swiping right');
@@ -98,7 +100,7 @@ const CalendarScreen = () => {
     }).runOnJS(true);
     
 
-    const getEventPosition = (startTime: string, endTime: string) => {
+    const getEventPosition = (startTime: string, endTime: string) :{top:number; height: number} => {
         const start = new Date(startTime);
         const end = new Date(endTime);
         
@@ -111,8 +113,8 @@ const CalendarScreen = () => {
         };
     };
 
-    const getEventsForDay = (day: string) => {
-        return events.filter((event: any) => {
+    const getEventsForDay = (day: string) :Event[]=> {
+        return events.filter((event: Event) => {
             const date = new Date(event.startTime);
             const dayOfWeek = date.getDay();
             const dayIndex = days.indexOf(day);
@@ -127,7 +129,7 @@ const CalendarScreen = () => {
                 <TouchableOpacity onPress={prevWeekPress}>
                     <Ionicons name={'caret-back-outline'} size= {27} />
                 </TouchableOpacity>
-                <Text style={CalendarStyles.headerText}>
+                <Text style={CalendarStyles.headerText} testID='WeekHeader'>
                     {`${weekRange.start} - ${weekRange.end}`}
                 </Text>
                 <TouchableOpacity onPress={nextWeekPress}>
@@ -152,7 +154,7 @@ const CalendarScreen = () => {
                     <View style={CalendarStyles.gridContainer}>
                         {/* Time axis */}
                         <View style={CalendarStyles.timeColumn}>
-                            {TIME_LABELS.map((timeLabel, index) => (
+                            {TIME_LABELS.map((timeLabel) => (
                                 <View key={timeLabel} style={CalendarStyles.timeSlot}>
                                     <Text style={CalendarStyles.timeText}>{timeLabel}</Text>
                                 </View>
@@ -168,29 +170,24 @@ const CalendarScreen = () => {
                                 ))}
                                 
                                 {/* Events */}
-                                {getEventsForDay(day).map((event: any, index) => {
+                                {getEventsForDay(day).map((event: Event, index):JSX.Element => {
                                     const position = getEventPosition(event.startTime, event.endTime);
                                     return (
                                         <TouchableOpacity
-                                            key={`event-${day}-${index}`}
-                                            style={[
-                                                CalendarStyles.event,
-                                                {
-                                                    position: 'absolute',
-                                                    top: position.top,
-                                                    height: Math.max(position.height, 20), // Minimum height of 20px
-                                                    backgroundColor: 'lightblue'
-                                                }
-                                            ]}
-                                            onPress={() => {
-                                                console.log('Clicked event:', event);
-                                                navigateToDaily();
-                                            }}
-                                        >
-                                            <Text style={CalendarStyles.eventText} numberOfLines={1}>
-                                                {event.name || 'Event'}
-                                            </Text>
-                                        </TouchableOpacity>
+                                        key={`event-${day}-${index}`}
+                                        style={[
+                                            CalendarStyles.event,
+                                            { top: position.top, height: Math.max(position.height, 20) } // Dynamically setting top and height
+                                        ]}
+                                        onPress={() => {
+                                            console.log('Clicked event:', event);
+                                            navigateToDaily();
+                                        }}
+                                    >
+                                        <Text style={CalendarStyles.eventText} numberOfLines={1}>
+                                            {event.name || 'Event'}
+                                        </Text>
+                                    </TouchableOpacity>
                                     );
                                 })}
                             </View>

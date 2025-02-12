@@ -58,7 +58,7 @@ export const clearEvents = async()=>{ //just for clearing local storage
   catch (error) {
     console.error(' error dropping table', error);
   }
-}
+};
 
 export const getWeeklyEvents = async(date)=>{
   console.log('getting weekly events for ', date);
@@ -67,7 +67,6 @@ export const getWeeklyEvents = async(date)=>{
   endDate.setDate(endDate.getDate()+7);
   try{
     const DB = await SQLite.openDatabaseAsync('userEvents.db');
-    const readOnly=true;
     console.log('db opened for daily events');
     const result = await DB.getAllAsync(` SELECT * FROM events 
       WHERE date(startTime) BETWEEN date(?) AND date(?)
@@ -80,7 +79,7 @@ export const getWeeklyEvents = async(date)=>{
   catch(error){
     console.error('error getting weekly evenets', error);
   }
-}
+};
 
 export const addEvent = async (name, description, startTime, endTime, latitude, longitude, transportationMode) => {
   try {
@@ -96,9 +95,9 @@ export const addEvent = async (name, description, startTime, endTime, latitude, 
 
 export const foo = (num)=>{
     if (num%2===0 )
-      return true
+      return true;
     else
-      return false
-}
+      return false;
+};
 
 

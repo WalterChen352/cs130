@@ -1,21 +1,16 @@
-import { StyleSheet} from "react-native";
+import { StyleSheet } from 'react-native';
 
 const HOUR_HEIGHT = 20; // Height for each hour in pixels
 const START_HOUR = 0; // 12 AM
 const END_HOUR = 24; // 12 AM next day
-const TIME_LABELS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => {
-  const hour = (START_HOUR + i) % 12 || 12;
-  const ampm = (START_HOUR + i) < 12 ? 'AM' : 'PM';
-  return `${hour}${ampm}`;
-});
 
-export const CalendarStyles =StyleSheet.create({
+export const CalendarStyles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
     },
     header: {
-        flexDirection:'row',
+        flexDirection: 'row',
         justifyContent: 'center',
         padding: 16,
     },
@@ -85,9 +80,12 @@ export const CalendarStyles =StyleSheet.create({
         borderRadius: 4,
         padding: 4,
         overflow: 'hidden',
+        minHeight: 20, 
+        backgroundColor: 'lightblue', 
     },
     eventText: {
         fontSize: 11,
         color: '#1f2937',
     },
 });
+

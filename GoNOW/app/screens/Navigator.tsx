@@ -1,5 +1,5 @@
 import React, { JSX } from 'react';
-import { View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, TouchableOpacity} from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from 'react-native-vector-icons';
 import MapScreen from './MapScreen';
@@ -7,7 +7,7 @@ import ProfileScreen from './ProfileScreen';
 import CalendarScreen from './CalendarScreen';
 import DailyScreen from './DailyScreen';
 import CreateTaskScreen from './CreateTaskScreen';
-import {NavigatorStyles} from './screen_styles/Navigator.styles'
+import {NavigatorStyles} from './screen_styles/Navigator.styles';
 
 const Tab = createBottomTabNavigator();
 
