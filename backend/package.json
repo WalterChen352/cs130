@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "lint": "eslint . --ext .ts,.tsx"
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
@@ -15,10 +15,13 @@
     "nodemon": "^3.1.9"
   },
   "devDependencies": {
+    "@eslint/js": "^9.20.0",
     "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",
     "eslint": "^9.20.1",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-native": "^5.0.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.2.5"
   }

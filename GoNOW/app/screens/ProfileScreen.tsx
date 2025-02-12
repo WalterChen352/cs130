@@ -1,7 +1,8 @@
-import { Text } from "react-native"
+import { Text } from 'react-native';
+import { JSX } from 'react';
 
-const ProfileScreen= ()=>{
-    return <Text>Profile Screen</Text>
-}
+const ProfileScreen = (): JSX.Element => {
+  return <Text>Profile Screen</Text>;
+};
 
 export default ProfileScreen;

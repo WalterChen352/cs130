@@ -1,7 +1,7 @@
-import { Text } from "react-native"
+import { Text } from 'react-native';
+import { JSX } from 'react';
 
-
-const DailyScreen = ()=>{
+const DailyScreen = (): JSX.Element =>{
     return (<Text>Daily Screen</Text>);
 };
 
