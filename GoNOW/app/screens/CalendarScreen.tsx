@@ -1,7 +1,8 @@
-import { Text } from "react-native"
+import { Text } from 'react-native';
+import { JSX } from 'react';
 
 
-const CalendarScreen = ()=>{
+const CalendarScreen = (): JSX.Element =>{
     return (<Text>Calendar Screen</Text>);
 };
 
