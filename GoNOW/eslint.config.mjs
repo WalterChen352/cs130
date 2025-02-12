@@ -1,11 +1,10 @@
-import js from './node_modules/@eslint/js/index.js';
-import tsPlugin from './node_modules/@typescript-eslint/eslint-plugin/index.js';
-import tsParser from './node_modules/@typescript-eslint/parser/index.js';
-import reactPlugin from './node_modules/eslint-plugin-react/index.js';
-import reactNativePlugin from './node_modules/eslint-plugin-react-native/index.js';
+import js from '@eslint/js';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
+import reactPlugin from 'eslint-plugin-react';
+import reactNativePlugin from 'eslint-plugin-react-native';
 
 const sharedGlobals = {
-    // Testing globals
     jest: true,
     expect: true,
     describe: true,
@@ -15,7 +14,6 @@ const sharedGlobals = {
     afterAll: true,
     afterEach: true,
     test: true,
-    // Browser/Node globals
     console: true,
     process: true,
     window: true,
@@ -34,16 +32,13 @@ const sharedRules = {
 
 export default [
     js.configs.recommended,
-    // Test files
     {
         files: ['**/*.test.js', '**/*.test.ts', '**/*.test.tsx', '**/__tests__/**/*'],
         languageOptions: {
             parserOptions: {
                 ecmaVersion: 'latest',
                 sourceType: 'module',
-                ecmaFeatures: {
-                    jsx: true
-                }
+                ecmaFeatures: { jsx: true }
             },
             globals: sharedGlobals
         },
@@ -58,16 +53,13 @@ export default [
             '@typescript-eslint/explicit-function-return-type': 'off'
         }
     },
-    // JavaScript files
     {
         files: ['**/*.js', '**/*.jsx'],
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'module',
             parserOptions: {
-                ecmaFeatures: {
-                    jsx: true
-                }
+                ecmaFeatures: { jsx: true }
             },
             globals: sharedGlobals
         },
@@ -77,7 +69,6 @@ export default [
         },
         rules: sharedRules
     },
-    // TypeScript files
     {
         files: ['**/*.ts', '**/*.tsx'],
         languageOptions: {
@@ -85,9 +76,7 @@ export default [
             parserOptions: {
                 ecmaVersion: 'latest',
                 sourceType: 'module',
-                ecmaFeatures: {
-                    jsx: true
-                }
+                ecmaFeatures: { jsx: true }
             },
             globals: sharedGlobals
         },
