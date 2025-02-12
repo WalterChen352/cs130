@@ -27,7 +27,7 @@ jobs:
       run: npm ci
       
     - name: Run linter
-      run: cd .. && npm --prefix GoNOW run lint
+      run: npm run lint
 
     - name: Run tests
       run: npm test
@@ -52,7 +52,7 @@ jobs:
       run: npm ci
       
     - name: Run linter
-      run: cd .. && npm --prefix backend run lint
+      run: npm run lint
       
     - name: Run tests
       run: npm test
