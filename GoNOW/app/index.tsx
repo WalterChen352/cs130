@@ -1,14 +1,14 @@
-import TabNavigator from './screens/Navigator';
-import { useEffect } from 'react';
-import { Text } from 'react-native';
+import Navigator from './screens/Navigator';
+import { useEffect, JSX } from 'react';
 import {initializeDatabase, getDailyEvents, clearEvents, addEvent} from './scripts/database';
-export default function Index() {
+
+export default function Index(): JSX.Element {
   
 useEffect(() => {
-  const setupDatabase = async () => {
+  const setupDatabase = async (): Promise<void> => {
       try {
           await initializeDatabase(); // Ensure DB is initialized before adding events
-          console.log("Database initialized.");
+          console.log('Database initialized.');
 
           //await addEvent('Study1', 'Descr1', '2025-02-06 13:00:00', '2025-02-05 16:30:00', 0, 0, 'walking');
           // await addEvent('Study2', 'Descr2', '2025-02-05 12:00:00', '2025-02-05 12:30:00', 0, 0, 'walking');
@@ -16,18 +16,16 @@ useEffect(() => {
           // console.log("Events added.");
 
           const events = await getDailyEvents(); // Fetch events after adding
-          //console.log("Daily events:", events);
-          //await clearEvents(); // Clear events after fetching
-          // console.log("Events cleared.");
+          console.log('Daily events:', events);
+          await clearEvents(); // Clear events after fetching
+          console.log('Events cleared.');
       } catch (error) {
-          console.error("Error in database setup:", error);
+          console.error('Error in database setup:', error);
       }
   };
   setupDatabase();
 }, []);
   return (
-    
-      <TabNavigator></TabNavigator>
-    
+    <Navigator/>
   );
 }

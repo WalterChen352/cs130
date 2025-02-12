@@ -25,13 +25,12 @@ export const initializeDatabase = async () => {
 
       console.error('Error creating the table: ', error);
     }
-}
+};
 
 export const getDailyEvents = async()=>{
     console.log('getting events');
     try{
         const DB = await SQLite.openDatabaseAsync('userEvents.db');
-        const readOnly=true;
         console.log('db opened for daily events');
         const result = await DB.getAllAsync(` SELECT * FROM events 
   WHERE date(startTime) = date('now', 'localtime')
@@ -41,10 +40,11 @@ export const getDailyEvents = async()=>{
         console.log('done txn');
         return result;
     }
-    catch(error){
+    catch (error) {
         console.error('error getting daily events', error);
+        return [];
     }
-}
+};
 
 export const clearEvents = async()=>{ //just for clearing local storage
   console.log('dropping events table');
@@ -52,10 +52,10 @@ export const clearEvents = async()=>{ //just for clearing local storage
       const DB = await SQLite.openDatabaseSync('userEvents.db');
       await DB.execAsync(`PRAGMA journal_mode = WAL;
         DROP TABLE events;
-        `)
-      console.log('dropped table')
+        `);
+      console.log('dropped table');
   }
-  catch(error){
+  catch (error) {
     console.error(' error dropping table', error);
   }
 }
@@ -85,12 +85,12 @@ export const getWeeklyEvents = async(date)=>{
 export const addEvent = async (name, description, startTime, endTime, latitude, longitude, transportationMode) => {
   try {
       const DB = await SQLite.openDatabaseAsync('userEvents.db');
-      console.log('db', DB)
+      console.log('db', DB);
       await DB.runAsync(`INSERT INTO events 
               (name, description, startTime, endTime, latitude, longitude, transportationMode) 
               VALUES (?, ?, ?, ?, ?, ?, ?);`, [name, description, startTime, endTime, latitude, longitude, transportationMode]);
   } catch (error) {
-      console.error("Error in addEvent function:", error);
+      console.error('Error in addEvent function:', error);
   }
 };
 

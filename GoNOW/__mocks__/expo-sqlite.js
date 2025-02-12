@@ -7,4 +7,3 @@ export const openDatabaseAsync = jest.fn(async () => ({
   export const openDatabaseSync = jest.fn(() => ({
     execAsync: jest.fn(async () => Promise.resolve()),
   }));
-  
