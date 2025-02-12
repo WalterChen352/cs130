@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn()
 }));
-jest.mock("expo-font");
+jest.mock('expo-font');
 
 describe('CalendarScreen', () => {
   const mockNavigation = {
@@ -49,9 +49,9 @@ describe('CalendarScreen', () => {
     await waitFor(()=>{
       screen.getByTestId('WeekHeader');
     });
-    weekHeader = screen.getByTestId('WeekHeader');
+    const weekHeader = screen.getByTestId('WeekHeader');
     expect(weekHeader).toBeOnTheScreen();
     console.log(weekHeader.innerHTML);
-  })
+  });
   
 });

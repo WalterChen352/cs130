@@ -65,15 +65,15 @@ export const getWeeklyEvents = async(date)=>{
   const startDate= new Date(date);
   const endDate = new Date(date);
   endDate.setDate(endDate.getDate()+7);
+  console.log('searching for events between ', startDate.toISOString(), endDate.toISOString());
   try{
     const DB = await SQLite.openDatabaseAsync('userEvents.db');
-    console.log('db opened for daily events');
     const result = await DB.getAllAsync(` SELECT * FROM events 
-      WHERE date(startTime) BETWEEN date(?) AND date(?)
-      ORDER BY startTime;`, [startDate.toISOString(),endDate.toISOString()]);
+    WHERE startTime >= datetime(?) AND startTime < datetime(?) 
+    ORDER BY startTime;
+`, [startDate.toISOString(),endDate.toISOString()]);
         //const result = await DB.getAllAsync("SELECT * FROM events");
         console.log(result);
-        console.log('searching for events between ', startDate.toISOString(), endDate.toISOString());
         return result;
   }
   catch(error){

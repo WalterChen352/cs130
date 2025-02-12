@@ -29,9 +29,9 @@ const CalendarScreen = (): JSX.Element=> {
         var t = new Date(d);
         t.setDate(d.getDate() - d.getDay());
         console.log('day of sunday', d.getDate() - d.getDay());
-        console.log('last sunda is', t.getDate())
+        console.log('last sunda is', t.getDate());
         t.setHours(0,0,0,0);
-        console.log(t)
+        console.log(t);
         return t;
     };
     const getWeekRange = (startDate: Date): { start: string; end: string } => {
@@ -39,7 +39,7 @@ const CalendarScreen = (): JSX.Element=> {
         start.setHours(0,0,0,0);
         const end = new Date(start);
         end.setDate(start.getDate() + 6);
-        console.log('getweek range', start, end)
+        console.log('getweek range', start, end);
         return {
             start: start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
             end: end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -106,7 +106,7 @@ const CalendarScreen = (): JSX.Element=> {
     
 
     const getEventPosition = (startTime: string, endTime: string) :{top:number; height: number} => {
-        console.log(startTime, endTime)
+        console.log(startTime, endTime);
         const start = new Date(startTime);
         const end = new Date(endTime);
         
