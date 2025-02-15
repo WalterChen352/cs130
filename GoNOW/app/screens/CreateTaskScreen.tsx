@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, TextInput, Button, Switch, StyleSheet, Pressable } from 'react-native';
+import { ScrollView, View, Text, TextInput, Button, Switch, Pressable } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { addEvent } from '../scripts/database';
-import { styles } from "./screen_styles/CreateTaskScreen.styles"
+import { styles } from "./screen_styles/CreateTaskScreen.styles";
 
 const CreateTaskScreen = () => {
-  const [title, setTitle] = useState('');
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [autoSchedule, setAutoSchedule] = useState(false);
-  const [transportationMode, setTransportationMode] = useState('');
-  const [longitude, setLongitude] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [description, setDescription] = useState('');
-  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
-  const [showStartTimePicker, setShowStartTimePicker] = useState(false);
-  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-  const [showEndTimePicker, setShowEndTimePicker] = useState(false);
-  
+  const [title, setTitle] = useState<string>('');
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [autoSchedule, setAutoSchedule] = useState<boolean>(false);
+  const [transportationMode, setTransportationMode] = useState<string>('');
+  const [longitude, setLongitude] = useState<string>('');
+  const [latitude, setLatitude] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [showStartDatePicker, setShowStartDatePicker] = useState<boolean>(false);
+  const [showStartTimePicker, setShowStartTimePicker] = useState<boolean>(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
+  const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
+
   const dropdownOptions = [
     { label: 'Walk', value: 'walk' },
     { label: 'Public Transit', value: 'transit' },
@@ -26,12 +26,10 @@ const CreateTaskScreen = () => {
     { label: 'Car', value: 'car' },
   ];
 
-
   return (
     <ScrollView>
       <Text style={styles.title}>Add a task</Text>
 
-      {/*Task Title*/}
       <TextInput
         style={styles.input}
         placeholder="Title"
@@ -39,7 +37,6 @@ const CreateTaskScreen = () => {
         onChangeText={setTitle}
       />
 
-      {/*Task Start Date and Time*/}
       <Text style={styles.label}>Select start time</Text>
       <View style={styles.row}>
         <Button title={startDate.toDateString()} onPress={() => setShowStartDatePicker(true)} />
@@ -51,9 +48,9 @@ const CreateTaskScreen = () => {
           value={startDate}
           mode="date"
           display="default"
-          onChange={(event, selectedStartDate) => {
+          onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
             setShowStartDatePicker(false);
-            if (selectedStartDate) setStartDate(selectedStartDate);
+            if (selectedDate) setStartDate(selectedDate);
           }}
         />
       )}
@@ -63,14 +60,13 @@ const CreateTaskScreen = () => {
           value={startDate}
           mode="time"
           display="default"
-          onChange={(event, selectedStartTime) => {
+          onChange={(event: DateTimePickerEvent, selectedTime?: Date) => {
             setShowStartTimePicker(false);
-            if (selectedStartTime) setStartDate(selectedStartTime);
+            if (selectedTime) setStartDate(selectedTime);
           }}
         />
       )}
 
-      {/*Task End Date and Time*/}
       <Text style={styles.label}>Select end time</Text>
       <View style={styles.row}>
         <Button title={endDate.toDateString()} onPress={() => setShowEndDatePicker(true)} />
@@ -82,9 +78,9 @@ const CreateTaskScreen = () => {
           value={endDate}
           mode="date"
           display="default"
-          onChange={(event, selectedEndDate) => {
+          onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
             setShowEndDatePicker(false);
-            if (selectedEndDate) setEndDate(selectedEndDate);
+            if (selectedDate) setEndDate(selectedDate);
           }}
         />
       )}
@@ -94,27 +90,27 @@ const CreateTaskScreen = () => {
           value={endDate}
           mode="time"
           display="default"
-          onChange={(event, selectedEndTime) => {
+          onChange={(event: DateTimePickerEvent, selectedTime?: Date) => {
             setShowEndTimePicker(false);
-            if (selectedEndTime) setEndDate(selectedEndTime);
+            if (selectedTime) setEndDate(selectedTime);
           }}
         />
       )}
 
       <Text style={styles.label}>Select transportation mode</Text>
       <Dropdown
-            style={styles.dropdown}
-            data={dropdownOptions}
-            search
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder="Select item"
-            searchPlaceholder="Search..."
-            value={transportationMode}
-            onChange={item => {
-              setTransportationMode(item.value);
-            }}
+        style={styles.dropdown}
+        data={dropdownOptions}
+        search
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        placeholder="Select item"
+        searchPlaceholder="Search..."
+        value={transportationMode}
+        onChange={item => {
+          setTransportationMode(item.value);
+        }}
       />
       
       <View style={styles.row}>
@@ -145,20 +141,27 @@ const CreateTaskScreen = () => {
         multiline
       />
 
-      
-      <Pressable style={styles.container} onPress={async () => await addEvent(title, description, formatDate(startDate), formatDate(endDate), transportationMode)}>
+      <Pressable 
+        style={styles.container} 
+        onPress={async () => 
+          await addEvent(
+            title, 
+            description, 
+            formatDate(startDate), 
+            formatDate(endDate), 
+            transportationMode
+          )
+        }
+      >
         <Text>Save Task</Text>
       </Pressable>
     </ScrollView>
-    
   );
 };
 
-{/*date formatting helper function*/}
-const formatDate = (date: Date) => {
-  const datePart = date.toLocaleDateString("en-CA"); // "YYYY-MM-DD" (Canada format)
-  const timePart = date.toLocaleTimeString("en-GB"); // "HH:mm:ss" (24-hour format)
-
+const formatDate = (date: Date): string => {
+  const datePart = date.toLocaleDateString("en-CA");
+  const timePart = date.toLocaleTimeString("en-GB");
   return `${datePart} ${timePart}`;
 };
 
