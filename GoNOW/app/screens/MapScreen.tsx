@@ -1,7 +1,7 @@
-import { Text } from "react-native"
+import { Text } from 'react-native';
+import { JSX } from 'react';
 
-
-const MapScreen = ()=>{
+const MapScreen = (): JSX.Element =>{
     return (<Text>Map Screen</Text>);
 };
 

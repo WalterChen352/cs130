@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import { View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -12,14 +12,13 @@ import CreateTaskScreen from './CreateTaskScreen';
 const Tab = createBottomTabNavigator();
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const CustomTabBar = ({ state, descriptors, navigation }) => {
+const CustomTabBar = ({ state, navigation }): JSX.Element => {
   return (
     <View style={styles.container}>
       {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
         const isFocused = state.index === index;
 
-        const onPress = () => {
+        const onPress = (): void => {
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,
@@ -42,7 +41,8 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
             onPress={onPress}
             style={styles.tabButton}
           >
-            <Ionicons 
+            <Ionicons
+              testID="tab-icon"
               name={iconName} 
               size={24} 
               color={isFocused ? '#007AFF' : '#8E8E8F'}
@@ -62,7 +62,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   );
 };
 
-export default function TabNavigator() {
+export default function Navigator(): JSX.Element {
   return (
     <Tab.Navigator
       tabBar={(props) => <CustomTabBar {...props} />}
