@@ -5,7 +5,7 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { addEvent } from '../scripts/database';
 import { styles } from "./screen_styles/CreateTaskScreen.styles";
 
-const CreateTaskScreen = () => {
+const CreateTaskScreen = (): JSX.Element => {
   const [title, setTitle] = useState<string>('');
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
