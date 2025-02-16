@@ -90,9 +90,7 @@ describe('Profile Screen', () => {
     await waitFor(() => {
       expect(getByTestId('profile-title')).toHaveTextContent('Workflows');
     });
-    await waitFor(() => {
-      unmount();
-    });
+    unmount();
   });
 
   test('should load and render workloads list on profile screen', async () => {
