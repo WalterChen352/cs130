@@ -1,12 +1,12 @@
 import * as SQLite from 'expo-sqlite';
 
-export const DB_NAME = "gonow.db";
+export const DB_NAME = 'gonow.db';
 
-export const openDatabase = async () => {
+export const openDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
     return await SQLite.openDatabaseAsync(DB_NAME);
-}
+};
 
-export const initDatabase = async () => {
+export const initDatabase = async (): Promise<Boolean> => {
     //console.log('> Start initialize DB');
     try {
         const DB = await openDatabase();
@@ -57,15 +57,17 @@ export const initDatabase = async () => {
               INSERT INTO profile (id, address, lat, lon) VALUES (1, '', 0, 0);
             `);
         }
-        catch { } //ignore second attempt of insert record
+        catch {
+            console.log(''); //ignore second attempt of insert record
+        }
 
     }
     catch (error) {
         console.error('Error initializing the DB: ', error);
     }
-}
+};
 
-export const dropDatabase = async () => {
+export const dropDatabase = async (): Promise<Boolean> => {
 
     try {
         const DB = await openDatabase();
@@ -91,9 +93,9 @@ export const dropDatabase = async () => {
     catch (error) {
         console.error('Error dropping the DB: ', error);
     }
-}
+};
 
-export const resetDatabase = async () => {
+export const resetDatabase = async (): Promise<Boolean> => {
     try {
         await dropDatabase();
         await initDatabase();
@@ -101,4 +103,4 @@ export const resetDatabase = async () => {
     catch (error) {
         console.error('Error resetting the DB: ', error);
     }
-}
+};

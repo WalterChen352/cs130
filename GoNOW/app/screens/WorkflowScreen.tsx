@@ -1,20 +1,19 @@
-import { Alert, Button, FlatList, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { Alert, Button, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { JSX, useCallback, useEffect, useRef , useState } from "react";
-import { Ionicons } from "react-native-vector-icons";
+import { JSX, useCallback, useEffect, useRef , useState } from 'react';
+import { Ionicons } from 'react-native-vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import WheelPicker from 'react-native-wheel-color-picker';
 
-import { getSchedulingStyles, getSchedulingStyle } from "../scripts/SchedulingStyle";
-import { DaysOfWeekNames, Time, TimeFromDate } from "../models/Time";
-import { Workflow } from "../models/Workflow";
-import { addWorkflow, updateWorkflow, deleteWorkflow, validateWorkflow } from "../scripts/Workflow";
+import { getSchedulingStyles, getSchedulingStyle } from '../scripts/SchedulingStyle';
+import { DaysOfWeekNames, Time, TimeFromDate } from '../models/Time';
+import { Workflow } from '../models/Workflow';
+import { addWorkflow, updateWorkflow, deleteWorkflow, validateWorkflow } from '../scripts/Workflow';
 
 const WorkflowScreen = ({ route }): JSX.Element => {
 
     //console.log('> Route: ', route);
-    console.log('> Route');
     const { workflow } = route.params;
 
     const navigation = useNavigation();
@@ -34,18 +33,18 @@ const WorkflowScreen = ({ route }): JSX.Element => {
     const [showTimeStart, setShowTimeStart] = useState(false);
     const [showTimeEnd, setShowTimeEnd] = useState(false);
 
-    const openTimeStart = () => { setShowTimeStart(true); }
-    const onChangeTimeStart = (event, time) => {
+    const openTimeStart = (): void => { setShowTimeStart(true); };
+    const onChangeTimeStart = (event, time): void => {
         setTimeStart(new Date(0, 0, 0, time.getHours(), time.getMinutes()));
         setShowTimeStart(false);
     };
-    const openTimeEnd = () => { setShowTimeEnd(true); }
-    const onChangeTimeEnd = (event, time) => {
+    const openTimeEnd = (): void => { setShowTimeEnd(true); };
+    const onChangeTimeEnd = (event, time): void => {
         setTimeEnd(new Date(0, 0, 0, time.getHours(), time.getMinutes()));
         setShowTimeEnd(false);
     };
 
-    const toggleDay = (indexDay) => {
+    const toggleDay = (indexDay): void => {
         setDaysOfWeek((prev) => {
             const next = [...prev];
             next[indexDay] = !next[indexDay];
@@ -53,7 +52,7 @@ const WorkflowScreen = ({ route }): JSX.Element => {
         });
     };
 
-    const handleSaveForm = async () => {
+    const handleSaveForm = async (): Promise<void> => {
         const workflowNew = new Workflow(
             workflow.Id,
             name,
@@ -67,7 +66,7 @@ const WorkflowScreen = ({ route }): JSX.Element => {
         try {
             await validateWorkflow(workflowNew);
         } catch (error) {
-            Alert.alert("Validation Error", error.message);
+            Alert.alert('Validation Error', error.message);
             return;
         }
         if (workflow.Id > 0) {
@@ -76,23 +75,23 @@ const WorkflowScreen = ({ route }): JSX.Element => {
         else {
             await addWorkflow(workflowNew);
         }
-        navigation.navigate("Profile");
+        navigation.navigate('Profile');
     };
 
-    const handleDelete = async () => {
-        Alert.alert("Confirm", `Remove workflow ${workflow.Name}?`,
+    const handleDelete = async (): Promise<void> => {
+        Alert.alert('Confirm', `Remove workflow ${workflow.Name}?`,
             [
-                { text: "Cancel", style: "cancel" },
-                { text: "OK", onPress: async () => {
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'OK', onPress: async (): Promise<void> => {
                     await deleteWorkflow(workflow);
-                    navigation.navigate("Profile");
+                    navigation.navigate('Profile');
                 } },
             ],
             { cancelable: false }
         );
     };
 
-    const loadSchedulingStyle = async () => {
+    const loadSchedulingStyle = async (): Promise<void> => {
         setSchedulingStyles(await getSchedulingStyles());
     };
 
@@ -111,9 +110,6 @@ const WorkflowScreen = ({ route }): JSX.Element => {
         useCallback(() => {
             loadSchedulingStyle();
             scrollRef.current?.scrollTo({ y: 0, animated: true });
-            return () => {
-                //console.log('WorkflowScreen lost focus');
-            };
         }, [])
     );
 
@@ -121,7 +117,7 @@ const WorkflowScreen = ({ route }): JSX.Element => {
         <View style={styles.container}>
             <ScrollView style={styles.scrollContainer} ref={scrollRef}>
                 <Text style={styles.title} testID="workflow-title">
-                    {workflow.Id === 0 ? "Add a workflow" : "Update the workflow"}
+                    {workflow.Id === 0 ? 'Add a workflow' : 'Update the workflow'}
                 </Text>
                 <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Workflow name" testID="workflow-name" />
 
@@ -148,7 +144,7 @@ const WorkflowScreen = ({ route }): JSX.Element => {
                         <View key={ind} style={styles.blockDayOfWeek}>
                             <Button title={ DaysOfWeekNames[ind] }
                                 onPress={() => toggleDay(ind)}
-                                color={day ? "#388dff" : 'lightgray'}
+                                color={day ? '#388dff' : 'lightgray'}
                                 testID={`workflow-day-of-week-${ind}`}
                             />
                         </View>
@@ -201,16 +197,16 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 23,
-        fontWeight: "bold",
-        textAlign: "center",
+        fontWeight: 'bold',
+        textAlign: 'center',
         marginBottom: 16
     },
     header: {
         fontSize: 23,
-        textAlign: "center",
+        textAlign: 'center',
         marginTop: 24,
         marginBottom: 10,
-        color: "#888888"
+        color: '#888888'
     },
     input: {
         borderWidth: 1,
@@ -218,15 +214,15 @@ const styles = StyleSheet.create({
         marginVertical: 8
     },
     center: {
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center"
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     centerWrap: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        alignItems: "center"
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     blockDayOfWeek: {
         margin: 5,
@@ -244,40 +240,40 @@ const styles = StyleSheet.create({
         height: 300
     },
     btnSave: {
-        position: "absolute",
+        position: 'absolute',
         bottom: 20,
         right: 20,
-        backgroundColor: "#388dff",
+        backgroundColor: '#388dff',
         width: 60,
         height: 60,
         borderRadius: 30,
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
         elevation: 5,
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         borderWidth: 4,
-        borderColor: "white",
+        borderColor: 'white',
     },
     btnDel: {
-        position: "absolute",
+        position: 'absolute',
         bottom: 20,
         left: 20,
-        backgroundColor: "#ffa5a5",
+        backgroundColor: '#ffa5a5',
         width: 60,
         height: 60,
         borderRadius: 30,
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
         elevation: 5,
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         borderWidth: 4,
-        borderColor: "white",
+        borderColor: 'white',
     },
     footer: {
         paddingBottom: 100,

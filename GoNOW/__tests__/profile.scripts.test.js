@@ -1,8 +1,8 @@
-import { getLocation, updateLocation } from "../app/scripts/Profile";
-import { Location, Coordinates } from "../app/models/Location";
-import { openDatabase } from "../app/scripts/Database";
+import { getLocation, updateLocation } from '../app/scripts/Profile';
+import { Location, Coordinates } from '../app/models/Location';
+import { openDatabase } from '../app/scripts/Database';
 
-jest.mock("../app/scripts/Database", () => ({
+jest.mock('../app/scripts/Database', () => ({
   openDatabase: jest.fn(),
 }));
 
@@ -12,22 +12,22 @@ const locationToDb = (location) => {
     address: location.Address,
     lat: location.Coordinates.Latitude,
     lon: location.Coordinates.Longitude,
-  }
-}
+  };
+};
 
 const mockLocation = new Location(
     new Coordinates(33.033, -44.044),
-    "7400 Boelter Hall, Los Angeles, CA 90095"
+    '7400 Boelter Hall, Los Angeles, CA 90095'
 );
 const mockLocationDb = locationToDb(mockLocation);
 
 
-describe("Profile Database", () => {
+describe('Profile Database', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test("method getLocation should return location object from the database", async () => {
+  test('method getLocation should return location object from the database', async () => {
     const mockDb = {
       getAllAsync: jest.fn().mockResolvedValue([mockLocationDb]),
     };
@@ -38,14 +38,14 @@ describe("Profile Database", () => {
     expect(location.Coordinates.Longitude).toBe(mockLocation.Coordinates.Longitude);
   });
 
-  test("method updateLocation should update profile location into the database", async () => {
+  test('method updateLocation should update profile location into the database', async () => {
     const mockDb = {
       runAsync: jest.fn().mockResolvedValue(undefined),
     };
     openDatabase.mockResolvedValue(mockDb);
     await updateLocation(mockLocation);
     expect(mockDb.runAsync).toHaveBeenCalledWith(
-      expect.stringContaining("UPDATE profile"),
+      expect.stringContaining('UPDATE profile'),
       expect.arrayContaining([
         mockLocationDb.address,
         mockLocationDb.lat,

@@ -1,5 +1,5 @@
-import { SchedulingStyle } from "./SchedulingStyle";
-import { Time } from "./Time";
+import { SchedulingStyle } from './SchedulingStyle';
+import { Time } from './Time';
 
 export class Workflow {
     Id: number;

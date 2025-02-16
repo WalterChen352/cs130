@@ -34,16 +34,16 @@ describe('Model Coordinates', () => {
 describe('Model Location', () => {
   test('should create a Location instance', () => {
     const coords = new Coordinates(33.033, -44.044);
-    const location = new Location(coords, "7400 Boelter Hall, Los Angeles, CA 90095");
+    const location = new Location(coords, '7400 Boelter Hall, Los Angeles, CA 90095');
     
     expect(location).toBeInstanceOf(Location);
     expect(location.Coordinates).toBe(coords);
-    expect(location.Address).toBe("7400 Boelter Hall, Los Angeles, CA 90095");
+    expect(location.Address).toBe('7400 Boelter Hall, Los Angeles, CA 90095');
   });
 
   test('should return correct string representation from toString()', () => {
     const coords = new Coordinates(33.033, -44.044);
-    const location = new Location(coords, "7400 Boelter Hall, Los Angeles, CA 90095");
+    const location = new Location(coords, '7400 Boelter Hall, Los Angeles, CA 90095');
     
     expect(location.toString()).toBe('[33.033;-44.044] 7400 Boelter Hall, Los Angeles, CA 90095');
   });

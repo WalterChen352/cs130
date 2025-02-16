@@ -1,7 +1,7 @@
 import { initDatabase } from './scripts/Database';
 import Navigator from './screens/Navigator';
 import { JSX, useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native"
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import {initializeDatabase, getDailyEvents, clearEvents, addEvent} from './scripts/database';
 
 export default function Index(): JSX.Element {
@@ -44,7 +44,7 @@ export default function Index(): JSX.Element {
 const styles = StyleSheet.create({
   spiner: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 });

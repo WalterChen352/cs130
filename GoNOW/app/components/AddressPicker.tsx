@@ -1,11 +1,11 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from 'react';
 import 'react-native-get-random-values';
-import { StyleSheet, View, TextInput, Text, ActivityIndicator } from "react-native";
-import * as ExpoLocation from "expo-location";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { StyleSheet, View } from 'react-native';
+//import * as ExpoLocation from 'expo-location';
+import { GooglePlacesAutocomplete, GooglePlaceData, GooglePlaceDetail } from 'react-native-google-places-autocomplete';
 
-import { GOOGLE_API_KEY } from "../scripts/Config";
-import { Coordinates, Location } from "../models/Location";
+import { GOOGLE_API_KEY } from '../scripts/Config';
+import { Coordinates, Location } from '../models/Location';
 
 interface AddressPickerProps {
   initialAddress?: string;
@@ -15,10 +15,10 @@ interface AddressPickerProps {
 }
 
 const AddressPicker: React.FC<AddressPickerProps> = ({
-    initialAddress = "",
+    initialAddress = '',
     initialCoordinates = null,
     onSelect,
-    placeHolder = "Type an address",
+    placeHolder = 'Type an address',
   }) => {
   const [address, setAddress] = useState(initialAddress);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(initialCoordinates);
@@ -34,11 +34,11 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     }
   }, [initialAddress, initialCoordinates]);
 
-  const handlePlaceSelect = (data: any, details: any) => {
+  const handlePlaceSelect = (data: GooglePlaceData , details: GooglePlaceDetail): void => {
     const { geometry } = details;
     const { lat, lng } = geometry.location;
 
-    console.log("AddressPicker: ", geometry, { lat, lng });
+    console.log('AddressPicker: ', geometry, { lat, lng });
 
     setAddress(data.description);
     setCoordinates(new Coordinates( lat, lng ));
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   textInput:{
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
   },
   description: {
     fontWeight: 'bold',
@@ -86,14 +86,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 45,
     borderRadius: 3,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 5, // for Android
   },
   poweredContainer: {
-    display: "none",
+    display: 'none',
   },
 });
 

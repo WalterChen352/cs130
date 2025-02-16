@@ -1,7 +1,7 @@
-import { openDatabase } from "./Database";
-import { Location, Coordinates } from "../models/Location";
+import { openDatabase } from './Database';
+import { Location, Coordinates } from '../models/Location';
 
-export const getLocation = async () => {
+export const getLocation = async (): Promise<Location | null> => {
   //console.log("> Profile getLocation");
   try{
     const DB = await openDatabase();
@@ -14,17 +14,17 @@ export const getLocation = async () => {
     if (rows.length > 0) {
       const row = rows[0];
       return new Location(
-        new Coordinates( Number(row["lat"]), Number(row["lon"])), row["address"]);
+        new Coordinates( Number(row['lat']), Number(row['lon'])), row['address']);
     }
     return null;
   }
   catch (error) {
-      console.error("Error getting proflie Location", error);
+      console.error('Error getting proflie Location', error);
       return null;
   }
-}
+};
 
-export const updateLocation = async (location : Location) => {
+export const updateLocation = async (location : Location): Promise<Boolean> => {
   //console.log("> Profile updateLocation");
   try {
     const DB = await openDatabase();
@@ -42,6 +42,6 @@ export const updateLocation = async (location : Location) => {
     ]
     );
   } catch (error) {
-    console.error("Error updating proflie Location:", error);
+    console.error('Error updating proflie Location:', error);
   }
 };

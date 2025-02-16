@@ -74,4 +74,3 @@ export const addEvent = async (name, description, startTime, endTime, latitude, 
       console.error('Error in addEvent function:', error);
   }
 };
-

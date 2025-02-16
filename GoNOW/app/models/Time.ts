@@ -9,14 +9,14 @@ export class Time {
     return this.Hours*60 + this.Minutes;
   }
   toString(): string {
-    return `${this.Hours < 10 ? "0" + this.Hours : this.Hours}:${this.Minutes < 10 ? "0" + this.Minutes : this.Minutes}`;
+    return `${this.Hours < 10 ? '0' + this.Hours : this.Hours}:${this.Minutes < 10 ? '0' + this.Minutes : this.Minutes}`;
   }
 }
 
-export const TimeFromDate = (date: Date) => {
+export const TimeFromDate = (date: Date): Time => {
   return new Time(date.getHours(), date.getMinutes());
-}
+};
 
-export const DaysOfWeekNames = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+export const DaysOfWeekNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 
 export default Time;
