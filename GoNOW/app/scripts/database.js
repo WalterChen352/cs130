@@ -88,10 +88,26 @@ export const addEvent = async (name, description, startTime, endTime, latitude, 
       await DB.runAsync(`INSERT INTO events 
               (name, description, startTime, endTime, latitude, longitude, transportationMode) 
               VALUES (?, ?, ?, ?, ?, ?, ?);`, [name, description, startTime, endTime, latitude, longitude, transportationMode]);
+      getEventByName("Test", DB);
   } catch (error) {
       console.error('Error in addEvent function:', error);
   }
 };
 
+//debugging function
+const getEventByName = async (eventName, DB) => {
+  try {
+    const results = await DB.getAllAsync(
+      `SELECT * FROM events WHERE name = ?;`,
+      [eventName]
+    );
 
-
+    if (results.length > 0) {
+      console.log("Event Found:", JSON.stringify(results, null, 2));
+    } else {
+      console.log("No event found with that name.");
+    }
+  } catch (error) {
+    console.error("Error fetching event:", error);
+  }
+};
