@@ -1,6 +1,6 @@
 import Navigator from './screens/Navigator';
 import { useEffect, JSX } from 'react';
-import {initializeDatabase, addEvent, getDailyEvents, clearEvents } from './scripts/database';
+import {initializeDatabase, getDailyEvents, clearEvents, addEvent} from './scripts/database';
 
 export default function Index(): JSX.Element {
   
