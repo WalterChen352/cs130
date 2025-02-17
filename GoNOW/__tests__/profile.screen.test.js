@@ -85,10 +85,11 @@ describe('Profile Screen', () => {
     (useNavigation).mockReturnValue(mockNavigation);
   });
 
-  test('should render the title on profile screen', async () => {
+  test('should render the titles on profile screen', async () => {
     const {getByTestId, unmount} = render(<ProfileScreen />);
     await waitFor(() => {
-      expect(getByTestId('profile-title')).toHaveTextContent('Workflows');
+      expect(getByTestId('workflow-title')).toHaveTextContent('Workflows');
+      expect(getByTestId('home-location-title')).toHaveTextContent('Home Location');
     });
     unmount();
   });

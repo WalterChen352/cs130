@@ -91,13 +91,16 @@ const ProfileScreen = (): JSX.Element => {
 
     return (
         <View style={styles.container}>
+
+            <Text style={styles.title} testID="home-location-title">Home Location</Text>
+
             <View >
-                <View style={[styles.locationPicker, {}]} >
+                <View style={[styles.locationPicker, { zIndex: 100 }]} > 
                     <AddressPicker initialAddress={location?.Address} initialCoordinates={location?.Coordinates} onSelect={handleLocation} placeHolder="Your home location" />
                 </View>
             </View>
 
-            <Text style={styles.title} testID="profile-title">Workflows</Text>
+            <Text style={styles.title} testID="workflow-title">Workflows</Text>
 
             <FlatList data={workflows} keyExtractor={(item) => item.Id.toString()}
                 contentContainerStyle={styles.workflowList}
