@@ -1,7 +1,7 @@
 import React, { useState, useEffect , JSX} from 'react';
 import { Text, View, FlatList } from 'react-native';
 import { getDailyEvents } from '../scripts/database';
-import { styles } from './screen_styles/DailyScreen.styles';
+import { styles } from '../styles/DailyScreen.styles';
 import { Event } from '../interfaces/event.interface';
 
 const DailyScreen = () :JSX.Element=> {
