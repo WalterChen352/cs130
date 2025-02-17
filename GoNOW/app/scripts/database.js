@@ -93,11 +93,5 @@ export const addEvent = async (name, description, startTime, endTime, latitude, 
   }
 };
 
-export const foo = (num)=>{
-    if (num%2===0 )
-      return true;
-    else
-      return false;
-};
 
 
