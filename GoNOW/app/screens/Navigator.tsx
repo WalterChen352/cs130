@@ -7,7 +7,7 @@ import ProfileScreen from './ProfileScreen';
 import CalendarScreen from './CalendarScreen';
 import DailyScreen from './DailyScreen';
 import CreateTaskScreen from './CreateTaskScreen';
-import {NavigatorStyles} from './screen_styles/Navigator.styles';
+import {NavigatorStyles} from '../styles/Navigator.styles';
 
 const Tab = createBottomTabNavigator();
 

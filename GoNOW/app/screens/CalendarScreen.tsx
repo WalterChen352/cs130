@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import {GestureDetector,Gesture,Directions} from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from 'react-native-vector-icons';
-import {CalendarStyles} from './screen_styles/CalendarScreen.styles';
+import {CalendarStyles} from '../styles/CalendarScreen.styles';
 import Event from '../interfaces/event.interface';
 
 

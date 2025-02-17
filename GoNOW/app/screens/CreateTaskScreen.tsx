@@ -3,7 +3,7 @@ import { ScrollView, View, Text, TextInput, Button, Switch, Pressable } from 're
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { addEvent } from '../scripts/database';
-import { styles } from './screen_styles/CreateTaskScreen.styles';
+import { styles } from '../styles/CreateTaskScreen.styles';
 
 const CreateTaskScreen = (): JSX.Element => {
   const [title, setTitle] = useState<string>('');
