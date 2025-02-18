@@ -1,12 +1,12 @@
 import React, {JSX} from 'react';
 import { View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import { getWeeklyEvents } from '../scripts/database';
+import { getWeeklyEvents } from '../scripts/Event';
 import { useEffect, useState } from 'react';
 import {GestureDetector,Gesture,Directions} from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from 'react-native-vector-icons';
 import {CalendarStyles} from '../styles/CalendarScreen.styles';
-import Event from '../interfaces/event.interface';
+import {Event} from '../models/Event';
 
 
 const HOUR_HEIGHT = 20; // Height for each hour in pixels

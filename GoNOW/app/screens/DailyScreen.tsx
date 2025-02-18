@@ -1,6 +1,6 @@
 import React, { useState, useEffect , JSX} from 'react';
 import { Text, View, FlatList } from 'react-native';
-import { getDailyEvents } from '../scripts/database';
+import { getDailyEvents } from '../scripts/Event';
 import { styles } from '../styles/DailyScreen.styles';
 import { Event } from '../interfaces/event.interface';
 

@@ -2,8 +2,9 @@ import React, { useState, JSX } from 'react';
 import { ScrollView, View, Text, TextInput, Button, Switch, Pressable } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { addEvent } from '../scripts/database';
+import { addEvent } from '../scripts/Event';
 import { styles } from '../styles/CreateTaskScreen.styles';
+import {Event} from '../models/Event';
 
 const CreateTaskScreen = (): JSX.Element => {
   const [title, setTitle] = useState<string>('');
@@ -143,14 +144,16 @@ const CreateTaskScreen = (): JSX.Element => {
 
       <Pressable 
         style={styles.container} 
-        onPress={async () => 
-          await addEvent(
-            title, 
-            description, 
-            formatDate(startDate), 
-            formatDate(endDate), 
-            transportationMode
-          )
+        onPress={async () =>
+            {
+            //TODO PLACEHOLDER VALUES
+            const longitude =0;
+            const latitude = 0;
+            const workflow='';
+            //END PLACEHOLDER
+            const e = new Event(title, description,formatDate(startDate), formatDate(endDate), longitude, latitude, transportationMode , workflow);
+            await addEvent(e);
+            }
         }
       >
         <Text>Save Task</Text>
