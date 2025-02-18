@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import CreateTaskScreen from '../app/screens/CreateTaskScreen';
+import { addEvent } from '../app/scripts/database';
 
 jest.mock('../app/scripts/database', () => ({
   addEvent: jest.fn(),
@@ -25,43 +26,21 @@ describe('CreateTaskScreen', () => {
     expect(titleInput.props.value).toBe('New Task Title');
   });
 
-  it('handles date pickers correctly', async () => {
+  it('calls addEvent on save', async () => {
     const { getByTestId, getByText } = render(<CreateTaskScreen />);
-    const startDateButton = getByTestId('Start Date');
 
-    fireEvent.press(startDateButton);
+    fireEvent.changeText(getByTestId('Title'), 'Test Event');
+    fireEvent.changeText(getByTestId('Description'), 'Test Description');
+    fireEvent.press(getByText('Save Task'));
 
-    // Assume DateTimePicker becomes visible
     await waitFor(() => {
-      expect(getByText('OK')).toBeTruthy();
+      expect(addEvent).toHaveBeenCalledWith(
+        'Test Event', 
+        'Test Description', 
+        expect.any(String), 
+        expect.any(String), 
+        ''
+      );
     });
   });
-
-//   it('handles dropdown selection', () => {
-//     const { getByText } = render(<CreateTaskScreen />);
-//     const dropdown = getByText('Select item');
-
-//     fireEvent.press(dropdown);
-//     fireEvent.press(getByText('Walk'));
-
-//     expect(getByText('Walk')).toBeTruthy();
-//   });
-
-//   it('calls addEvent on save', async () => {
-//     const { getByPlaceholderText, getByText } = render(<CreateTaskScreen />);
-
-//     fireEvent.changeText(getByPlaceholderText('Title'), 'Test Event');
-//     fireEvent.changeText(getByPlaceholderText('Task / event description here'), 'Test Description');
-//     fireEvent.press(getByText('Save Task'));
-
-//     await waitFor(() => {
-//       expect(addEvent).toHaveBeenCalledWith(
-//         'Test Event', 
-//         'Test Description', 
-//         expect.any(String), 
-//         expect.any(String), 
-//         ''
-//       );
-//     });
-//   });
 });
