@@ -41,7 +41,7 @@ const CreateTaskScreen = (): JSX.Element => {
 
       <Text style={styles.label}>Select start time</Text>
       <View style={styles.row}>
-        <Button title={startDate.toDateString()} onPress={() => { setShowStartDatePicker(true); }} />
+        <Button title={startDate.toDateString()} testID='Start Date' onPress={() => { setShowStartDatePicker(true); }} />
         <Button title={startDate.toLocaleTimeString()} onPress={() => { setShowStartTimePicker(true); }} />
       </View>
 

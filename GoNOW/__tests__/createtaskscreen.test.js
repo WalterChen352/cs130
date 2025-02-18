@@ -25,17 +25,17 @@ describe('CreateTaskScreen', () => {
     expect(titleInput.props.value).toBe('New Task Title');
   });
 
-//   it('handles date pickers correctly', async () => {
-//     const { getByText } = render(<CreateTaskScreen />);
-//     const startDateButton = getByText(new Date().toDateString());
+  it('handles date pickers correctly', async () => {
+    const { getByTestId, getByText } = render(<CreateTaskScreen />);
+    const startDateButton = getByTestId('Start Date');
 
-//     fireEvent.press(startDateButton);
+    fireEvent.press(startDateButton);
 
-//     // Assume DateTimePicker becomes visible
-//     await waitFor(() => {
-//       expect(getByText('OK')).toBeTruthy();
-//     });
-//   });
+    // Assume DateTimePicker becomes visible
+    await waitFor(() => {
+      expect(getByText('OK')).toBeTruthy();
+    });
+  });
 
 //   it('handles dropdown selection', () => {
 //     const { getByText } = render(<CreateTaskScreen />);
