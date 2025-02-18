@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, TextInput, FlatList, Text, TouchableOpacity } from 'react-native';
+import { View, TextInput, FlatList, Text, TouchableOpacity } from 'react-native';
 import debounce from 'lodash/debounce';
 import { Coordinates, Location } from '../models/Location';
+import { AddressPickerStyles } from '../styles/AddressPicker.styles';
 
 interface NominatimResult {
   place_id: number;
@@ -82,24 +83,24 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={AddressPickerStyles.container}>
       <TextInput
-        style={styles.textInput}
+        style={AddressPickerStyles.textInput}
         placeholder={placeHolder}
         value={address}
         onChangeText={handleTextChange}
       />
       {results.length > 0 && (
         <FlatList
-          style={styles.listView}
+          style={AddressPickerStyles.listView}
           data={results}
           keyExtractor={(item) => item.place_id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity
-              style={styles.resultItem}
+              style={AddressPickerStyles.resultItem}
               onPress={() => handleSelectPlace(item)}
             >
-              <Text style={styles.description}>{item.display_name}</Text>
+              <Text style={AddressPickerStyles.description}>{item.display_name}</Text>
             </TouchableOpacity>
           )}
         />
@@ -107,39 +108,5 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 5,
-  },
-  listView: {
-    position: 'absolute',
-    top: 45,
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    borderRadius: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 5,
-    maxHeight: 200,
-  },
-  resultItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  description: {
-    fontWeight: 'bold',
-  },
-});
 
 export default AddressPicker;
