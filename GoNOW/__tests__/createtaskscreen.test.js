@@ -17,13 +17,13 @@ describe('CreateTaskScreen', () => {
     expect(getByTestId('Save Task')).toBeTruthy();
   });
 
-//   it('handles title input correctly', () => {
-//     const { getByPlaceholderText } = render(<CreateTaskScreen />);
-//     const titleInput = getByPlaceholderText('Title');
+  it('handles title input correctly', () => {
+    const { getByPlaceholderText } = render(<CreateTaskScreen />);
+    const titleInput = getByPlaceholderText('Title');
 
-//     fireEvent.changeText(titleInput, 'New Task Title');
-//     expect(titleInput.props.value).toBe('New Task Title');
-//   });
+    fireEvent.changeText(titleInput, 'New Task Title');
+    expect(titleInput.props.value).toBe('New Task Title');
+  });
 
 //   it('handles date pickers correctly', async () => {
 //     const { getByText } = render(<CreateTaskScreen />);
