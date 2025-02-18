@@ -21,12 +21,6 @@ jest.mock('@react-navigation/native', () => ({
   useFocusEffect: jest.fn(),
 }));
 
-jest.mock('react-native-google-places-autocomplete', () => {
-  return {
-    GooglePlacesAutocomplete: jest.fn().mockReturnValue(null)
-  };
-});
-
 jest.mock('../app/components/AddressPicker', () => {
   const React = require('react');
   return jest.fn((props) => React.createElement('View', props));
