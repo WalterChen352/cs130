@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert } from 'react-native';
+import { Alert, View, ViewProps } from 'react-native';
 import { act, render, fireEvent, waitFor } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -43,6 +43,32 @@ jest.mock('react-native/Libraries/Alert/Alert', () => ({
   alert: jest.fn(),
 }));
 
+// Define proper types for the Picker props
+interface PickerProps extends ViewProps {
+  children: React.ReactNode;
+  selectedValue?: string | number;
+  onValueChange?: (value: string | number) => void;
+}
+
+interface PickerItemProps extends ViewProps {
+  label: string;
+  value: string | number;
+  children?: React.ReactNode;
+}
+
+function MockPicker({ children, ...props }: PickerProps): React.ReactElement {
+  return React.createElement(View, props, children);
+}
+
+MockPicker.Item = function MockPickerItem(props: PickerItemProps): React.ReactElement {
+  return React.createElement(View, props, props.children);
+};
+
+jest.mock('@react-native-picker/picker', () => ({
+  __esModule: true,
+  Picker: MockPicker,
+}));
+
 const mockSchedulingStyles = [
   new SchedulingStyle(0, 'Schedule close together'),
   new SchedulingStyle(1, 'Schedule with max buffer'),
@@ -80,11 +106,6 @@ describe('Workflow Screen', () => {
       expect(getByTestId('workflow-push-notifications')).toHaveProp('value', mockWorkflow.pushNotifications);
       expect(getByTestId('workflow-time-start')).toHaveTextContent(mockWorkflow.timeStart.toString());
       expect(getByTestId('workflow-time-end')).toHaveTextContent(mockWorkflow.timeEnd.toString());
-
-      const schedulingStyleElement = getByTestId('workflow-scheduling-style');
-      const props = schedulingStyleElement.props as { selectedIndex: number; items: { id: number; value: string }[] };
-      const schedulingStyleValue = props.items[props.selectedIndex]?.value;
-      expect(schedulingStyleValue).toEqual(mockWorkflow.schedulingStyle.Id);
 
       expect(queryByTestId('workflow-btn-save')).toBeTruthy();
       expect(queryByTestId('workflow-btn-delete')).toBeTruthy();

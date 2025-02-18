@@ -3,7 +3,7 @@ import { useFocusEffect, useNavigation, NavigationProp, RouteProp } from '@react
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Ionicons } from 'react-native-vector-icons';
 import { Picker } from '@react-native-picker/picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import WheelPicker from 'react-native-wheel-color-picker';
 
 import { getSchedulingStyles, getSchedulingStyle } from '../scripts/SchedulingStyle';
@@ -30,7 +30,7 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
     const [timeStart, setTimeStart] = useState<Date>(new Date(0, 0, 0, workflow.timeStart.Hours, workflow.timeStart.Minutes));
     const [timeEnd, setTimeEnd] = useState<Date>(new Date(0, 0, 0, workflow.timeEnd.Hours, workflow.timeEnd.Minutes));
     const [daysOfWeek, setDaysOfWeek] = useState<boolean[]>(workflow.daysOfWeek);
-    const [schedulingStyle, setSchedulingStyle] = useState<number>(workflow.schedulingStyle.Id);
+    const [schedulingStyle, setSchedulingStyle] = useState<string>(workflow.schedulingStyle.Id.toString());
 
     const [schedulingStyles, setSchedulingStyles] = useState<SchedulingStyle[]>([]);
 
@@ -41,9 +41,9 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         setShowTimeStart(true);
     };
 
-    const onChangeTimeStart = ( time: Date | undefined): void => {
-        if (time) {
-            setTimeStart(new Date(0, 0, 0, time.getHours(), time.getMinutes()));
+    const onChangeTimeStart = (event: DateTimePickerEvent, date?: Date  ): void => {
+        if (date) {
+            setTimeStart(new Date(0, 0, 0, date.getHours(), date.getMinutes()));
         }
         setShowTimeStart(false);
     };
@@ -52,7 +52,7 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         setShowTimeEnd(true);
     };
 
-    const onChangeTimeEnd = ( time: Date | undefined): void => {
+    const onChangeTimeEnd = (event: DateTimePickerEvent, time: Date | undefined): void => {
         if (time) {
             setTimeEnd(new Date(0, 0, 0, time.getHours(), time.getMinutes()));
         }
@@ -76,7 +76,7 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
             new Time(timeStart.getHours(), timeStart.getMinutes()),
             new Time(timeEnd.getHours(), timeEnd.getMinutes()),
             daysOfWeek,
-            getSchedulingStyle(schedulingStyle)
+            getSchedulingStyle(parseInt(schedulingStyle, 10))  // Convert string back to number
         );
         
         try {
@@ -209,21 +209,21 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
 
                 <Text style={WorkflowScreenStyles.header}>Scheduling style</Text>
                 <View style={WorkflowScreenStyles.center}>
-                    <Picker
-                        style={WorkflowScreenStyles.picker}
-                        selectedValue={schedulingStyle}
-                        testID="workflow-scheduling-style"
-                        onValueChange={(value: number) => { setSchedulingStyle(value); }}
-                    >
-                        {schedulingStyles.map((s: SchedulingStyle) => (
-                            <Picker.Item
-                                key={s.Id.toString()}
-                                label={s.Name}
-                                value={s.Id}
-                                testID={`workflow-scheduling-style-${String(s.Id)}`}
-                            />
-                        ))}
-                    </Picker>
+                <Picker
+                    style={WorkflowScreenStyles.picker}
+                    selectedValue={schedulingStyle}
+                    testID="workflow-scheduling-style"
+                    onValueChange={(value: string) => { setSchedulingStyle(value); }}
+                >
+                    {schedulingStyles.map((s: SchedulingStyle) => (
+                        <Picker.Item
+                            key={s.Id.toString()}
+                            label={s.Name}
+                            value={s.Id.toString()}  // Convert to string
+                            testID={`workflow-scheduling-style-${String(s.Id)}`}
+                        />
+                    ))}
+                </Picker>
                 </View>
 
                 <Text style={WorkflowScreenStyles.header}>Color</Text>

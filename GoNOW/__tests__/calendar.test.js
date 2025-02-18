@@ -32,7 +32,6 @@ describe('CalendarScreen', () => {
     });
     const weekHeader = screen.getByTestId('WeekHeader');
     expect(weekHeader).toBeOnTheScreen();
-    console.log(weekHeader.innerHTML);
   });
   
 });
