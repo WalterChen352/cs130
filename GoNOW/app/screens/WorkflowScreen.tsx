@@ -1,4 +1,4 @@
-import { Alert, Button, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, ScrollView, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { JSX, useCallback, useEffect, useRef , useState } from 'react';
 import { Ionicons } from 'react-native-vector-icons';
