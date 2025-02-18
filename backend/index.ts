@@ -1,16 +1,16 @@
-const express = require('express');
-const app = express();
+import express, { Express, Request, Response } from 'express';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const app: Express = express();
 const PORT = 3000;
+const apiKey = process.env.API_KEY;  // eslint-disable-line
 
-require('dotenv').config();
-
-// eslint-disable-next-line no-unused-vars
-const apiKey= process.env.API_KEY; 
 // TODO: Adding a lint ignore to make it go through for now, but
 // we should eventually remove this disable when we have implemented
 // more features with api key.
-
-app.get('/api/autoschedule', (req, res)=>{
+app.get('/api/autoschedule', (req: Request, res: Response) => {
     //TODO
     //parse incoming parameters
     //take into account existing events
@@ -19,7 +19,7 @@ app.get('/api/autoschedule', (req, res)=>{
     res.send('received autoschedule request');
 });
 
-app.get('/api/poll', (req, res)=>{
+app.get('/api/poll', (req: Request, res: Response) => {
     //TODO
     //parse incoming task for location
     //query against google maps api to ensure arrival time
@@ -28,5 +28,5 @@ app.get('/api/poll', (req, res)=>{
 });
 
 app.listen(PORT, () => {
-    console.log(`Example app listening on port ${PORT}`);
-  });
+    console.log(`Example app listening on port ${String(PORT)}`);
+});
