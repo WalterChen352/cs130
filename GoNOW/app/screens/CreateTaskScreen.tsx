@@ -33,6 +33,7 @@ const CreateTaskScreen = (): JSX.Element => {
 
       <TextInput
         style={styles.input}
+        testID='Title'
         placeholder="Title"
         value={title}
         onChangeText={setTitle}
@@ -106,7 +107,8 @@ const CreateTaskScreen = (): JSX.Element => {
         maxHeight={300}
         labelField="label"
         valueField="value"
-        placeholder="Select item"
+        testID='Transportation Mode'
+        placeholder="Select Transportation Mode"
         searchPlaceholder="Search..."
         value={transportationMode}
         onChange={(item:{ value: string }) => {
@@ -136,7 +138,8 @@ const CreateTaskScreen = (): JSX.Element => {
       <Text style={styles.label}>Description</Text>
       <TextInput
         style={[styles.input, styles.textArea]}
-        placeholder="Task / event description here"
+        placeholder="Description"
+        testID='Description'
         value={description}
         onChangeText={setDescription}
         multiline
@@ -144,6 +147,7 @@ const CreateTaskScreen = (): JSX.Element => {
 
       <Pressable 
         style={styles.container} 
+        testID='Save Task'
         onPress={() => {
             void (async () => {
               // TODO PLACEHOLDER VALUES
