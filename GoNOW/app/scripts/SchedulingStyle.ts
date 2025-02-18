@@ -5,13 +5,13 @@ export const listSchedulingStyles = [
     new SchedulingStyle(1, 'Schedule with max buffer')
 ];
 
-export const getSchedulingStyles = async (): Promise<SchedulingStyle[]> => {
+export const getSchedulingStyles = ():SchedulingStyle[] => {
     return listSchedulingStyles;
 };
-export const getSchedulingStyle = async (id: number): Promise<SchedulingStyle> => {
-    for (let i=0; i < listSchedulingStyles.length; i++) {
-        if (listSchedulingStyles[i].Id === id)
-            return listSchedulingStyles[i];
+export const getSchedulingStyle = (id: number):SchedulingStyle => {
+    for (const schedulingStyle of listSchedulingStyles){
+        if(schedulingStyle.Id=== id)
+            return schedulingStyle;
     }
     return listSchedulingStyles[0]; // default value
 };

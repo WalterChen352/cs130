@@ -8,7 +8,7 @@ export class Coordinates {
   }
 
   toString(): string {
-    return `${this.Latitude};${this.Longitude}`;
+    return `${String(this.Latitude)};${String(this.Longitude)}`;
   }
 }
 
@@ -22,7 +22,7 @@ export class Location {
   }
 
   toString(): string {
-    return `[${this.Coordinates.Latitude};${this.Coordinates.Longitude}] ${this.Address}`;
+    return `[${String(this.Coordinates.Latitude)};${String(this.Coordinates.Longitude)}] ${String(this.Address)}`;
   }
 }
 

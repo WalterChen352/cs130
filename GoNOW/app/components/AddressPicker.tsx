@@ -54,7 +54,7 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
           }
         }
       );
-      const data: NominatimResult[] = await response.json();
+      const data: NominatimResult[] = await response.json() as NominatimResult[];
       setResults(data);
     } catch (error) {
       console.error('Nominatim search error:', error);
@@ -62,9 +62,10 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
   };
 
   const debouncedSearch = useCallback(
-    debounce((text: string) => searchPlaces(text), 1000),
+    debounce((text: string) => searchPlaces(text), 1000) as (text: string) => void,
     []
   );
+  
 
   const handleTextChange = (text: string): void => {
     setAddress(text);
@@ -98,7 +99,7 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
           renderItem={({ item }) => (
             <TouchableOpacity
               style={AddressPickerStyles.resultItem}
-              onPress={() => handleSelectPlace(item)}
+              onPress={() => { handleSelectPlace(item); }}
             >
               <Text style={AddressPickerStyles.description}>{item.display_name}</Text>
             </TouchableOpacity>

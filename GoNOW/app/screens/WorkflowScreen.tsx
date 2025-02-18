@@ -1,5 +1,5 @@
 import { Alert, Button, ScrollView, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation,NavigationProp } from '@react-navigation/native';
 import { JSX, useCallback, useEffect, useRef , useState } from 'react';
 import { Ionicons } from 'react-native-vector-icons';
 import { Picker } from '@react-native-picker/picker';
@@ -11,15 +11,16 @@ import { DaysOfWeekNames, Time, TimeFromDate } from '../models/Time';
 import { Workflow } from '../models/Workflow';
 import { addWorkflow, updateWorkflow, deleteWorkflow, validateWorkflow } from '../scripts/Workflow';
 import { WorkflowScreenStyles } from '../styles/WorkflowScreen.styles';
+import SchedulingStyle from '../models/SchedulingStyle';
+import { TabParamList } from './Navigator';
 
 const WorkflowScreen = ({ route }): JSX.Element => {
 
     //console.log('> Route: ', route);
     const { workflow } = route.params;
+    const navigation = useNavigation<NavigationProp<TabParamList>>();
 
-    const navigation = useNavigation();
-
-    const scrollRef = useRef(null);
+    const scrollRef = useRef<ScrollView>(null);
 
     const [name, setName] = useState(workflow.Name);
     const [color, setColor] = useState(workflow.Color);
@@ -29,23 +30,23 @@ const WorkflowScreen = ({ route }): JSX.Element => {
     const [daysOfWeek, setDaysOfWeek] = useState<boolean[]>(workflow.DaysOfWeek);
     const [schedulingStyle, setSchedulingStyle] = useState(workflow.SchedulingStyle);
 
-    const [schedulingStyles, setSchedulingStyles] = useState([]);
+    const [schedulingStyles, setSchedulingStyles] = useState<SchedulingStyle[]>([]);
 
     const [showTimeStart, setShowTimeStart] = useState(false);
     const [showTimeEnd, setShowTimeEnd] = useState(false);
 
     const openTimeStart = (): void => { setShowTimeStart(true); };
-    const onChangeTimeStart = (event, time): void => {
+    const onChangeTimeStart = (time:Date): void => {
         setTimeStart(new Date(0, 0, 0, time.getHours(), time.getMinutes()));
         setShowTimeStart(false);
     };
     const openTimeEnd = (): void => { setShowTimeEnd(true); };
-    const onChangeTimeEnd = (event, time): void => {
+    const onChangeTimeEnd = (time: Date): void => {
         setTimeEnd(new Date(0, 0, 0, time.getHours(), time.getMinutes()));
         setShowTimeEnd(false);
     };
 
-    const toggleDay = (indexDay): void => {
+    const toggleDay = (indexDay: number): void => {
         setDaysOfWeek((prev) => {
             const next = [...prev];
             next[indexDay] = !next[indexDay];
@@ -58,16 +59,17 @@ const WorkflowScreen = ({ route }): JSX.Element => {
             workflow.Id,
             name,
             color,
-            (pushNotifications === true),
-            new Time(timeStart.getHours(), timeStart.getMinutes()),
-            new Time(timeEnd.getHours(), timeEnd.getMinutes()),
+            (pushNotifications),
+            timeStart? new Time(timeStart.getHours(), timeStart.getMinutes()) : new Time( 0, 0),
+            timeEnd? new Time(timeEnd.getHours(), timeEnd.getMinutes()):new Time(23,59),
             daysOfWeek,
             await getSchedulingStyle(Number(schedulingStyle))
         );
         try {
             await validateWorkflow(workflowNew);
         } catch (error) {
-            Alert.alert('Validation Error', error.message);
+            const typedError = error as Error;
+            Alert.alert('Validation Error', typedError.message);
             return;
         }
         if (workflow.Id > 0) {
@@ -92,8 +94,8 @@ const WorkflowScreen = ({ route }): JSX.Element => {
         );
     };
 
-    const loadSchedulingStyle = async (): Promise<void> => {
-        setSchedulingStyles(await getSchedulingStyles());
+    const loadSchedulingStyle = ():void => {
+        setSchedulingStyles(getSchedulingStyles());
     };
 
     useEffect(() => {
@@ -129,12 +131,12 @@ const WorkflowScreen = ({ route }): JSX.Element => {
 
                 <Text style={WorkflowScreenStyles.header}>Time selection</Text>
                 <View style={WorkflowScreenStyles.center}>
-                    <Button style={WorkflowScreenStyles.rightElem} onPress={openTimeStart} title={TimeFromDate(timeStart).toString()} testID="workflow-time-start" />
+                    <Button style={WorkflowScreenStyles.rightElem} onPress={openTimeStart} title={timeStart?TimeFromDate(timeStart).toString(): (new Time (0,0)).toString()} testID="workflow-time-start" />
                     {showTimeStart && (
                         <DateTimePicker value={timeStart} mode="time" is24Hour={true} display="default" onChange={onChangeTimeStart} />
                     )}
                     <Text></Text>
-                    <Button style={WorkflowScreenStyles.rightElem} onPress={openTimeEnd} title={TimeFromDate(timeEnd).toString()} testID="workflow-time-end" />
+                    <Button style={WorkflowScreenStyles.rightElem} onPress={openTimeEnd} title={timeEnd? TimeFromDate(timeEnd).toString(): (new Time(23,59)).toString()} testID="workflow-time-end" />
                     {showTimeEnd && (
                         <DateTimePicker value={timeEnd} mode="time" is24Hour={true} display="default" onChange={onChangeTimeEnd} />
                     )}
@@ -144,7 +146,7 @@ const WorkflowScreen = ({ route }): JSX.Element => {
                     {daysOfWeek.map((day, ind) => (
                         <View key={ind} style={WorkflowScreenStyles.blockDayOfWeek}>
                             <Button title={ DaysOfWeekNames[ind] }
-                                onPress={() => toggleDay(ind)}
+                                onPress={() => { toggleDay(ind); }}
                                 color={day ? '#388dff' : 'lightgray'}
                                 testID={`workflow-day-of-week-${ind}`}
                             />
@@ -154,21 +156,21 @@ const WorkflowScreen = ({ route }): JSX.Element => {
 
                 <Text style={WorkflowScreenStyles.header}>Scheduling style</Text>
                 <View style={WorkflowScreenStyles.center}>
-                    <Picker style={WorkflowScreenStyles.picker} selectedValue={workflow.SchedulingStyle.Id} testID="workflow-scheduling-style" onValueChange={(s) => setSchedulingStyle(s)} >
-                        {schedulingStyles.map((s) => (
-                            <Picker.Item key={s.Id} label={s.Name} value={s.Id} testID={`workflow-scheduling-style-${s.Id}`} />
+                    <Picker style={WorkflowScreenStyles.picker} selectedValue={workflow.SchedulingStyle.Id} testID="workflow-scheduling-style" onValueChange={(s) => { setSchedulingStyle(s); }} >
+                        {schedulingStyles.map((s: SchedulingStyle) => (
+                            <Picker.Item key={String(s.Id)} label={s.Name} value={s.Id} testID={`workflow-scheduling-style-${String(s.Id)}`} />
                         ))}
                     </Picker>
                 </View>
 
                 <Text style={WorkflowScreenStyles.header}>Color</Text>
                 <View style={WorkflowScreenStyles.center}>
+                    <View style={WorkflowScreenStyles.wheelPicker} testID="workflow-color">
                     <WheelPicker
-                        style={WorkflowScreenStyles.wheelPicker}
                         color={color}
                         onColorChange={setColor}
-                        testID="workflow-color"
                     />
+                    </View>
                 </View>
 
                 <Text style={WorkflowScreenStyles.footer}> </Text>

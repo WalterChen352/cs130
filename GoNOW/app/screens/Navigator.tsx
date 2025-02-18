@@ -9,9 +9,19 @@ import DailyScreen from './DailyScreen';
 import CreateTaskScreen from './CreateTaskScreen';
 import WorkflowScreen from './WorkflowScreen';
 import {NavigatorStyles} from '../styles/Navigator.styles';
+import { Workflow } from '../models/Workflow';
+import { ParamListBase } from '@react-navigation/native'
 
-const Tab = createBottomTabNavigator();
+export type TabParamList = ParamListBase & {
+  Map: undefined;
+  Daily: undefined;
+  CreateTask: undefined;
+  Calendar: undefined;
+  Profile: undefined;
+  Workflow: { workflow: Workflow };
+}
 
+const Tab = createBottomTabNavigator<TabParamList>();
 
 const CustomTabBar = ({ state, navigation }): JSX.Element => {
   return (

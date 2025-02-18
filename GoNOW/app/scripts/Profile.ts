@@ -12,9 +12,9 @@ export const getLocation = async (): Promise<Location | null> => {
       LIMIT 1;
     `);
     if (rows.length > 0) {
-      const row = rows[0];
+      const row = rows[0] as {lat: number, lon: number, address: string};
       return new Location(
-        new Coordinates( Number(row['lat']), Number(row['lon'])), row['address']);
+        new Coordinates( Number(row.lat), Number(row.lon)), row.address);
     }
     return null;
   }
@@ -24,7 +24,7 @@ export const getLocation = async (): Promise<Location | null> => {
   }
 };
 
-export const updateLocation = async (location : Location): Promise<Boolean> => {
+export const updateLocation = async (location : Location): Promise<void> => {
   //console.log("> Profile updateLocation");
   try {
     const DB = await openDatabase();

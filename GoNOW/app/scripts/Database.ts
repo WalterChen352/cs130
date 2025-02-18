@@ -6,7 +6,7 @@ export const openDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
     return await SQLite.openDatabaseAsync(DB_NAME);
 };
 
-export const initDatabase = async (): Promise<Boolean> => {
+export const initDatabase = async (): Promise<void> => {
     //console.log('> Start initialize DB');
     try {
         const DB = await openDatabase();
@@ -67,7 +67,7 @@ export const initDatabase = async (): Promise<Boolean> => {
     }
 };
 
-export const dropDatabase = async (): Promise<Boolean> => {
+export const dropDatabase = async (): Promise<void> => {
 
     try {
         const DB = await openDatabase();
@@ -95,7 +95,7 @@ export const dropDatabase = async (): Promise<Boolean> => {
     }
 };
 
-export const resetDatabase = async (): Promise<Boolean> => {
+export const resetDatabase = async (): Promise<void> => {
     try {
         await dropDatabase();
         await initDatabase();

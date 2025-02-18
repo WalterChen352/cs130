@@ -12,7 +12,7 @@ useEffect(() => {
           console.error('Error in initializing app:', error);
       }
   };
-  appInit();
+  void appInit();
 }, []);
   return (
     <Navigator/>
