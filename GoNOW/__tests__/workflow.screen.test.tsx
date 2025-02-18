@@ -67,7 +67,7 @@ describe('Workflow Screen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useNavigation as jest.Mock).mockReturnValue(mockNavigation);
-    (getSchedulingStyles as jest.Mock).mockResolvedValue(mockSchedulingStyles);
+    (getSchedulingStyles as jest.Mock).mockReturnValue(mockSchedulingStyles);
   });
 
   //afterEach(cleanup);

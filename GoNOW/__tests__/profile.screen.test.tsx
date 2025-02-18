@@ -100,12 +100,12 @@ describe('Profile Screen', () => {
     await waitFor(() => {
       for (let i = 0; i < {mockWorkflows}.length; i++){
         const w = mockWorkflows[i];
-        expect(findByTestId(`workflow-${String(w.Id)}`)).toBeTruthy();
-        expect(findByTestId(`workflow-header-${String(w.Id)}`)).toHaveTextContent(new RegExp(w.Name, 'i'));
-        expect(findByTestId(`workflow-text-${String(w.Id)}`)).toHaveTextContent(/Schedule/);
-        expect(findByTestId(`workflow-text-${String(w.Id)}`)).toHaveTextContent(new RegExp(w.TimeStart.toString(), 'i'));
-        expect(findByTestId(`workflow-text-${String(w.Id)}`)).toHaveTextContent(new RegExp(w.TimeEnd.toString(), 'i'));
-        expect(findByTestId(`workflow-scheduling-style-${String(w.Id)}`)).toHaveTextContent(new RegExp(w.SchedulingStyle.Name, 'i'));
+        expect(findByTestId(`workflow-${String(w.id)}`)).toBeTruthy();
+        expect(findByTestId(`workflow-header-${String(w.id)}`)).toHaveTextContent(new RegExp(w.name, 'i'));
+        expect(findByTestId(`workflow-text-${String(w.id)}`)).toHaveTextContent(/Schedule/);
+        expect(findByTestId(`workflow-text-${String(w.id)}`)).toHaveTextContent(new RegExp(w.timeStart.toString(), 'i'));
+        expect(findByTestId(`workflow-text-${String(w.id)}`)).toHaveTextContent(new RegExp(w.timeEnd.toString(), 'i'));
+        expect(findByTestId(`workflow-scheduling-style-${String(w.id)}`)).toHaveTextContent(new RegExp(w.schedulingStyle.Name, 'i'));
       }
     });
     await waitFor(() => {
