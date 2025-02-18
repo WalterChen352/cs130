@@ -1,16 +1,17 @@
-import React, { JSX } from 'react';
-import { View, TouchableOpacity} from 'react-native';
+import React from 'react';
+import { View, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from 'react-native-vector-icons';
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import MapScreen from './MapScreen';
 import ProfileScreen from './ProfileScreen';
 import CalendarScreen from './CalendarScreen';
 import DailyScreen from './DailyScreen';
 import CreateTaskScreen from './CreateTaskScreen';
 import WorkflowScreen from './WorkflowScreen';
-import {NavigatorStyles} from '../styles/Navigator.styles';
+import { NavigatorStyles } from '../styles/Navigator.styles';
 import { Workflow } from '../models/Workflow';
-import { ParamListBase } from '@react-navigation/native'
+import { ParamListBase } from '@react-navigation/native';
 
 export type TabParamList = ParamListBase & {
   Map: undefined;
@@ -19,11 +20,11 @@ export type TabParamList = ParamListBase & {
   Calendar: undefined;
   Profile: undefined;
   Workflow: { workflow: Workflow };
-}
+};
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const CustomTabBar = ({ state, navigation }): JSX.Element => {
+const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) => {
   return (
     <View style={NavigatorStyles.container}>
       {state.routes.map((route, index) => {
@@ -33,10 +34,11 @@ const CustomTabBar = ({ state, navigation }): JSX.Element => {
           return null;
         }
 
-        const onPress = (): void => {
+        const onPress = () => {
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,
+            canPreventDefault: true,
           });
 
           if (!isFocused && !event.defaultPrevented) {
@@ -44,7 +46,7 @@ const CustomTabBar = ({ state, navigation }): JSX.Element => {
           }
         };
 
-        let iconName;
+        let iconName = '';
         if (route.name === 'Map') iconName = 'pin-outline';
         else if (route.name === 'Profile') iconName = 'person';
         else if (route.name === 'Calendar') iconName = 'calendar';
@@ -58,8 +60,8 @@ const CustomTabBar = ({ state, navigation }): JSX.Element => {
           >
             <Ionicons
               testID="tab-icon"
-              name={iconName} 
-              size={24} 
+              name={iconName}
+              size={24}
               color={isFocused ? '#007AFF' : '#8E8E8F'}
             />
           </TouchableOpacity>
@@ -69,7 +71,7 @@ const CustomTabBar = ({ state, navigation }): JSX.Element => {
       {/* Create Task Button */}
       <TouchableOpacity
         style={NavigatorStyles.createButton}
-        onPress={() => navigation.navigate('CreateTask')}
+        onPress={() => { navigation.navigate('CreateTask'); }}
       >
         <Ionicons name="add" size={30} color="white" />
       </TouchableOpacity>
@@ -77,7 +79,7 @@ const CustomTabBar = ({ state, navigation }): JSX.Element => {
   );
 };
 
-export default function Navigator(): JSX.Element {
+const Navigator: React.FC = () => {
   return (
     <Tab.Navigator
       tabBar={(props) => <CustomTabBar {...props} />}
@@ -85,7 +87,7 @@ export default function Navigator(): JSX.Element {
         headerShown: false,
       }}
     >
-      <Tab.Screen name="Map" component={MapScreen}/>
+      <Tab.Screen name="Map" component={MapScreen} />
       <Tab.Screen name="Daily" component={DailyScreen} />
       <Tab.Screen 
         name="CreateTask" 
@@ -97,7 +99,9 @@ export default function Navigator(): JSX.Element {
       />
       <Tab.Screen name="Calendar" component={CalendarScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Workflow" component={WorkflowScreen}
+      <Tab.Screen 
+        name="Workflow" 
+        component={WorkflowScreen}
         options={{
           tabBarButton: () => null,
           headerShown: false
@@ -105,5 +109,6 @@ export default function Navigator(): JSX.Element {
       />
     </Tab.Navigator>
   );
-}
+};
 
+export default Navigator;
