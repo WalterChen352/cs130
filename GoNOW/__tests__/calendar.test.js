@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, act, waitFor, screen } from '@testing-library/react-native';
 import CalendarScreen from '../app/screens/CalendarScreen';
-import { getWeeklyEvents } from '../app/scripts/database';
+import { getWeeklyEvents } from '../app/scripts/Event';
 import { useNavigation } from '@react-navigation/native';
 
 // Mock dependencies
