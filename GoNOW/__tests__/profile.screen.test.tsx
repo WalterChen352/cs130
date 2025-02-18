@@ -8,7 +8,6 @@ import { SchedulingStyle } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import ProfileScreen from '../app/screens/ProfileScreen';
 import { View } from 'react-native';
-import { Location, Coordinates } from '../app/models/Location';
 
 jest.mock('react-native-vector-icons', () => ({
   Ionicons: jest.fn(() => null),
@@ -23,16 +22,30 @@ jest.mock('@react-navigation/native', () => ({
   useFocusEffect: jest.fn(),
 }));
 
-jest.doMock('../app/components/AddressPicker', () => jest.fn((props) => <View {...props} />));
+jest.mock('../app/components/AddressPicker', () => {
+  return () => <MockAddressPicker />;
+});
 
-jest.doMock('../app/scripts/Geo', () => ({
-  getMyLocation: jest.fn().mockReturnValue(new Location(new Coordinates(33, 44), 'Los Angeles, CA 90095')),
-}));
+const MockAddressPicker = (props) => <View {...props} />;
 
-jest.doMock('../app/scripts/Profile', () => ({
-  getLocation: jest.fn().mockReturnValue(new Location(new Coordinates(33, 44), 'Los Angeles, CA 90095')),
-  updateLocation: jest.fn(),
-}));
+jest.mock('../app/scripts/Geo', () => {
+  return {
+    getMyLocation: jest.fn().mockResolvedValue({
+      Coordinates: { Latitude: 33, Longitude: 44 },
+      Address: 'Los Angeles, CA 90095',
+    }),
+  };
+});
+
+jest.mock('../app/scripts/Profile', () => {
+  return {
+    getLocation: jest.fn().mockResolvedValue({
+      Coordinates: { Latitude: 33, Longitude: 44 },
+      Address: 'Los Angeles, CA 90095',
+    }),
+    updateLocation: jest.fn(),
+  };
+});
 
 const mockSchedulingStyles = [
   new SchedulingStyle(0, 'Schedule close together'),
