@@ -1,8 +1,6 @@
 import React from 'react';
-import { render, fireEvent, act, waitFor, screen } from '@testing-library/react-native';
+import { render, waitFor, screen } from '@testing-library/react-native';
 import CalendarScreen from '../app/screens/CalendarScreen';
-import { getWeeklyEvents } from '../app/scripts/Event';
-import { useNavigation } from '@react-navigation/native';
 
 // Mock dependencies
 jest.mock('@react-navigation/native', () => ({
@@ -11,23 +9,6 @@ jest.mock('@react-navigation/native', () => ({
 jest.mock('expo-font');
 
 describe('CalendarScreen', () => {
-  const mockNavigation = {
-    navigate: jest.fn()
-  };
-  const mockEvents = [
-    {
-      id: '1',
-      name: 'Test Event 1',
-      startTime: '2025-02-11T10:00:00',
-      endTime: '2025-02-11T11:00:00'
-    },
-    {
-      id: '2',
-      name: 'Test Event 2',
-      startTime: '2025-02-11T14:00:00',
-      endTime: '2025-02-11T15:00:00'
-    }
-  ];
 
   it('renders correctly with initial layout', async () => {
     render(<CalendarScreen />);
