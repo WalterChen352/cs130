@@ -24,7 +24,7 @@ export const getDailyEvents = async():Promise<Event[]>=>{
 export const clearEvents = async():Promise<void>=>{ //just for clearing local storage
   console.log('dropping events table');
   try{
-      const DB = await SQLite.openDatabaseSync('userEvents.db');
+      const DB = SQLite.openDatabaseSync('userEvents.db');
       await DB.execAsync(`PRAGMA journal_mode = WAL;
         DROP TABLE events;
         `);

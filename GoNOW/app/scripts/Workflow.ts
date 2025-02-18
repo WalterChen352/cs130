@@ -3,30 +3,41 @@ import { getSchedulingStyle } from '../scripts/SchedulingStyle';
 import { Time, DaysOfWeekNames } from '../models/Time';
 import { Workflow } from '../models/Workflow';
 
+interface row {
+  id: number,
+  name: string,
+  color: string,
+  pushNotifications: boolean,
+  timeStart: number,
+  timeEnd: number,
+  daysOfWeek: number,
+  schedulingStyle: number
+}
+
 export const getWorkflows = async (): Promise<Workflow[]> => {
   try {
     const DB = await openDatabase();
-    const rows = await DB.getAllAsync(`
+    const query = await DB.getAllAsync(`
       SELECT *
       FROM workflows
       ORDER BY timeStart;
     `); 
-    let workflows = [];
-
-    for (let i=0; i < rows.length; i++) {
-      const row = rows[i];
-      let daysOfWeek = new Array(7).fill(false);
+    const rows = query as row[];
+    const workflows = [];
+    
+    for (const row of rows) {
+      const daysOfWeek = new Array<boolean>(7).fill(false);
       for (let d=0; d<7; d++) {
-        daysOfWeek[d] = ((row['daysOfWeek'] & (1 << d)) !==0);
-      } 
-      const schedulingStyle = await getSchedulingStyle(Number(row['schedulingStyle']));
-      const timeStart = Number(row['timeStart']);
-      const timeEnd = Number(row['timeEnd']);
-      let workflowTemp = new Workflow(
-        row['id'],
-        row['name'],
-        row['color'],
-        (Number(row['pushNotifications']) === 1),
+        daysOfWeek[d] = ((row.daysOfWeek & (1 << d)) !==0);
+      }
+      const schedulingStyle = getSchedulingStyle(Number(row.schedulingStyle));
+      const timeStart = Number(row.timeStart);
+      const timeEnd = Number(row.timeEnd);
+      const workflowTemp = new Workflow(
+        row.id,
+        row.name,
+        row.color,
+        (Number(row.pushNotifications) === 1),
         new Time(Math.floor(timeStart / 60), timeStart % 60),
         new Time(Math.floor(timeEnd / 60), timeEnd % 60),
         daysOfWeek,
@@ -42,7 +53,7 @@ export const getWorkflows = async (): Promise<Workflow[]> => {
   }
 };
 
-export const clearWorkflows = async (): Promise<Boolean> => {
+export const clearWorkflows = async (): Promise<void> => {
   try {
     const DB = await openDatabase();
     await DB.execAsync(`
@@ -55,9 +66,9 @@ export const clearWorkflows = async (): Promise<Boolean> => {
   }
 };
 
-export const addWorkflow = async (workflow: Workflow): Promise<Boolean> => {
-  let daysOfWeekMask: number = 0;
-  workflow.DaysOfWeek.forEach((d,i) => {
+export const addWorkflow = async (workflow: Workflow): Promise<void> => {
+  let daysOfWeekMask = 0;
+  workflow.daysOfWeek.forEach((d,i) => {
     if (d) daysOfWeekMask = daysOfWeekMask | (1 << i);
   });
 
@@ -75,13 +86,13 @@ export const addWorkflow = async (workflow: Workflow): Promise<Boolean> => {
         schedulingStyle
       ) VALUES (?, ?, ?, ?, ?, ?, ?);
        `, [
-        workflow.Name,
-        workflow.Color,
-        workflow.PushNotifications,
-        workflow.TimeStart.toInt(),
-        workflow.TimeEnd.toInt(),
+        workflow.name,
+        workflow.color,
+        workflow.pushNotifications,
+        workflow.timeStart.toInt(),
+        workflow.timeEnd.toInt(),
         daysOfWeekMask,
-        workflow.SchedulingStyle.Id
+        workflow.schedulingStyle.Id
       ]
     );
   }
@@ -90,9 +101,9 @@ export const addWorkflow = async (workflow: Workflow): Promise<Boolean> => {
   }
 };
 
-export const updateWorkflow = async (workflow: Workflow): Promise<Boolean> => {
-  let daysOfWeekMask: number = 0;
-  workflow.DaysOfWeek.forEach((d,i) => {
+export const updateWorkflow = async (workflow: Workflow): Promise<void> => {
+  let daysOfWeekMask = 0;
+  workflow.daysOfWeek.forEach((d,i) => {
     if (d) daysOfWeekMask = daysOfWeekMask | (1 << i);
   });
 
@@ -111,14 +122,14 @@ export const updateWorkflow = async (workflow: Workflow): Promise<Boolean> => {
         schedulingStyle = ?
       WHERE id = ?;
       `, [
-        workflow.Name,
-        workflow.Color,
-        workflow.PushNotifications,
-        workflow.TimeStart.toInt(),
-        workflow.TimeEnd.toInt(),
+        workflow.name,
+        workflow.color,
+        workflow.pushNotifications,
+        workflow.timeStart.toInt(),
+        workflow.timeEnd.toInt(),
         daysOfWeekMask,
-        workflow.SchedulingStyle.Id,
-        workflow.Id
+        workflow.schedulingStyle.Id,
+        workflow.id
       ]
     );  }
   catch (error) {
@@ -126,14 +137,14 @@ export const updateWorkflow = async (workflow: Workflow): Promise<Boolean> => {
   }
 };
 
-export const deleteWorkflow = async (workflow: Workflow): Promise<Boolean> => {
+export const deleteWorkflow = async (workflow: Workflow): Promise<void> => {
   try {
     const DB = await openDatabase();
     await DB.runAsync(`
       PRAGMA journal_mode = WAL;
       DELETE FROM workflows
       WHERE id = ?;
-      `, [ workflow.Id ]
+      `, [ workflow.id ]
     );
   }
   catch (error) {
@@ -141,27 +152,27 @@ export const deleteWorkflow = async (workflow: Workflow): Promise<Boolean> => {
   }
 };
 
-export const validateWorkflow = async (workflow : Workflow): Promise<Boolean> => {
+export const validateWorkflow = async (workflow : Workflow): Promise<void> => {
   const errors = [];
-  if (!workflow.Name) {
+  if (!workflow.name) {
     errors.push('The Worklow Name field is required.');
   }
-  if (workflow.TimeStart.toInt() > workflow.TimeEnd.toInt()) {
+  if (workflow.timeStart.toInt() > workflow.timeEnd.toInt()) {
     errors.push('The Start Time of workflow must be earlier than the End Time. Overnight workflow is not supported.');
   }
-  if (workflow.DaysOfWeek.every(d => d === false)) {
+  if (workflow.daysOfWeek.every(d => !d)) {
     errors.push('Select at least one day of the week.');
   }
   const workflows = await getWorkflows();
-  workflows.filter(w => w.Id !== workflow.Id).forEach(w => {
+  workflows.filter(w => w.id !== workflow.id).forEach(w => {
     for( let d = 0; d < 7; d++) {
-      if (w.DaysOfWeek[d] && workflow.DaysOfWeek[d]) {
-        if (w.TimeEnd.toInt() > workflow.TimeStart.toInt()
-          && w.TimeEnd.toInt() <= workflow.TimeEnd.toInt()
-          || workflow.TimeEnd.toInt() > w.TimeStart.toInt()
-          && workflow.TimeEnd.toInt() <= w.TimeEnd.toInt()
+      if (w.daysOfWeek[d] && workflow.daysOfWeek[d]) {
+        if (w.timeEnd.toInt() > workflow.timeStart.toInt()
+          && w.timeEnd.toInt() <= workflow.timeEnd.toInt()
+          || workflow.timeEnd.toInt() > w.timeStart.toInt()
+          && workflow.timeEnd.toInt() <= w.timeEnd.toInt()
         ) {
-          errors.push(`Workflow time overlaps with another workflow "${w.Name}" on ${DaysOfWeekNames[d]}`);
+          errors.push(`Workflow time overlaps with another workflow "${w.name}" on ${DaysOfWeekNames[d]}`);
         }
       }
     }

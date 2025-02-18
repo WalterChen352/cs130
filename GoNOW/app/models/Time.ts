@@ -9,7 +9,7 @@ export class Time {
     return this.Hours*60 + this.Minutes;
   }
   toString(): string {
-    return `${this.Hours < 10 ? '0' + this.Hours : this.Hours}:${this.Minutes < 10 ? '0' + this.Minutes : this.Minutes}`;
+    return `${this.Hours < 10 ? '0' + String(this.Hours) :String( this.Hours)}:${this.Minutes < 10 ? '0' + String(this.Minutes): String(this.Minutes)}`;
   }
 }
 

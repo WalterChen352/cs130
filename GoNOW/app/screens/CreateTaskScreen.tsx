@@ -40,8 +40,8 @@ const CreateTaskScreen = (): JSX.Element => {
 
       <Text style={styles.label}>Select start time</Text>
       <View style={styles.row}>
-        <Button title={startDate.toDateString()} onPress={() => setShowStartDatePicker(true)} />
-        <Button title={startDate.toLocaleTimeString()} onPress={() => setShowStartTimePicker(true)} />
+        <Button title={startDate.toDateString()} onPress={() => { setShowStartDatePicker(true); }} />
+        <Button title={startDate.toLocaleTimeString()} onPress={() => { setShowStartTimePicker(true); }} />
       </View>
 
       {showStartDatePicker && (
@@ -70,8 +70,8 @@ const CreateTaskScreen = (): JSX.Element => {
 
       <Text style={styles.label}>Select end time</Text>
       <View style={styles.row}>
-        <Button title={endDate.toDateString()} onPress={() => setShowEndDatePicker(true)} />
-        <Button title={endDate.toLocaleTimeString()} onPress={() => setShowEndTimePicker(true)} />
+        <Button title={endDate.toDateString()} onPress={() => { setShowEndDatePicker(true); }} />
+        <Button title={endDate.toLocaleTimeString()} onPress={() => { setShowEndTimePicker(true); }} />
       </View>
 
       {showEndDatePicker && (
@@ -109,7 +109,7 @@ const CreateTaskScreen = (): JSX.Element => {
         placeholder="Select item"
         searchPlaceholder="Search..."
         value={transportationMode}
-        onChange={item => {
+        onChange={(item:{ value: string }) => {
           setTransportationMode(item.value);
         }}
       />
@@ -144,17 +144,26 @@ const CreateTaskScreen = (): JSX.Element => {
 
       <Pressable 
         style={styles.container} 
-        onPress={async () =>
-            {
-            //TODO PLACEHOLDER VALUES
-            const longitude =0;
-            const latitude = 0;
-            const workflow='';
-            //END PLACEHOLDER
-            const e = new Event(title, description,formatDate(startDate), formatDate(endDate), longitude, latitude, transportationMode , workflow);
-            await addEvent(e);
-            }
-        }
+        onPress={() => {
+            void (async () => {
+              // TODO PLACEHOLDER VALUES
+              const longitude = 0;
+              const latitude = 0;
+              const workflow = '';
+              // END PLACEHOLDER
+              const e = new Event(
+                title,
+                description,
+                formatDate(startDate),
+                formatDate(endDate),
+                longitude,
+                latitude,
+                transportationMode,
+                workflow
+              );
+              await addEvent(e);
+            })();
+          }}
       >
         <Text>Save Task</Text>
       </Pressable>

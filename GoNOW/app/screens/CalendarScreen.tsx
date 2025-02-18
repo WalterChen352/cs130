@@ -15,7 +15,7 @@ const END_HOUR = 24; // 12 AM next day
 const TIME_LABELS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => {
   const hour = (START_HOUR + i) % 12 || 12;
   const ampm = (START_HOUR + i) < 12 ? 'AM' : 'PM';
-  return `${hour}${ampm}`;
+  return `${String(hour)}${String(ampm)}`;
 
 });
 
@@ -26,7 +26,7 @@ const CalendarScreen = (): JSX.Element=> {
       navigation.navigate('Daily');
     };
     const getLastSunday = (d: Date) :Date => {
-        var t = new Date(d);
+        const t = new Date(d);
         t.setDate(d.getDate() - d.getDay());
         console.log('day of sunday', d.getDate() - d.getDay());
         console.log('last sunda is', t.getDate());
@@ -45,7 +45,7 @@ const CalendarScreen = (): JSX.Element=> {
             end: end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
         };
     };
-    const [events, setEvents] = useState([]);
+    const [events, setEvents] = useState<Event[]>([]);
     const [startDate, setStartDate]=useState(getLastSunday(new Date(Date.now())));
     const [weekRange, setWeekRange]= useState(getWeekRange(startDate));
     useEffect(() => {
@@ -58,7 +58,7 @@ const CalendarScreen = (): JSX.Element=> {
                 console.error('error fetching events', error);
             }
         };
-        fetchEvents();
+        void fetchEvents();
     }, [startDate]);
 
     const days = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
@@ -172,7 +172,7 @@ const CalendarScreen = (): JSX.Element=> {
                             <View key={`col-${day}`} style={CalendarStyles.dayColumn}>
                                 {/* Hour grid lines */}
                                 {TIME_LABELS.map((_, index) => (
-                                    <View key={`grid-${day}-${index}`} style={CalendarStyles.gridLine} />
+                                    <View key={`grid-${String(day)}-${String(index)}`} style={CalendarStyles.gridLine} />
                                 ))}
                                 
                                 {/* Events */}
@@ -180,7 +180,7 @@ const CalendarScreen = (): JSX.Element=> {
                                     const position = getEventPosition(event.startTime, event.endTime);
                                     return (
                                         <TouchableOpacity
-                                        key={`event-${day}-${index}`}
+                                        key={`event-${String(day)}-${String(index)}`}
                                         style={[
                                             CalendarStyles.event,
                                             { top: position.top, height: Math.max(position.height, 20) } // Dynamically setting top and height

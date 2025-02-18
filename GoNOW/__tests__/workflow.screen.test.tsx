@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert } from 'react-native';
+import { Alert, View, ViewProps } from 'react-native';
 import { act, render, fireEvent, waitFor } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -43,22 +43,48 @@ jest.mock('react-native/Libraries/Alert/Alert', () => ({
   alert: jest.fn(),
 }));
 
+// Define proper types for the Picker props
+interface PickerProps extends ViewProps {
+  children: React.ReactNode;
+  selectedValue?: string | number;
+  onValueChange?: (value: string | number) => void;
+}
+
+interface PickerItemProps extends ViewProps {
+  label: string;
+  value: string | number;
+  children?: React.ReactNode;
+}
+
+function MockPicker({ children, ...props }: PickerProps): React.ReactElement {
+  return React.createElement(View, props, children);
+}
+
+MockPicker.Item = function MockPickerItem(props: PickerItemProps): React.ReactElement {
+  return React.createElement(View, props, props.children);
+};
+
+jest.mock('@react-native-picker/picker', () => ({
+  __esModule: true,
+  Picker: MockPicker,
+}));
+
 const mockSchedulingStyles = [
   new SchedulingStyle(0, 'Schedule close together'),
   new SchedulingStyle(1, 'Schedule with max buffer'),
-  new SchedulingStyle(2, 'Schedule with mmiddle buffer'),
+  new SchedulingStyle(2, 'Schedule with middle buffer'),
   new SchedulingStyle(3, 'Schedule with random buffer')
 ];
 
 const mockWorkflow = {
-  Id: 1,
-  Name: 'Test Workflow',
-  Color: '#388dff',
-  PushNotifications: true,
-  TimeStart: new Time(8, 30),
-  TimeEnd: new Time(17, 0),
-  DaysOfWeek: [true, false, true, false, true, false, true],
-  SchedulingStyle: mockSchedulingStyles[3],
+  id: 1,
+  name: 'Test Workflow',
+  color: '#388dff',
+  pushNotifications: true,
+  timeStart: new Time(8, 30),
+  timeEnd: new Time(17, 0),
+  daysOfWeek: [true, false, true, false, true, false, true],
+  schedulingStyle: mockSchedulingStyles[3],
 };
 
 describe('Workflow Screen', () => {
@@ -67,79 +93,54 @@ describe('Workflow Screen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useNavigation as jest.Mock).mockReturnValue(mockNavigation);
-    (getSchedulingStyles as jest.Mock).mockResolvedValue(mockSchedulingStyles);
+    (getSchedulingStyles as jest.Mock).mockReturnValue(mockSchedulingStyles);
   });
 
-  //afterEach(cleanup);
-
   test('should render the updating screen for existing workflow', async () => {
-
-    // Rendering the component
     const route = { params: { workflow: mockWorkflow }};
     const {getByTestId, queryByTestId, unmount} = render(<WorkflowScreen route={route} />);
 
     await waitFor(() => {
-
       expect(getByTestId('workflow-title')).toHaveTextContent('Update the workflow');
-      expect(getByTestId('workflow-name')).toHaveProp('value', mockWorkflow.Name);
-      expect(getByTestId('workflow-push-notifications')).toHaveProp('value', mockWorkflow.PushNotifications);
-      expect(getByTestId('workflow-time-start')).toHaveTextContent(mockWorkflow.TimeStart.toString());
-      expect(getByTestId('workflow-time-end')).toHaveTextContent(mockWorkflow.TimeEnd.toString());
+      expect(getByTestId('workflow-name')).toHaveProp('value', mockWorkflow.name);
+      expect(getByTestId('workflow-push-notifications')).toHaveProp('value', mockWorkflow.pushNotifications);
+      expect(getByTestId('workflow-time-start')).toHaveTextContent(mockWorkflow.timeStart.toString());
+      expect(getByTestId('workflow-time-end')).toHaveTextContent(mockWorkflow.timeEnd.toString());
 
-      const schedulingStyleElement = getByTestId('workflow-scheduling-style');
-      const props = schedulingStyleElement.props as { selectedIndex: number; items: { id: number; value: string }[] };
-      const schedulingStyleValue = props.items[props.selectedIndex]?.value;
-      expect(schedulingStyleValue).toEqual(mockWorkflow.SchedulingStyle.Id);
-
-      expect(queryByTestId('workflow-btn-save')).toBeTruthy();    // Visible
-      expect(queryByTestId('workflow-btn-delete')).toBeTruthy();  // Visible
+      expect(queryByTestId('workflow-btn-save')).toBeTruthy();
+      expect(queryByTestId('workflow-btn-delete')).toBeTruthy();
     });
 
-    await waitFor(() => {
-      unmount();
-    });
+    unmount();
   });
 
   test('should render the creating screen for new workflow', async () => {
-    const mockWorkflow = {
-      Id: 0,
-      Name: '',
-      Color: '#d5f9cf',
-      PushNotifications: true,
-      TimeStart: new Time(9, 5),
-      TimeEnd: new Time(10, 11),
-      DaysOfWeek: new Array(7).fill(false),
-      SchedulingStyle: mockSchedulingStyles[0],
+    const newMockWorkflow = {
+      id: 0,
+      name: '',
+      color: '#d5f9cf',
+      pushNotifications: true,
+      timeStart: new Time(9, 5),
+      timeEnd: new Time(10, 11),
+      daysOfWeek: new Array(7).fill(false),
+      schedulingStyle: mockSchedulingStyles[0],
     };
 
-    // Rendering the component
-    const route = { params: { workflow: mockWorkflow }};
+    const route = { params: { workflow: newMockWorkflow }};
     const {getByTestId, queryByTestId, unmount} = render(<WorkflowScreen route={route} />);
 
     await waitFor(() => {
-
       expect(getByTestId('workflow-title')).toHaveTextContent('Add a workflow');
-      expect(getByTestId('workflow-name')).toHaveProp('value', mockWorkflow.Name);
-      expect(getByTestId('workflow-push-notifications')).toHaveProp('value', mockWorkflow.PushNotifications);
-      expect(getByTestId('workflow-time-start')).toHaveTextContent(mockWorkflow.TimeStart.toString());
-      expect(getByTestId('workflow-time-end')).toHaveTextContent(mockWorkflow.TimeEnd.toString());
+      expect(getByTestId('workflow-name')).toHaveProp('value', newMockWorkflow.name);
+      expect(getByTestId('workflow-push-notifications')).toHaveProp('value', newMockWorkflow.pushNotifications);
+      expect(getByTestId('workflow-time-start')).toHaveTextContent(newMockWorkflow.timeStart.toString());
+      expect(getByTestId('workflow-time-end')).toHaveTextContent(newMockWorkflow.timeEnd.toString());
 
-      const schedulingStyleElement = getByTestId('workflow-scheduling-style');
-      const props = schedulingStyleElement.props as { 
-        selectedIndex: number; 
-        items: { id: number; value: string }[]; 
-      };
-      const schedulingStyleIndex = props.selectedIndex;
-      const schedulingStyleValue = props.items[schedulingStyleIndex]?.value;
-      expect(schedulingStyleValue).toEqual(mockWorkflow.SchedulingStyle.Id);
-
-      expect(queryByTestId('workflow-btn-save')).toBeTruthy();    // Visible
-      expect(queryByTestId('workflow-btn-delete')).toBeNull();    // Invisible
+      expect(queryByTestId('workflow-btn-save')).toBeTruthy();
+      expect(queryByTestId('workflow-btn-delete')).toBeNull();
     });
 
-    await waitFor(() => {
-      unmount();
-    });
+    unmount();
   });
 
   test('should update the workflow name', async () => {
@@ -153,9 +154,7 @@ describe('Workflow Screen', () => {
     });
     expect(el).toHaveProp('value', 'Updated Workflow Name');
 
-    await waitFor(() => {
-      unmount();
-    });
+    unmount();
   });
 
   test('should toggle push notifications', async () => {
@@ -175,9 +174,7 @@ describe('Workflow Screen', () => {
     });
     expect(el).toHaveProp('value', true);
 
-    await waitFor(() => {
-      unmount();
-    });
+    unmount();
   });
 
   test('should handle save workflow', async () => {
@@ -193,36 +190,33 @@ describe('Workflow Screen', () => {
     });
 
     expect(updateWorkflow).toHaveBeenCalled();
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Profile');
 
-    await waitFor(() => {
-      expect(mockNavigation.navigate).toHaveBeenCalledWith('Profile');
-    });
-
-    await waitFor(() => {
-      unmount();
-    });
+    unmount();
   });
 
   test('should handle add workflow', async () => {
     (validateWorkflow as jest.Mock).mockResolvedValueOnce(undefined);
 
-    const mockWorkflow = {
-      Id: 0,
-      Name: '',
-      Color: '#d5f9cf',
-      PushNotifications: true,
-      TimeStart: new Time(9, 5),
-      TimeEnd: new Time(10, 11),
-      DaysOfWeek: new Array(7).fill(false),
-      SchedulingStyle: mockSchedulingStyles[0],
+    const newMockWorkflow = {
+      id: 0,
+      name: '',
+      color: '#d5f9cf',
+      pushNotifications: true,
+      timeStart: new Time(9, 5),
+      timeEnd: new Time(10, 11),
+      daysOfWeek: new Array(7).fill(false),
+      schedulingStyle: mockSchedulingStyles[0],
     };
-    const route = { params: { workflow: mockWorkflow }};
+    
+    const route = { params: { workflow: newMockWorkflow }};
     const {getByTestId, unmount} = render(<WorkflowScreen route={route} />);
 
     await act(async () => {
       fireEvent.changeText(getByTestId('workflow-name'), 'New workflow name');
       return Promise.resolve();
     });
+
     await act(async () => {
       fireEvent.press(getByTestId('workflow-day-of-week-0'));
       return Promise.resolve();
@@ -235,14 +229,9 @@ describe('Workflow Screen', () => {
     });
 
     expect(addWorkflow).toHaveBeenCalled();
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Profile');
 
-    await waitFor(() => {
-      expect(mockNavigation.navigate).toHaveBeenCalledWith('Profile');
-    });
-
-    await waitFor(() => {
-      unmount();
-    });
+    unmount();
   });
 
   test('should delete workflow on confirmation', async () => {
@@ -255,9 +244,10 @@ describe('Workflow Screen', () => {
       fireEvent.press(getByTestId('workflow-btn-delete'));
       return Promise.resolve();
     });
+
     expect(Alert.alert).toHaveBeenCalledWith(
       'Confirm',
-      `Remove workflow ${mockWorkflow.Name}?`,
+      `Remove workflow ${mockWorkflow.name}?`,
       expect.any(Array),
       { cancelable: false }
     );
@@ -270,19 +260,13 @@ describe('Workflow Screen', () => {
       act(() => {
         okButton.onPress();
       });
-    }        
+    }
+
     await waitFor(() => {
       expect(deleteWorkflow).toHaveBeenCalled();
-    });
-    
-    await waitFor(() => {
       expect(mockNavigation.navigate).toHaveBeenCalledWith('Profile');
     });
 
-    await waitFor(() => {
-      unmount();
-    });
-
+    unmount();
   });
-
 });

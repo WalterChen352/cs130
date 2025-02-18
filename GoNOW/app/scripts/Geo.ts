@@ -5,18 +5,18 @@ import {Coordinates, Location} from '../models/Location';
 export const getMyLocation = async (): Promise<Location | null> => {
   try {
     const { status } = await ExpoLocation.requestForegroundPermissionsAsync();
-    if (status === 'granted') {
+    if (status === ExpoLocation.PermissionStatus.GRANTED) {
       const { coords } = await ExpoLocation.getCurrentPositionAsync({});
       const { latitude, longitude } = coords;
-      let location = new Location(new Coordinates(latitude, longitude), '');
+      const location = new Location(new Coordinates(latitude, longitude), '');
       const reverseGeocode = await ExpoLocation.reverseGeocodeAsync({
         latitude,
         longitude,
       });
       if (reverseGeocode.length > 0) {
         location.Address = Platform.select({
-          ios: `${reverseGeocode[0].streetNumber} ${reverseGeocode[0].street}, ${reverseGeocode[0].city}, ${reverseGeocode[0].region} ${reverseGeocode[0].postalCode}, ${reverseGeocode[0].country}`,
-          android: reverseGeocode[0].formattedAddress || '',
+          ios: `${String(reverseGeocode[0].streetNumber)} ${String(reverseGeocode[0].street)}, ${String(reverseGeocode[0].city)}, ${String(reverseGeocode[0].region)} ${String(reverseGeocode[0].postalCode)}, ${String(reverseGeocode[0].country)}`,
+          android: String(reverseGeocode[0].formattedAddress) || '',
           default: ''
         });
       }

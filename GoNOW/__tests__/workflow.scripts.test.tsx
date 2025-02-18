@@ -29,19 +29,19 @@ interface WorkflowDbFormat {
 
 const toDbFormat = (workflow: Workflow): WorkflowDbFormat => {
   let daysOfWeekMask = 0;
-  workflow.DaysOfWeek.forEach((d, i) => {
+  workflow.daysOfWeek.forEach((d, i) => {
     if (d) daysOfWeekMask |= 1 << i;
   });
 
   return {
-    id: workflow.Id,
-    name: workflow.Name,
-    color: workflow.Color,
-    pushNotifications: workflow.PushNotifications,
-    timeStart: workflow.TimeStart.toInt(),
-    timeEnd: workflow.TimeEnd.toInt(),
+    id: workflow.id,
+    name: workflow.name,
+    color: workflow.color,
+    pushNotifications: workflow.pushNotifications,
+    timeStart: workflow.timeStart.toInt(),
+    timeEnd: workflow.timeEnd.toInt(),
     daysOfWeek: daysOfWeekMask,
-    schedulingStyle: workflow.SchedulingStyle.Id,
+    schedulingStyle: workflow.schedulingStyle.Id,
   };
 };
 
@@ -81,16 +81,16 @@ describe('Workflow Database', () => {
     const workflows: Workflow[] = await getWorkflows();
     expect(workflows).toHaveLength(mockWorkflows.length);
     mockWorkflows.forEach((wf, i) => {
-      expect(workflows[i]?.Id).toBe(wf.Id);
-      expect(workflows[i]?.Name).toBe(wf.Name);
-      expect(workflows[i]?.Color).toBe(wf.Color);
-      expect(workflows[i]?.PushNotifications).toBe(wf.PushNotifications);
-      expect(workflows[i]?.TimeStart.Hours).toBe(wf.TimeStart.Hours);
-      expect(workflows[i]?.TimeStart.Minutes).toBe(wf.TimeStart.Minutes);
-      expect(workflows[i]?.TimeEnd.Hours).toBe(wf.TimeEnd.Hours);
-      expect(workflows[i]?.TimeEnd.Minutes).toBe(wf.TimeEnd.Minutes);
-      expect(workflows[i]?.SchedulingStyle.Name).toBe(wf.SchedulingStyle.Name);
-      expect(workflows[i]?.DaysOfWeek).toEqual(wf.DaysOfWeek);
+      expect(workflows[i]?.id).toBe(wf.id);
+      expect(workflows[i]?.name).toBe(wf.name);
+      expect(workflows[i]?.color).toBe(wf.color);
+      expect(workflows[i]?.pushNotifications).toBe(wf.pushNotifications);
+      expect(workflows[i]?.timeStart.Hours).toBe(wf.timeStart.Hours);
+      expect(workflows[i]?.timeStart.Minutes).toBe(wf.timeStart.Minutes);
+      expect(workflows[i]?.timeEnd.Hours).toBe(wf.timeEnd.Hours);
+      expect(workflows[i]?.timeEnd.Minutes).toBe(wf.timeEnd.Minutes);
+      expect(workflows[i]?.schedulingStyle.Name).toBe(wf.schedulingStyle.Name);
+      expect(workflows[i]?.daysOfWeek).toEqual(wf.daysOfWeek);
     });
   });
 
@@ -127,8 +127,8 @@ describe('Workflow Database', () => {
       new Workflow(0, '', '', false, new Time(0, 0), new Time(0, 0), [], mockSchedulingStyles[0]),
       mockWorkflows[0]
     );
-    workflow.TimeStart = new Time(11, 0);
-    workflow.TimeEnd = new Time(10, 0);
+    workflow.timeStart = new Time(11, 0);
+    workflow.timeEnd = new Time(10, 0);
 
     (openDatabase as jest.Mock).mockResolvedValue({ getAllAsync: jest.fn().mockResolvedValue(mockWorkflows) });
     const getWorkflowsMock = jest.spyOn(wfDB, 'getWorkflows').mockResolvedValue(mockWorkflows);
