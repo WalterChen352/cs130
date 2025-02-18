@@ -26,7 +26,6 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
   const [address, setAddress] = useState(initialAddress);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(initialCoordinates);
   const [results, setResults] = useState<NominatimResult[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (initialAddress !== address) {
@@ -37,13 +36,11 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     }
   }, [initialAddress, initialCoordinates]);
 
-  const searchPlaces = async (query: string) => {
+  const searchPlaces = async (query: string): Promise<void> => {
     if (!query.trim()) {
       setResults([]);
       return;
     }
-
-    setIsLoading(true);
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
@@ -60,8 +57,6 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
       setResults(data);
     } catch (error) {
       console.error('Nominatim search error:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -70,19 +65,17 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     []
   );
 
-  const handleTextChange = (text: string) => {
+  const handleTextChange = (text: string): void => {
     setAddress(text);
     debouncedSearch(text);
   };
 
-  const handleSelectPlace = (item: NominatimResult) => {
+  const handleSelectPlace = (item: NominatimResult): void => {
     const lat = parseFloat(item.lat);
     const lng = parseFloat(item.lon);
-    
     setAddress(item.display_name);
     setCoordinates(new Coordinates(lat, lng));
     setResults([]);
-
     if (onSelect) {
       onSelect(new Location(new Coordinates(lat, lng), item.display_name));
     }

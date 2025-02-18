@@ -95,7 +95,7 @@ const ProfileScreen = (): JSX.Element => {
             <Text style={styles.title} testID="home-location-title">Home Location</Text>
 
             <View >
-                <View style={[styles.locationPicker, { zIndex: 100 }]} > 
+                <View style={[styles.locationPicker, { }]} > 
                     <AddressPicker initialAddress={location?.Address} initialCoordinates={location?.Coordinates} onSelect={handleLocation} placeHolder="Your home location" />
                 </View>
             </View>
@@ -201,6 +201,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#ddd',
         marginBottom: 20,
+        zIndex: 100
     },
     footer: {
         paddingBottom: 40,

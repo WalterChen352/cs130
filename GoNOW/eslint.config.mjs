@@ -20,7 +20,8 @@ const sharedGlobals = {
     global: true,
     module: true,
     require: true,
-    __dirname: true
+    __dirname: true,
+    fetch: true
 };
 
 const sharedRules = {
