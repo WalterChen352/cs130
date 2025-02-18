@@ -10,6 +10,7 @@ import { getSchedulingStyles, getSchedulingStyle } from '../scripts/SchedulingSt
 import { DaysOfWeekNames, Time, TimeFromDate } from '../models/Time';
 import { Workflow } from '../models/Workflow';
 import { addWorkflow, updateWorkflow, deleteWorkflow, validateWorkflow } from '../scripts/Workflow';
+import { WorkflowScreenStyles } from '../styles/WorkflowScreen.styles';
 
 const WorkflowScreen = ({ route }): JSX.Element => {
 
@@ -114,34 +115,34 @@ const WorkflowScreen = ({ route }): JSX.Element => {
     );
 
     return (
-        <View style={styles.container}>
-            <ScrollView style={styles.scrollContainer} ref={scrollRef}>
-                <Text style={styles.title} testID="workflow-title">
+        <View style={WorkflowScreenStyles.container}>
+            <ScrollView style={WorkflowScreenStyles.scrollContainer} ref={scrollRef}>
+                <Text style={WorkflowScreenStyles.title} testID="workflow-title">
                     {workflow.Id === 0 ? 'Add a workflow' : 'Update the workflow'}
                 </Text>
-                <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Workflow name" testID="workflow-name" />
+                <TextInput style={WorkflowScreenStyles.input} value={name} onChangeText={setName} placeholder="Workflow name" testID="workflow-name" />
 
-                <View style={styles.center}>
+                <View style={WorkflowScreenStyles.center}>
                     <Switch value={pushNotifications} onValueChange={setPushNotifications} testID="workflow-push-notifications" />
-                    <Text style={styles.rightElem}>Push notifications</Text>
+                    <Text style={WorkflowScreenStyles.rightElem}>Push notifications</Text>
                 </View>
 
-                <Text style={styles.header}>Time selection</Text>
-                <View style={styles.center}>
-                    <Button style={styles.rightElem} onPress={openTimeStart} title={TimeFromDate(timeStart).toString()} testID="workflow-time-start" />
+                <Text style={WorkflowScreenStyles.header}>Time selection</Text>
+                <View style={WorkflowScreenStyles.center}>
+                    <Button style={WorkflowScreenStyles.rightElem} onPress={openTimeStart} title={TimeFromDate(timeStart).toString()} testID="workflow-time-start" />
                     {showTimeStart && (
                         <DateTimePicker value={timeStart} mode="time" is24Hour={true} display="default" onChange={onChangeTimeStart} />
                     )}
                     <Text></Text>
-                    <Button style={styles.rightElem} onPress={openTimeEnd} title={TimeFromDate(timeEnd).toString()} testID="workflow-time-end" />
+                    <Button style={WorkflowScreenStyles.rightElem} onPress={openTimeEnd} title={TimeFromDate(timeEnd).toString()} testID="workflow-time-end" />
                     {showTimeEnd && (
                         <DateTimePicker value={timeEnd} mode="time" is24Hour={true} display="default" onChange={onChangeTimeEnd} />
                     )}
                 </View>
 
-                <View style={styles.centerWrap}>
+                <View style={WorkflowScreenStyles.centerWrap}>
                     {daysOfWeek.map((day, ind) => (
-                        <View key={ind} style={styles.blockDayOfWeek}>
+                        <View key={ind} style={WorkflowScreenStyles.blockDayOfWeek}>
                             <Button title={ DaysOfWeekNames[ind] }
                                 onPress={() => toggleDay(ind)}
                                 color={day ? '#388dff' : 'lightgray'}
@@ -151,133 +152,38 @@ const WorkflowScreen = ({ route }): JSX.Element => {
                     ))}
                 </View>
 
-                <Text style={styles.header}>Scheduling style</Text>
-                <View style={styles.center}>
-                    <Picker style={styles.picker} selectedValue={workflow.SchedulingStyle.Id} testID="workflow-scheduling-style" onValueChange={(s) => setSchedulingStyle(s)} >
+                <Text style={WorkflowScreenStyles.header}>Scheduling style</Text>
+                <View style={WorkflowScreenStyles.center}>
+                    <Picker style={WorkflowScreenStyles.picker} selectedValue={workflow.SchedulingStyle.Id} testID="workflow-scheduling-style" onValueChange={(s) => setSchedulingStyle(s)} >
                         {schedulingStyles.map((s) => (
                             <Picker.Item key={s.Id} label={s.Name} value={s.Id} testID={`workflow-scheduling-style-${s.Id}`} />
                         ))}
                     </Picker>
                 </View>
 
-                <Text style={styles.header}>Color</Text>
-                <View style={styles.center}>
+                <Text style={WorkflowScreenStyles.header}>Color</Text>
+                <View style={WorkflowScreenStyles.center}>
                     <WheelPicker
-                        style={styles.wheelPicker}
+                        style={WorkflowScreenStyles.wheelPicker}
                         color={color}
                         onColorChange={setColor}
                         testID="workflow-color"
                     />
                 </View>
 
-                <Text style={styles.footer}> </Text>
+                <Text style={WorkflowScreenStyles.footer}> </Text>
             </ScrollView>
 
-            <TouchableOpacity style={styles.btnSave} onPress={handleSaveForm} testID="workflow-btn-save">
+            <TouchableOpacity style={WorkflowScreenStyles.btnSave} onPress={handleSaveForm} testID="workflow-btn-save">
                 <Ionicons name="checkmark" size={34} color="#fff" />
             </TouchableOpacity>
             {workflow?.Id > 0 &&
-                <TouchableOpacity style={styles.btnDel} onPress={handleDelete} testID="workflow-btn-delete">
+                <TouchableOpacity style={WorkflowScreenStyles.btnDel} onPress={handleDelete} testID="workflow-btn-delete">
                     <Ionicons name="close" size={34} color="#fff" />
                 </TouchableOpacity>
             }
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 0,
-        marginBottom: 0
-    },
-    scrollContainer: {
-        flex: 1,
-        padding: 16,
-    },
-    title: {
-        fontSize: 23,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 16
-    },
-    header: {
-        fontSize: 23,
-        textAlign: 'center',
-        marginTop: 24,
-        marginBottom: 10,
-        color: '#888888'
-    },
-    input: {
-        borderWidth: 1,
-        padding: 8,
-        marginVertical: 8
-    },
-    center: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    centerWrap: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    blockDayOfWeek: {
-        margin: 5,
-        marginTop: 26,
-    },
-    rightElem: {
-        marginRight: 16
-    },
-    picker: {
-        height: 50,
-        width: 300,
-        borderWidth: 1
-    },
-    wheelPicker: {
-        height: 300
-    },
-    btnSave: {
-        position: 'absolute',
-        bottom: 20,
-        right: 20,
-        backgroundColor: '#388dff',
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        borderWidth: 4,
-        borderColor: 'white',
-    },
-    btnDel: {
-        position: 'absolute',
-        bottom: 20,
-        left: 20,
-        backgroundColor: '#ffa5a5',
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        borderWidth: 4,
-        borderColor: 'white',
-    },
-    footer: {
-        paddingBottom: 100,
-    }
-});
 
 export default WorkflowScreen;

@@ -1,4 +1,3 @@
-import { initDatabase } from './scripts/Database';
 import Navigator from './screens/Navigator';
 import { useEffect, JSX } from 'react';
 import {initializeDatabase} from './scripts/database';
@@ -19,11 +18,3 @@ useEffect(() => {
     <Navigator/>
   );
 }
-
-const styles = StyleSheet.create({
-  spiner: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
-});
