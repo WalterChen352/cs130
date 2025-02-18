@@ -12,6 +12,7 @@ const CreateTaskScreen = (): JSX.Element => {
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [autoSchedule, setAutoSchedule] = useState<boolean>(false);
   const [transportationMode, setTransportationMode] = useState<string>('');
+  const [workflow, setWorkflow] = useState<string>('')
   const [longitude, setLongitude] = useState<string>('');
   const [latitude, setLatitude] = useState<string>('');
   const [description, setDescription] = useState<string>('');
@@ -121,6 +122,13 @@ const CreateTaskScreen = (): JSX.Element => {
         <Text style={styles.label}>Autoschedule?</Text>
       </View>
 
+      <Text style={styles.label}>Enter workflow</Text>
+      <TextInput
+        style={styles.input}
+        value={workflow}
+        onChangeText={setWorkflow}
+      />
+
       <Text style={styles.label}>Enter latitude</Text>
       <TextInput
         style={styles.input}
@@ -153,7 +161,6 @@ const CreateTaskScreen = (): JSX.Element => {
               // TODO PLACEHOLDER VALUES
               const longitude = 0;
               const latitude = 0;
-              const workflow = '';
               // END PLACEHOLDER
               const e = new Event(
                 title,
