@@ -93,7 +93,6 @@ export const addEvent = async (name, description, startTime, endTime, latitude, 
       console.error('Error in addEvent function:', error);
   }
 };
-
 //debugging function
 const getEventByName = async (eventName, DB) => {
   try {

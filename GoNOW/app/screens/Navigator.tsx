@@ -7,6 +7,7 @@ import ProfileScreen from './ProfileScreen';
 import CalendarScreen from './CalendarScreen';
 import DailyScreen from './DailyScreen';
 import CreateTaskScreen from './CreateTaskScreen';
+import WorkflowScreen from './WorkflowScreen';
 import {NavigatorStyles} from '../styles/Navigator.styles';
 
 const Tab = createBottomTabNavigator();
@@ -17,6 +18,10 @@ const CustomTabBar = ({ state, navigation }): JSX.Element => {
     <View style={NavigatorStyles.container}>
       {state.routes.map((route, index) => {
         const isFocused = state.index === index;
+
+        if (route.name === 'Workflow') {
+          return null;
+        }
 
         const onPress = (): void => {
           const event = navigation.emit({
@@ -82,6 +87,12 @@ export default function Navigator(): JSX.Element {
       />
       <Tab.Screen name="Calendar" component={CalendarScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Workflow" component={WorkflowScreen}
+        options={{
+          tabBarButton: () => null,
+          headerShown: false
+        }}
+      />
     </Tab.Navigator>
   );
 }
