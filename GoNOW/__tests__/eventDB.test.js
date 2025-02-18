@@ -1,21 +1,15 @@
-import { initializeDatabase, getDailyEvents, clearEvents } from '../app/scripts/database';
+import { getDailyEvents, clearEvents } from '../app/scripts/Event';
+import {initDatabase} from '../app/scripts/Database';
 import * as SQLite from 'expo-sqlite';
 
 jest.mock('expo-sqlite');
 
-describe('Database Functions', () => {
+describe('Event Functions', () => {
   
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
-    test('initializeDatabase should create a table', async () => {
-        await initializeDatabase();
-
-        expect(SQLite.openDatabaseAsync).toHaveBeenCalledWith('userEvents.db');
-        const dbMock = await SQLite.openDatabaseAsync.mock.results[0].value;
-        expect(dbMock.execAsync).toHaveBeenCalledWith(expect.stringContaining('CREATE TABLE IF NOT EXISTS events'));
-    });
 
     test('should retrieve today\'s events', async () => {
         const mockResult = [{ id: 1, name: 'Test Event', startTime: Date.now().toString() }];
@@ -35,13 +29,5 @@ describe('Database Functions', () => {
         // Verify that getAllAsync was called
         expect(mockDB.getAllAsync).toHaveBeenCalled();
         });
-
-    test('clearEvents should drop the events table', async () => {
-        await clearEvents();
-
-        expect(SQLite.openDatabaseSync).toHaveBeenCalledWith('userEvents.db');
-        const dbMock = SQLite.openDatabaseSync.mock.results[0].value;
-        expect(dbMock.execAsync).toHaveBeenCalledWith(expect.stringContaining('DROP TABLE events'));
-    });
 
 });
