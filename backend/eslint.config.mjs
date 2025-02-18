@@ -4,6 +4,9 @@ import jestPlugin from 'eslint-plugin-jest';
 import globals from 'globals';
 
 export default tseslint.config(
+  {
+    ignores: ['*.mjs']
+  },
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,
   tseslint.configs.stylisticTypeChecked,

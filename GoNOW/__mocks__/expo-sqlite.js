@@ -1,9 +1,9 @@
-export const openDatabaseAsync = jest.fn(async () => ({
-    execAsync: jest.fn(async () => Promise.resolve()),
-    getAllAsync: jest.fn(async () => Promise.resolve([])),
-    runAsync: jest.fn(async () => Promise.resolve()),
+export const openDatabaseAsync = jest.fn(() => ({
+    execAsync: jest.fn(async () =>{ await  Promise.resolve(); }),
+    getAllAsync: jest.fn(async () => await Promise.resolve([])),
+    runAsync: jest.fn(async () => { await Promise.resolve(); }),
   }));
   
   export const openDatabaseSync = jest.fn(() => ({
-    execAsync: jest.fn(async () => Promise.resolve()),
+    execAsync: jest.fn(async () =>{ await  Promise.resolve(); }),
   }));
