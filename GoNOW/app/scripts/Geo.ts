@@ -1,4 +1,5 @@
 import* as ExpoLocation from 'expo-location';
+import { Platform } from 'react-native';
 import {Coordinates, Location} from '../models/Location';
 
 export const getMyLocation = async (): Promise<Location | null> => {
@@ -13,7 +14,11 @@ export const getMyLocation = async (): Promise<Location | null> => {
         longitude,
       });
       if (reverseGeocode.length > 0) {
-        location.Address = `${reverseGeocode[0].formattedAddress}` || '';
+        location.Address = Platform.select({
+          ios: `${reverseGeocode[0].streetNumber} ${reverseGeocode[0].street}, ${reverseGeocode[0].city}, ${reverseGeocode[0].region} ${reverseGeocode[0].postalCode}, ${reverseGeocode[0].country}`,
+          android: reverseGeocode[0].formattedAddress || '',
+          default: ''
+        });
       }
       return location;
     } else {
