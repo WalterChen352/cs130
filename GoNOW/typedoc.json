@@ -1,0 +1,10 @@
+{
+    "entryPoints": ["app"], 
+    "out": "docs",
+    "tsconfig": "tsconfig.json",
+    "exclude": ["node_modules", "**/*.test.ts", "**/*.spec.ts"],
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "includeVersion": true,
+    "readme": "README.md"
+  }
