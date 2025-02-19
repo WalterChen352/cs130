@@ -1,10 +1,15 @@
-import React, { useState, JSX } from 'react';
+import React, { useState, useEffect, JSX } from 'react';
 import { ScrollView, View, Text, TextInput, Button, Switch, Pressable } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+
+import AddressPicker from '../components/AddressPicker';
+import { Location } from '../models/Location';
 import { addEvent } from '../scripts/Event';
 import { styles } from '../styles/CreateTaskScreen.styles';
 import {Event} from '../models/Event';
+import { getMyLocation } from '../scripts/Geo';
+import { getLocation } from '../scripts/Profile';
 
 const CreateTaskScreen = (): JSX.Element => {
   const [title, setTitle] = useState<string>('');
@@ -13,8 +18,9 @@ const CreateTaskScreen = (): JSX.Element => {
   const [autoSchedule, setAutoSchedule] = useState<boolean>(false);
   const [transportationMode, setTransportationMode] = useState<string>('');
   const [workflow, setWorkflow] = useState<string>('')
-  const [longitude, setLongitude] = useState<string>('');
-  const [latitude, setLatitude] = useState<string>('');
+  const [location, setLocation] = useState<Location | null>(null);
+  const [longitude, setLongitude] = useState<number>(0.0);
+  const [latitude, setLatitude] = useState<number>(0.0);
   const [description, setDescription] = useState<string>('');
   const [showStartDatePicker, setShowStartDatePicker] = useState<boolean>(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState<boolean>(false);
@@ -27,6 +33,34 @@ const CreateTaskScreen = (): JSX.Element => {
     { label: 'Bike', value: 'bike' },
     { label: 'Car', value: 'car' },
   ];
+
+  const setDestCoords = (location: Location): void => {
+    setLatitude(location.Coordinates.Latitude)
+    setLongitude(location.Coordinates.Longitude)
+  };
+
+  useEffect(() => {
+    const fetchLocation = async (): Promise<void> => {
+        const location = await getLocation();
+        if (location === null
+            || !location.Address
+            && location.Coordinates.Latitude === 0
+            && location.Coordinates.Longitude === 0
+        ) {
+            const currentLocation = await getMyLocation();
+            if (currentLocation !== null) {
+                setLocation(currentLocation);
+            }
+        } else {
+            setLocation(location);
+        }
+    };
+    void fetchLocation();
+  }, []);
+
+  useEffect(() => {
+    location && setDestCoords(location)
+  }, [location]);
 
   return (
     <ScrollView>
@@ -129,19 +163,14 @@ const CreateTaskScreen = (): JSX.Element => {
         onChangeText={setWorkflow}
       />
 
-      <Text style={styles.label}>Enter latitude</Text>
-      <TextInput
-        style={styles.input}
-        value={latitude}
-        onChangeText={setLatitude}
-      />
-
-      <Text style={styles.label}>Enter longitude</Text>
-      <TextInput
-        style={styles.input}
-        value={longitude}
-        onChangeText={setLongitude}
-      />
+      <View style={[styles.locationPicker, {}]}>
+        <AddressPicker
+          initialAddress={location?.Address}
+          initialCoordinates={location?.Coordinates}
+          onSelect={setDestCoords}
+          placeHolder="Address"
+        />
+      </View>
 
       <Text style={styles.label}>Description</Text>
       <TextInput
@@ -158,10 +187,6 @@ const CreateTaskScreen = (): JSX.Element => {
         testID='Save Task'
         onPress={() => {
             void (async () => {
-              // TODO PLACEHOLDER VALUES
-              const longitude = 0;
-              const latitude = 0;
-              // END PLACEHOLDER
               const e = new Event(
                 title,
                 description,
@@ -187,5 +212,7 @@ const formatDate = (date: Date): string => {
   const timePart = date.toLocaleTimeString('en-GB');
   return `${datePart} ${timePart}`;
 };
+
+
 
 export default CreateTaskScreen;
