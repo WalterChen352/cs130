@@ -2,10 +2,12 @@ import React from 'react';
 import { act, render, fireEvent, waitFor } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { getWorkflows} from '../app/scripts/Workflow';
-import { Workflow } from '../app/models/Workflow';
-import { SchedulingStyle } from '../app/models/SchedulingStyle';
-import { Time } from '../app/models/Time';
+//Commented Out to appease linter while test gets fixed
+//import { getWorkflows} from '../app/scripts/Workflow';
+//import { Workflow } from '../app/models/Workflow';
+//import { Time } from '../app/models/Time';
+// import { SchedulingStyle } from '../app/models/SchedulingStyle';
+
 import ProfileScreen from '../app/screens/ProfileScreen';
 import { View } from 'react-native';
 import { IoniconsProps } from '../__mocks__/ionicons';
@@ -50,35 +52,35 @@ jest.mock('../app/scripts/Profile', () => {
   };
 });
 
-const mockSchedulingStyles = [
-  new SchedulingStyle(0, 'Schedule close together'),
-  new SchedulingStyle(1, 'Schedule with max buffer'),
-  new SchedulingStyle(2, 'Schedule with mmiddle buffer'),
-  new SchedulingStyle(3, 'Schedule with random buffer')
-];
-
-const mockWorkflows = [
-  new Workflow(
-    1,
-    'School',
-    '#d5f9cf',
-    false,
-    new Time(9, 0),
-    new Time(10, 0),
-    [false, true, true, false, true, false, false],
-    mockSchedulingStyles[0]
-  ),
-  new Workflow(
-    2,
-    'Errand',
-    '#d3eef9',
-    true,
-    new Time(11, 0),
-    new Time(17, 0),
-    [true, false, false, false, false, false, true],
-    mockSchedulingStyles[1]
-  ),
-];
+//Commented out to appease linter while test gets fixed
+// const mockSchedulingStyles = [
+//   new SchedulingStyle(0, 'Schedule close together'),
+//   new SchedulingStyle(1, 'Schedule with max buffer'),
+//   new SchedulingStyle(2, 'Schedule with mmiddle buffer'),
+//   new SchedulingStyle(3, 'Schedule with random buffer')
+// ];r
+// const mockWorkflows = [
+//   new Workflow(
+//     1,
+//     'School',
+//     '#d5f9cf',
+//     false,
+//     new Time(9, 0),
+//     new Time(10, 0),
+//     [false, true, true, false, true, false, false],
+//     mockSchedulingStyles[0]
+//   ),
+//   new Workflow(
+//     2,
+//     'Errand',
+//     '#d3eef9',
+//     true,
+//     new Time(11, 0),
+//     new Time(17, 0),
+//     [true, false, false, false, false, false, true],
+//     mockSchedulingStyles[1]
+//   ),
+// ];
 
 describe('Profile Screen', () => {
   const mockNavigation = { navigate: jest.fn() };
@@ -118,10 +120,10 @@ describe('Profile Screen', () => {
   //   }
   // });
 
-  test('should navigate to Workflow create screen when press Create Workload button', async () => {
+  test('should navigate to Workflow create screen when press Create Workload button', () => {
     const { getByTestId } = render(<ProfileScreen />);
     
-    await act(async () => {
+    act(() => {
       fireEvent.press(getByTestId('workflow-btn-add'));
     });
 

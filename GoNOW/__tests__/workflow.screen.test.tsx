@@ -2,74 +2,21 @@ import React from 'react';
 import { Alert, View, ViewProps } from 'react-native';
 import { act, render, fireEvent, waitFor } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
+import { RouteProp } from '@react-navigation/native';
 
 import { SchedulingStyle } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import WorkflowScreen from '../app/screens/WorkflowScreen';
-import { getSchedulingStyle, getSchedulingStyles } from '../app/scripts/SchedulingStyle';
 import { addWorkflow, updateWorkflow, deleteWorkflow, validateWorkflow } from '../app/scripts/Workflow';
 import { IoniconsProps } from '../__mocks__/ionicons';
-import { RouteProp } from '@react-navigation/native';
 import { TabParamList } from '../app/screens/Navigator';
 
-
-// Create a proper mock route object
-const route: RouteProp<TabParamList, 'Workflow'> = {
-  key: 'workflow-screen',
-  name: 'Workflow',
-  params: {
-    workflow: {
-      id: 1,
-      name: 'Test Workflow',
-      color: '#000000',
-      pushNotifications: true,
-      timeStart: new Time(8,0),
-      timeEnd: new Time(10,0),
-      daysOfWeek: [],
-      schedulingStyle: new SchedulingStyle(0, 'Schedule close together')
-    }
-  }
-};
-
-
-
-// Use the mock route in your test
-const { getByTestId, queryByTestId, unmount } = render(
-  <WorkflowScreen route={route} />
-);
-
-jest.mock('react-native-vector-icons/Ionicons', () => {
-  return function MockIonicons(props: IoniconsProps) {
-    return <mock-ionicon {...props} />;
-  };
-});
-
-jest.mock('../app/scripts/Workflow', () => ({
-  addWorkflow: jest.fn(),
-  updateWorkflow: jest.fn(),
-  deleteWorkflow: jest.fn(),
-  validateWorkflow: jest.fn(),
-}));
-
-
-
-jest.mock('react-native-reanimated', () => {
-  const actualReanimated = jest.requireActual<typeof import('react-native-reanimated')>('react-native-reanimated');
-  
-  return {
-    ...actualReanimated,
-    default: jest.fn(),
-  };
-});
-
-jest.mock('@react-navigation/native', () => ({
-  useNavigation: jest.fn(),
-  useFocusEffect: jest.fn(),
-}));
-
-jest.mock('react-native/Libraries/Alert/Alert', () => ({
-  alert: jest.fn(),
-}));
+const mockSchedulingStyles = [
+  new SchedulingStyle(0, 'Schedule close together'),
+  new SchedulingStyle(1, 'Schedule with max buffer'),
+  new SchedulingStyle(2, 'Schedule with middle buffer'),
+  new SchedulingStyle(3, 'Schedule with random buffer')
+];
 
 // Define proper types for the Picker props
 interface PickerProps extends ViewProps {
@@ -92,41 +39,66 @@ MockPicker.Item = function MockPickerItem(props: PickerItemProps): React.ReactEl
   return React.createElement(View, props, props.children);
 };
 
+jest.mock('react-native-vector-icons/Ionicons', () => {
+  return function MockIonicons(props: IoniconsProps) {
+    return <mock-ionicon {...props} />;
+  };
+});
+
+jest.mock('react-native-reanimated', () => {
+  const actualReanimated = jest.requireActual<typeof import('react-native-reanimated')>('react-native-reanimated');
+  return {
+    ...actualReanimated,
+    default: jest.fn(),
+  };
+});
+
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: jest.fn(),
+  useFocusEffect: jest.fn(),
+}));
+
+jest.mock('react-native/Libraries/Alert/Alert', () => ({
+  alert: jest.fn(),
+}));
+
 jest.mock('@react-native-picker/picker', () => ({
   __esModule: true,
   Picker: MockPicker,
 }));
-
-const mockSchedulingStyles = [
-  new SchedulingStyle(0, 'Schedule close together'),
-  new SchedulingStyle(1, 'Schedule with max buffer'),
-  new SchedulingStyle(2, 'Schedule with middle buffer'),
-  new SchedulingStyle(3, 'Schedule with random buffer')
-];
-
 jest.mock('../app/scripts/SchedulingStyle', () => ({
-  getSchedulingStyles: jest.fn().mockResolvedValue(mockSchedulingStyles),
+  getSchedulingStyles: jest.fn(() => mockSchedulingStyles),
   getSchedulingStyle: jest.fn(),
 }));
 
-const mockWorkflow = {
-  id: 1,
-  name: 'Test Workflow',
-  color: '#388dff',
-  pushNotifications: true,
-  timeStart: new Time(8, 30),
-  timeEnd: new Time(17, 0),
-  daysOfWeek: [true, false, true, false, true, false, true],
-  schedulingStyle: mockSchedulingStyles[3],
-};
+jest.mock('../app/scripts/Workflow', () => ({
+  addWorkflow: jest.fn(),
+  updateWorkflow: jest.fn(),
+  deleteWorkflow: jest.fn(),
+  validateWorkflow: jest.fn(()=>Promise.resolve()),
+}));
+;
 
 describe('Workflow Screen', () => {
+
+  const mockWorkflow = {
+    id: 1,
+    name: 'Test Workflow',
+    color: '#388dff',
+    pushNotifications: true,
+    timeStart: new Time(8, 30),
+    timeEnd: new Time(17, 0),
+    daysOfWeek: [true, false, true, false, true, false, true],
+    schedulingStyle: mockSchedulingStyles[3],
+  };
+
   const mockNavigation = { navigate: jest.fn() };
+
+
 
   beforeEach(() => {
     jest.clearAllMocks();
     (useNavigation as jest.Mock).mockReturnValue(mockNavigation);
-    (getSchedulingStyles as jest.Mock).mockReturnValue(mockSchedulingStyles);
   });
 
   test('should render the updating screen for existing workflow', async () => {
@@ -135,7 +107,8 @@ describe('Workflow Screen', () => {
       name: 'Workflow',
       params: { workflow: mockWorkflow }
     } as RouteProp<TabParamList, 'Workflow'>;
-    const {getByTestId, queryByTestId, unmount} = render(<WorkflowScreen route={route} />);
+
+    const { getByTestId, queryByTestId, unmount } = render(<WorkflowScreen route={route} />);
 
     await waitFor(() => {
       expect(getByTestId('workflow-title')).toHaveTextContent('Update the workflow');
@@ -143,7 +116,6 @@ describe('Workflow Screen', () => {
       expect(getByTestId('workflow-push-notifications')).toHaveProp('value', mockWorkflow.pushNotifications);
       expect(getByTestId('workflow-time-start')).toHaveTextContent(mockWorkflow.timeStart.toString());
       expect(getByTestId('workflow-time-end')).toHaveTextContent(mockWorkflow.timeEnd.toString());
-
       expect(queryByTestId('workflow-btn-save')).toBeTruthy();
       expect(queryByTestId('workflow-btn-delete')).toBeTruthy();
     });
@@ -166,9 +138,10 @@ describe('Workflow Screen', () => {
     const route = {
       key: 'workflow-screen',
       name: 'Workflow',
-      params: { workflow: mockWorkflow }
+      params: { workflow: newMockWorkflow }
     } as RouteProp<TabParamList, 'Workflow'>;
-    const {getByTestId, queryByTestId, unmount} = render(<WorkflowScreen route={route} />);
+
+    const { getByTestId, queryByTestId, unmount } = render(<WorkflowScreen route={route} />);
 
     await waitFor(() => {
       expect(getByTestId('workflow-title')).toHaveTextContent('Add a workflow');
@@ -176,7 +149,6 @@ describe('Workflow Screen', () => {
       expect(getByTestId('workflow-push-notifications')).toHaveProp('value', newMockWorkflow.pushNotifications);
       expect(getByTestId('workflow-time-start')).toHaveTextContent(newMockWorkflow.timeStart.toString());
       expect(getByTestId('workflow-time-end')).toHaveTextContent(newMockWorkflow.timeEnd.toString());
-
       expect(queryByTestId('workflow-btn-save')).toBeTruthy();
       expect(queryByTestId('workflow-btn-delete')).toBeNull();
     });
@@ -184,49 +156,48 @@ describe('Workflow Screen', () => {
     unmount();
   });
 
-  test('should update the workflow name', async () => {
+  test('should update the workflow name', () => {
     const route = {
       key: 'workflow-screen',
       name: 'Workflow',
       params: { workflow: mockWorkflow }
     } as RouteProp<TabParamList, 'Workflow'>;
-    const {getByTestId, unmount} = render(<WorkflowScreen route={route} />);
+
+    const { getByTestId, unmount } = render(<WorkflowScreen route={route} />);
 
     const el = getByTestId('workflow-name');
-    await act(async () => {
+    act(() => {
       fireEvent.changeText(el, 'Updated Workflow Name');
-      return Promise.resolve();
     });
     expect(el).toHaveProp('value', 'Updated Workflow Name');
 
     unmount();
   });
 
-  test('should toggle push notifications', async () => {
+  test('should toggle push notifications', () => {
     const route = {
       key: 'workflow-screen',
       name: 'Workflow',
       params: { workflow: mockWorkflow }
     } as RouteProp<TabParamList, 'Workflow'>;
-    const {getByTestId, unmount} = render(<WorkflowScreen route={route} />);
+
+    const { getByTestId, unmount } = render(<WorkflowScreen route={route} />);
 
     const el = getByTestId('workflow-push-notifications');
-    await act(async () => {
+    act( () => {
       fireEvent(el, 'valueChange', false);
-      return Promise.resolve();
     });
     expect(el).toHaveProp('value', false);
 
-    await act(async () => {
+    act(() => {
       fireEvent(el, 'valueChange', true);
-      return Promise.resolve();
     });
     expect(el).toHaveProp('value', true);
 
     unmount();
   });
 
-  test('should handle save workflow', async () => {
+  test('should handle save workflow',async  () => {
     (validateWorkflow as jest.Mock).mockResolvedValueOnce(undefined);
 
     const route = {
@@ -234,12 +205,13 @@ describe('Workflow Screen', () => {
       name: 'Workflow',
       params: { workflow: mockWorkflow }
     } as RouteProp<TabParamList, 'Workflow'>;
-    const {getByTestId, unmount} = render(<WorkflowScreen route={route} />);
+
+    const { getByTestId, unmount } = render(<WorkflowScreen route={route} />);
 
     const saveButton = getByTestId('workflow-btn-save');
     await act(async () => {
-      fireEvent.press(saveButton);
-      return Promise.resolve();
+        fireEvent.press(saveButton);
+        await Promise.resolve();
     });
 
     expect(updateWorkflow).toHaveBeenCalled();
@@ -265,24 +237,25 @@ describe('Workflow Screen', () => {
     const route = {
       key: 'workflow-screen',
       name: 'Workflow',
-      params: { workflow: mockWorkflow }
+      params: { workflow: newMockWorkflow }
     } as RouteProp<TabParamList, 'Workflow'>;
-    const {getByTestId, unmount} = render(<WorkflowScreen route={route} />);
+
+    const { getByTestId, unmount } = render(<WorkflowScreen route={route} />);
 
     await act(async () => {
       fireEvent.changeText(getByTestId('workflow-name'), 'New workflow name');
-      return Promise.resolve();
+      await Promise.resolve();
     });
 
     await act(async () => {
       fireEvent.press(getByTestId('workflow-day-of-week-0'));
-      return Promise.resolve();
+      await Promise.resolve();
     });
 
     const saveButton = getByTestId('workflow-btn-save');
     await act(async () => {
       fireEvent.press(saveButton);
-      return Promise.resolve();
+      await Promise.resolve();
     });
 
     expect(addWorkflow).toHaveBeenCalled();
@@ -299,11 +272,11 @@ describe('Workflow Screen', () => {
       name: 'Workflow',
       params: { workflow: mockWorkflow }
     } as RouteProp<TabParamList, 'Workflow'>;
-    const {getByTestId, unmount} = render(<WorkflowScreen route={route} />);
 
-    await act(async () => {
+    const { getByTestId, unmount } = render(<WorkflowScreen route={route} />);
+
+    act(() => {
       fireEvent.press(getByTestId('workflow-btn-delete'));
-      return Promise.resolve();
     });
 
     expect(Alert.alert).toHaveBeenCalledWith(
