@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from 'react-native-vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import MapScreen from './MapScreen';
 import ProfileScreen from './ProfileScreen';

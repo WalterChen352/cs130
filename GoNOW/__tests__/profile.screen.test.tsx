@@ -8,10 +8,13 @@ import { SchedulingStyle } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import ProfileScreen from '../app/screens/ProfileScreen';
 import { View } from 'react-native';
+import { IoniconsProps } from '../__mocks__/ionicons';
 
-jest.mock('react-native-vector-icons', () => ({
-  Ionicons: jest.fn(() => null),
-}));
+jest.mock('react-native-vector-icons/Ionicons', () => {
+  return function MockIonicons(props: IoniconsProps) {
+    return <mock-ionicon {...props} />;
+  };
+});
 
 jest.mock('../app/scripts/Workflow', () => ({
   getWorkflows: jest.fn(),
