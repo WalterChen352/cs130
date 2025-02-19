@@ -13,6 +13,7 @@ import { NavigatorStyles } from '../styles/Navigator.styles';
 import { Workflow } from '../models/Workflow';
 import { ParamListBase } from '@react-navigation/native';
 
+
 export type TabParamList = ParamListBase & {
   Map: undefined;
   Daily: undefined;

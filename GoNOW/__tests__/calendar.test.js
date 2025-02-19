@@ -2,6 +2,11 @@ import React from 'react';
 import { render, waitFor, screen } from '@testing-library/react-native';
 import CalendarScreen from '../app/screens/CalendarScreen';
 
+jest.mock('react-native-vector-icons/Ionicons', () => {
+  return function MockIonicons(props) {
+    return <mock-ionicon {...props} />;
+  };
+});
 // Mock dependencies
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn()

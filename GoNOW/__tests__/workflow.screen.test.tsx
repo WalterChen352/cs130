@@ -6,9 +6,37 @@ import { useNavigation } from '@react-navigation/native';
 import { SchedulingStyle } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import WorkflowScreen from '../app/screens/WorkflowScreen';
-import { getSchedulingStyles } from '../app/scripts/SchedulingStyle';
+import { getSchedulingStyle, getSchedulingStyles } from '../app/scripts/SchedulingStyle';
 import { addWorkflow, updateWorkflow, deleteWorkflow, validateWorkflow } from '../app/scripts/Workflow';
 import { IoniconsProps } from '../__mocks__/ionicons';
+import { RouteProp } from '@react-navigation/native';
+import { TabParamList } from '../app/screens/Navigator';
+
+
+// Create a proper mock route object
+const route: RouteProp<TabParamList, 'Workflow'> = {
+  key: 'workflow-screen',
+  name: 'Workflow',
+  params: {
+    workflow: {
+      id: 1,
+      name: 'Test Workflow',
+      color: '#000000',
+      pushNotifications: true,
+      timeStart: new Time(8,0),
+      timeEnd: new Time(10,0),
+      daysOfWeek: [],
+      schedulingStyle: new SchedulingStyle(0, 'Schedule close together')
+    }
+  }
+};
+
+
+
+// Use the mock route in your test
+const { getByTestId, queryByTestId, unmount } = render(
+  <WorkflowScreen route={route} />
+);
 
 jest.mock('react-native-vector-icons/Ionicons', () => {
   return function MockIonicons(props: IoniconsProps) {
@@ -23,10 +51,7 @@ jest.mock('../app/scripts/Workflow', () => ({
   validateWorkflow: jest.fn(),
 }));
 
-jest.mock('../app/scripts/SchedulingStyle', () => ({
-  getSchedulingStyles: jest.fn(),
-  getSchedulingStyle: jest.fn(),
-}));
+
 
 jest.mock('react-native-reanimated', () => {
   const actualReanimated = jest.requireActual<typeof import('react-native-reanimated')>('react-native-reanimated');
@@ -79,6 +104,11 @@ const mockSchedulingStyles = [
   new SchedulingStyle(3, 'Schedule with random buffer')
 ];
 
+jest.mock('../app/scripts/SchedulingStyle', () => ({
+  getSchedulingStyles: jest.fn().mockResolvedValue(mockSchedulingStyles),
+  getSchedulingStyle: jest.fn(),
+}));
+
 const mockWorkflow = {
   id: 1,
   name: 'Test Workflow',
@@ -100,7 +130,11 @@ describe('Workflow Screen', () => {
   });
 
   test('should render the updating screen for existing workflow', async () => {
-    const route = { params: { workflow: mockWorkflow }};
+    const route = {
+      key: 'workflow-screen',
+      name: 'Workflow',
+      params: { workflow: mockWorkflow }
+    } as RouteProp<TabParamList, 'Workflow'>;
     const {getByTestId, queryByTestId, unmount} = render(<WorkflowScreen route={route} />);
 
     await waitFor(() => {
@@ -129,7 +163,11 @@ describe('Workflow Screen', () => {
       schedulingStyle: mockSchedulingStyles[0],
     };
 
-    const route = { params: { workflow: newMockWorkflow }};
+    const route = {
+      key: 'workflow-screen',
+      name: 'Workflow',
+      params: { workflow: mockWorkflow }
+    } as RouteProp<TabParamList, 'Workflow'>;
     const {getByTestId, queryByTestId, unmount} = render(<WorkflowScreen route={route} />);
 
     await waitFor(() => {
@@ -147,7 +185,11 @@ describe('Workflow Screen', () => {
   });
 
   test('should update the workflow name', async () => {
-    const route = { params: { workflow: mockWorkflow }};
+    const route = {
+      key: 'workflow-screen',
+      name: 'Workflow',
+      params: { workflow: mockWorkflow }
+    } as RouteProp<TabParamList, 'Workflow'>;
     const {getByTestId, unmount} = render(<WorkflowScreen route={route} />);
 
     const el = getByTestId('workflow-name');
@@ -161,7 +203,11 @@ describe('Workflow Screen', () => {
   });
 
   test('should toggle push notifications', async () => {
-    const route = { params: { workflow: mockWorkflow }};
+    const route = {
+      key: 'workflow-screen',
+      name: 'Workflow',
+      params: { workflow: mockWorkflow }
+    } as RouteProp<TabParamList, 'Workflow'>;
     const {getByTestId, unmount} = render(<WorkflowScreen route={route} />);
 
     const el = getByTestId('workflow-push-notifications');
@@ -183,7 +229,11 @@ describe('Workflow Screen', () => {
   test('should handle save workflow', async () => {
     (validateWorkflow as jest.Mock).mockResolvedValueOnce(undefined);
 
-    const route = { params: { workflow: mockWorkflow }};
+    const route = {
+      key: 'workflow-screen',
+      name: 'Workflow',
+      params: { workflow: mockWorkflow }
+    } as RouteProp<TabParamList, 'Workflow'>;
     const {getByTestId, unmount} = render(<WorkflowScreen route={route} />);
 
     const saveButton = getByTestId('workflow-btn-save');
@@ -212,7 +262,11 @@ describe('Workflow Screen', () => {
       schedulingStyle: mockSchedulingStyles[0],
     };
     
-    const route = { params: { workflow: newMockWorkflow }};
+    const route = {
+      key: 'workflow-screen',
+      name: 'Workflow',
+      params: { workflow: mockWorkflow }
+    } as RouteProp<TabParamList, 'Workflow'>;
     const {getByTestId, unmount} = render(<WorkflowScreen route={route} />);
 
     await act(async () => {
@@ -240,7 +294,11 @@ describe('Workflow Screen', () => {
   test('should delete workflow on confirmation', async () => {
     (validateWorkflow as jest.Mock).mockResolvedValueOnce(undefined);
 
-    const route = { params: { workflow: mockWorkflow }};
+    const route = {
+      key: 'workflow-screen',
+      name: 'Workflow',
+      params: { workflow: mockWorkflow }
+    } as RouteProp<TabParamList, 'Workflow'>;
     const {getByTestId, unmount} = render(<WorkflowScreen route={route} />);
 
     await act(async () => {

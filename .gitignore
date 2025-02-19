@@ -38,3 +38,15 @@ yarn-error.*
 
 app-example
 GoNOW/.gitignore
+GoNOW/docs/.nojekyll
+GoNOW/docs/index.html
+GoNOW/docs/modules.html
+GoNOW/docs/assets/hierarchy.js
+GoNOW/docs/assets/highlight.css
+GoNOW/docs/assets/icons.js
+GoNOW/docs/assets/icons.svg
+GoNOW/docs/assets/main.js
+GoNOW/docs/assets/navigation.js
+GoNOW/docs/assets/search.js
+GoNOW/docs/assets/style.css
+GoNOW/docs/functions/default.html
