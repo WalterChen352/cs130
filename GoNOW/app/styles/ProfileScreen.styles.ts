@@ -1,5 +1,8 @@
 import { StyleSheet } from 'react-native';
 
+/**
+ * Styles for the Profile Screen components.
+ */
 export const ProfileScreenStyles = StyleSheet.create({
     container: {
         flex: 1,
@@ -58,23 +61,5 @@ export const ProfileScreenStyles = StyleSheet.create({
     },
     footer: {
         paddingBottom: 40,
-    },
-    btnDel: {
-        position: 'absolute',
-        bottom: 20,
-        left: 20,
-        backgroundColor: '#ffa5a5',
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        borderWidth: 4,
-        borderColor: 'white',
     },
 });

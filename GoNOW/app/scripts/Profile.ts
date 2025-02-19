@@ -1,6 +1,13 @@
 import { openDatabase } from './Database';
 import { Location, Coordinates } from '../models/Location';
 
+/**
+ * Returns home geolocation of the user from DB.
+ * Returns null if DB is not initialized.
+ *
+ * @async
+ * @returns {Promise<Location | null>} - A promise that resolves to `Location` object or null.
+ */
 export const getLocation = async (): Promise<Location | null> => {
   //console.log("> Profile getLocation");
   try{
@@ -24,6 +31,14 @@ export const getLocation = async (): Promise<Location | null> => {
   }
 };
 
+/**
+ * Updates home geolocation of the user in DB if the record of location exists.
+ * This method does not return any value.
+ *
+ * @async
+ * @param {Location} location - The `Location` object
+ * @returns {Promise<void>} - A promise that resolves when the geolocation is updated.
+ */
 export const updateLocation = async (location : Location): Promise<void> => {
   //console.log("> Profile updateLocation");
   try {

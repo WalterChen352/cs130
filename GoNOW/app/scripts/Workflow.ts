@@ -3,17 +3,78 @@ import { getSchedulingStyle } from '../scripts/SchedulingStyle';
 import { Time, DaysOfWeekNames } from '../models/Time';
 import { Workflow } from '../models/Workflow';
 
+/**
+ * DB record representing a workflow.
+ *
+ * @interface row
+ * @typedef {row}
+ * 
+ */
 interface row {
+  /**
+   * Unique id for the workflow.
+   *
+   * @type {number}
+   */
   id: number,
+  
+  /**
+   * Name of the workflow.
+   *
+   * @type {string}
+   */
   name: string,
+  
+  /**
+   * Color of the workflow in #RRGGBB format.
+   *
+   * @type {string}
+   */
   color: string,
+  
+  /**
+   * Boolean representation whether push notifications are enabled for the workflow.
+   *
+   * @type {boolean}
+   */
   pushNotifications: boolean,
+  
+  /**
+   * Start time of the workflow in the format = hours * 60 + minutes.
+   *
+   * @type {number}
+   */
   timeStart: number,
+  /**
+   * End time of the workflow in the format = hours * 60 + minutes.
+   *
+   * @type {number}
+   */
   timeEnd: number,
+  
+  /**
+   * A bit mask representing the days of week when the workflow is active.
+   * Each bit position corresponds to a day of the week: Su Mo Tu We Th Fr Sa.
+   * `1` indicates the workflow is active on that day, `0` indicates it is not.
+   *
+   * @type {number}
+   */
   daysOfWeek: number,
+  
+  /**
+   * Id of Scheduling style representing how it should be scheduled in autoscheduling mode.
+   *
+   * @type {number}
+   */
   schedulingStyle: number
 }
 
+/**
+ * Returns the list of workflows from DB.
+ *
+ * @async
+ * @returns {Promise<Workflow[]>} - A promise that resolves to a list of `Workflow` objects.
+ */
 export const getWorkflows = async (): Promise<Workflow[]> => {
   try {
     const DB = await openDatabase();
@@ -53,6 +114,13 @@ export const getWorkflows = async (): Promise<Workflow[]> => {
   }
 };
 
+/**
+ * Clears table of workflows in DB.
+ * This method does not return any value.
+ *
+ * @async
+ * @returns {Promise<void>} - A promise that resolves when the table is cleared.
+ */
 export const clearWorkflows = async (): Promise<void> => {
   try {
     const DB = await openDatabase();
@@ -66,6 +134,14 @@ export const clearWorkflows = async (): Promise<void> => {
   }
 };
 
+/**
+ * Adds a workflows to the table `workflows` in DB.
+ * This method does not return any value.
+ *
+ * @async
+ * @param {Workflow} workflow - The `Workflow` object
+ * @returns {Promise<void>} - A promise that resolves when the record is added to the table in DB.
+ */
 export const addWorkflow = async (workflow: Workflow): Promise<void> => {
   let daysOfWeekMask = 0;
   workflow.daysOfWeek.forEach((d,i) => {
@@ -101,6 +177,15 @@ export const addWorkflow = async (workflow: Workflow): Promise<void> => {
   }
 };
 
+
+/**
+ * Updates a workflows in the table `workflows` in DB.
+ * This method does not return any value.
+ *
+ * @async
+ * @param {Workflow} workflow - The `Workflow` object
+ * @returns {Promise<void>} - A promise that resolves when the record is updated in the table in DB.
+ */
 export const updateWorkflow = async (workflow: Workflow): Promise<void> => {
   let daysOfWeekMask = 0;
   workflow.daysOfWeek.forEach((d,i) => {
@@ -137,6 +222,14 @@ export const updateWorkflow = async (workflow: Workflow): Promise<void> => {
   }
 };
 
+/**
+ * Deletes a workflows from the table `workflows` in DB.
+ * This method does not return any value.
+ *
+ * @async
+ * @param {Workflow} workflow - The `Workflow` object
+ * @returns {Promise<void>} - A promise that resolves when the record is deleted from the table in DB.
+ */
 export const deleteWorkflow = async (workflow: Workflow): Promise<void> => {
   try {
     const DB = await openDatabase();
@@ -152,6 +245,15 @@ export const deleteWorkflow = async (workflow: Workflow): Promise<void> => {
   }
 };
 
+/**
+ * Checks if the values of new or changed workflow's patameters are valid.
+ * Checks if the values of new or changed workflow do not conflict with other workflows.
+ * This method does not return any value.
+ *
+ * @async
+ * @param {Workflow} workflow - The `Workflow` object
+ * @returns {Promise<void>} - A promise that resolves when the record is deleted from the table in DB.
+ */
 export const validateWorkflow = async (workflow : Workflow): Promise<void> => {
   const errors = [];
   if (!workflow.name) {

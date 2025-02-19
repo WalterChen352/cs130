@@ -5,6 +5,7 @@ import { Ionicons } from 'react-native-vector-icons';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import AddressPicker from '../components/AddressPicker';
+import ButtonDelete from '../components/ButtonDelete';
 import { Location } from '../models/Location';
 import { Time, DaysOfWeekNames } from '../models/Time';
 import { Workflow } from '../models/Workflow';
@@ -16,12 +17,23 @@ import { getWorkflows } from '../scripts/Workflow';
 import { ProfileScreenStyles } from '../styles/ProfileScreen.styles';
 import { TabParamList } from './Navigator';
 
+/**
+ * `ProfileScreen` component that displays a profile of the user.
+ *
+ * @returns {JSX.Element} - The rendered `ProfileScreen` component.
+ */
 const ProfileScreen = (): JSX.Element => {
     const [workflows, setWorkflows] = useState<Workflow[]>([]);
     const [location, setLocation] = useState<Location | null>(null);
 
     const navigation = useNavigation<NavigationProp<TabParamList>>();
 
+    /**
+     * Loads list of workflows to `workflows` state.
+     *
+     * @async
+     * @returns {Promise<void>} - A promise that resolves when `workflows` state is updated.
+     */
     const loadWorkflows = async (): Promise<void> => {
         const items = await getWorkflows();
         setWorkflows(items);
@@ -53,9 +65,11 @@ const ProfileScreen = (): JSX.Element => {
         void fetchLocation();
     }, []);
 
-    // Removed async since no await is used
+    /** Shows pop-up window and requests confirmation to reset DB.
+     * This method does not return any value.
+     */
     const handleReset = (): void => {
-        Alert.alert('Confirm', 'Are you sure?',
+        Alert.alert('Confirm reset DB', 'Are you sure?',
             [
                 { text: 'Cancel', style: 'cancel' },
                 {
@@ -71,7 +85,9 @@ const ProfileScreen = (): JSX.Element => {
         );
     };
 
-    // Removed async since no await is used
+    /** Calls rendering screen for new workflow.
+     * This method does not return any value.
+     */
     const handleAdd = (): void => {
         const schedulingStyleDefault = getSchedulingStyle(0);
         const workflowDefault = new Workflow(
@@ -87,6 +103,12 @@ const ProfileScreen = (): JSX.Element => {
         navigation.navigate('Workflow', { workflow: workflowDefault });
     };
 
+    /**
+     * Sets `location` state from user input.
+     * This method does not return any value.
+     *
+     * @param {Location} location - The `location` object from user input.
+     */
     const handleLocation = (location: Location): void => {
         void updateLocation(location).then(() => {
             setLocation(location);
@@ -152,9 +174,7 @@ const ProfileScreen = (): JSX.Element => {
                 )}
             />
 
-            <TouchableOpacity style={ProfileScreenStyles.btnDel} onPress={handleReset} testID="workflow-btn-delete">
-                <Ionicons name="trash-outline" size={34} color="#fff" />
-            </TouchableOpacity>
+            <ButtonDelete onPress={handleReset} icon="trash-outline" testID="workflow-btn-delete" />
         </View>
     );
 };
