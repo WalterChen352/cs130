@@ -3,10 +3,11 @@ import { View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import { getWeeklyEvents } from '../scripts/Event';
 import { useEffect, useState } from 'react';
 import {GestureDetector,Gesture,Directions} from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Ionicons } from 'react-native-vector-icons';
 import {CalendarStyles} from '../styles/CalendarScreen.styles';
 import {Event} from '../models/Event';
+import { TabParamList } from './Navigator';
 
 
 const HOUR_HEIGHT = 20; // Height for each hour in pixels
@@ -20,11 +21,13 @@ const TIME_LABELS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => {
 });
 
 const CalendarScreen = (): JSX.Element=> {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp<TabParamList>>();
 
-    const navigateToDaily= ():void => {
-      navigation.navigate('Daily');
+    const navigateToDaily= (eventDate: Date): void => {
+        console.log(eventDate);
+      navigation.navigate('Daily', { eventDate: eventDate.toISOString() });
     };
+
     const getLastSunday = (d: Date) :Date => {
         const t = new Date(d);
         t.setDate(d.getDate() - d.getDay());
@@ -187,7 +190,8 @@ const CalendarScreen = (): JSX.Element=> {
                                         ]}
                                         onPress={() => {
                                             console.log('Clicked event:', event);
-                                            navigateToDaily();
+                                            const eventDate = new Date(event.startTime);
+                                            navigateToDaily(eventDate);
                                         }}
                                     >
                                         <Text style={CalendarStyles.eventText} numberOfLines={1}>

@@ -1,24 +1,36 @@
 import * as SQLite from 'expo-sqlite';
 import { Event } from '../models/Event';
 
-export const getDailyEvents = async():Promise<Event[]>=>{
-    console.log('getting events');
-    try{
-        const DB = await SQLite.openDatabaseAsync('userEvents.db');
-        console.log('db opened for daily events');
-        const result = await DB.getAllAsync(` SELECT * FROM events 
-  WHERE date(startTime) = date('now', 'localtime')
-  ORDER BY startTime;`);
-        //const result = await DB.getAllAsync("SELECT * FROM events");
-        console.log(result);
-        console.log('done txn');
-        const events = result as Event[];
-        return events;
-    }
-    catch (error) {
-        console.error('error getting daily events', error);
-        return [];
-    }
+export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
+  console.log('getting events for date:', eventDate);
+  try {
+    const DB = await SQLite.openDatabaseAsync('userEvents.db');
+    console.log('db opened for daily events');
+    
+    const dateToUse = eventDate ?? new Date();
+    
+    const startOfDay = new Date(dateToUse);
+    startOfDay.setHours(0, 0, 0, 0);
+    
+    const endOfDay = new Date(dateToUse);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const result = await DB.getAllAsync(`
+      SELECT * FROM events 
+      WHERE datetime(startTime) >= datetime(?)
+      AND datetime(startTime) < datetime(?)
+      ORDER BY startTime;
+    `, [startOfDay.toISOString(), endOfDay.toISOString()]);
+
+    console.log('Query result:', result);
+    console.log('done txn');
+    
+    const events = result as Event[];
+    return events;
+  } catch (error) {
+    console.error('error getting daily events', error);
+    return [];
+  }
 };
 
 export const clearEvents = async():Promise<void>=>{ //just for clearing local storage

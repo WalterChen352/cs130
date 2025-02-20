@@ -1,30 +1,41 @@
-import React, { useState, useEffect , JSX} from 'react';
+import React, { useState, useCallback, JSX, useMemo } from 'react';
 import { Text, View, FlatList } from 'react-native';
 import { getDailyEvents } from '../scripts/Event';
 import { styles } from '../styles/DailyScreen.styles';
 import { Event } from '../models/Event';
+import { TabParamList } from './Navigator';
+import { RouteProp, useFocusEffect } from '@react-navigation/native';
 
-const DailyScreen = () :JSX.Element=> {
-  // set up
+interface DailyScreenProps {
+  route: RouteProp<TabParamList, 'Daily'>;
+}
+
+const DailyScreen = ({ route }: DailyScreenProps) :JSX.Element=> {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
-  
+  const eventDate = useMemo(() => 
+    new Date(route.params?.eventDate ?? Date.now()),
+    [route.params?.eventDate]
+  );
 
-  useEffect(() => {
-    const loadEvents = async () :Promise<void>=> {
-      try {
+  useFocusEffect(
+    useCallback(() => {
+      const loadEvents = async (): Promise<void> => {
+        try {
           setLoading(true);
-          const dailyEvents = await getDailyEvents();
+          const dailyEvents = await getDailyEvents(eventDate);
           setEvents(dailyEvents);
-      } catch (error) {
+        } catch (error) {
           console.error('Failed to get daily events.', error);
-      } finally {
+        } finally {
           setLoading(false);
-      }
-    };
-    void loadEvents();
-  }, []);
+        }
+      };
+      
+      void loadEvents();
+    }, [eventDate])
+  );
 
   const LocalTimeStringOptions:Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
 

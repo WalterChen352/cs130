@@ -15,7 +15,7 @@ import { ParamListBase } from '@react-navigation/native';
 
 export type TabParamList = ParamListBase & {
   Map: undefined;
-  Daily: undefined;
+  Daily: { eventDate: string };
   CreateTask: undefined;
   Calendar: undefined;
   Profile: undefined;
