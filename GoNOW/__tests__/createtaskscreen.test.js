@@ -1,9 +1,8 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import CreateTaskScreen from '../app/screens/CreateTaskScreen';
-import { addEvent } from '../app/scripts/Database';
 
-jest.mock('../app/scripts/database', () => ({
+jest.mock('../app/scripts/Event', () => ({
   addEvent: jest.fn(),
 }));
 
@@ -26,9 +25,8 @@ describe('CreateTaskScreen', () => {
     expect(titleInput.props.value).toBe('New Task Title');
   });
 
-  // TODO:: seems to not accurately test whether or not the pressable is pressable
   it('calls addEvent on save', async () => {
-    const { getByTestId, getByText } = render(<CreateTaskScreen />);
+    const { getByTestId } = render(<CreateTaskScreen />);
 
     fireEvent.changeText(getByTestId('Title'), 'Test Event');
     fireEvent.changeText(getByTestId('Description'), 'Test Description');
