@@ -1,10 +1,11 @@
 import * as SQLite from 'expo-sqlite';
 import { Event } from '../models/Event';
+import { DB_NAME } from './Database';
 
 export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
   console.log('getting events for date:', eventDate);
   try {
-    const DB = await SQLite.openDatabaseAsync('userEvents.db');
+    const DB = await SQLite.openDatabaseAsync(DB_NAME);
     console.log('db opened for daily events');
     
     const dateToUse = eventDate ?? new Date();
@@ -36,7 +37,7 @@ export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
 export const clearEvents = async():Promise<void>=>{ //just for clearing local storage
   console.log('dropping events table');
   try{
-      const DB = SQLite.openDatabaseSync('userEvents.db');
+      const DB = SQLite.openDatabaseSync(DB_NAME);
       await DB.execAsync(`PRAGMA journal_mode = WAL;
         DROP TABLE events;
         `);
@@ -55,7 +56,7 @@ export const getWeeklyEvents = async(date:Date):Promise<Event[]>=>{
   endDate.setDate(endDate.getDate()+7);
   console.log('searching for events between ', startDate.toISOString(), endDate.toISOString());
   try{
-    const DB = await SQLite.openDatabaseAsync('userEvents.db');
+    const DB = await SQLite.openDatabaseAsync(DB_NAME);
     const result = await DB.getAllAsync(` SELECT * FROM events 
     WHERE startTime >= datetime(?) AND startTime < datetime(?) 
     ORDER BY startTime;
@@ -71,15 +72,78 @@ export const getWeeklyEvents = async(date:Date):Promise<Event[]>=>{
   return [];
 };
 
-export const addEvent = async (e: Event):Promise<void> => {
+export const addEvent = async (e: Event): Promise<void> => {
   try {
-      const DB = await SQLite.openDatabaseAsync('userEvents.db');
-      console.log('db', DB);
-      await DB.runAsync(`INSERT INTO events 
-              (name, description, startTime, endTime, latitude, longitude, transportationMode) 
-              VALUES (?, ?, ?, ?, ?, ?, ?);`, [e.name, e.description, e.startTime, e.endTime, e.latitude, e.longitude, e.transportationMode]);
+    const DB = await SQLite.openDatabaseAsync(DB_NAME);
+    console.log('db', DB);
+    
+    const query = e.workflow !== undefined
+      ? `INSERT INTO events
+          (name, description, startTime, endTime, latitude, longitude, transportationMode, workflow)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
+      : `INSERT INTO events
+          (name, description, startTime, endTime, latitude, longitude, transportationMode)
+          VALUES (?, ?, ?, ?, ?, ?, ?);`;
+    
+    const params = e.workflow !== undefined
+      ? [e.name, e.description, e.startTime, e.endTime, e.latitude, e.longitude, e.transportationMode, e.workflow]
+      : [e.name, e.description, e.startTime, e.endTime, e.latitude, e.longitude, e.transportationMode];
+    
+    await DB.runAsync(query, params);
   } catch (error) {
-      console.error('Error in addEvent function:', error);
+    console.error('Error in addEvent function:', error);
   }
-  return new Promise(()=>{return;});
+  return new Promise(() => { return; });
+};
+
+export const updateEvent = async (e: Event): Promise<void> => {
+  try {
+    const DB = await SQLite.openDatabaseAsync(DB_NAME);
+    console.log('db opened for update', DB);
+    
+    const query = e.workflow !== undefined
+      ? `UPDATE events 
+          SET name = ?, 
+              description = ?, 
+              startTime = ?,
+              endTime = ?,
+              latitude = ?,
+              longitude = ?,
+              transportationMode = ?,
+              workflow = ?
+          WHERE id = ?;`
+      : `UPDATE events 
+          SET name = ?, 
+              description = ?, 
+              startTime = ?,
+              endTime = ?,
+              latitude = ?,
+              longitude = ?,
+              transportationMode = ?,
+              workflow = NULL
+          WHERE id = ?;`;
+    
+    const params = e.workflow !== undefined
+      ? [e.name, e.description, e.startTime, e.endTime, e.latitude, e.longitude, e.transportationMode, e.workflow, e.id]
+      : [e.name, e.description, e.startTime, e.endTime, e.latitude, e.longitude, e.transportationMode, e.id];
+    
+    await DB.runAsync(query, params);
+    console.log('Updated event with id:', e.id);
+  } catch (error) {
+    console.error('Error in updateEvent function:', error);
+  }
+  return new Promise(() => { return; });
+};
+
+export const deleteEvent = async (eventId: number): Promise<void> => {
+  try {
+    const DB = await SQLite.openDatabaseAsync(DB_NAME);
+    console.log('db opened for deletion', DB);
+    
+    await DB.runAsync('DELETE FROM events WHERE id = ?;', [eventId]);
+    console.log('Deleted event with id:', eventId);
+  } catch (error) {
+    console.error('Error in deleteEvent function:', error);
+  }
+  return new Promise(() => { return; });
 };

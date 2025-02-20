@@ -15,8 +15,14 @@ import { ParamListBase } from '@react-navigation/native';
 
 export type TabParamList = ParamListBase & {
   Map: undefined;
-  Daily: { eventDate?: string };
-  CreateTask: undefined;
+  Daily: { 
+    eventDate?: string,
+    eventId?: number
+   };
+  CreateTask: {
+    mode?: string,
+    eventData?: Event
+  };
   Calendar: undefined;
   Profile: undefined;
   Workflow: { workflow: Workflow };

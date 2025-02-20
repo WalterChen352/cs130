@@ -5,19 +5,40 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 
 import AddressPicker from '../components/AddressPicker';
 import { Location } from '../models/Location';
-import { addEvent } from '../scripts/Event';
+import { addEvent, updateEvent } from '../scripts/Event';
 import { styles } from '../styles/CreateTaskScreen.styles';
-import {Event} from '../models/Event';
+import { Event } from '../models/Event';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
+import { RouteProp } from '@react-navigation/native';
+import { TabParamList } from './Navigator';
 
-const CreateTaskScreen = (): JSX.Element => {
+interface EventData {
+  id: number;
+  name: string;
+  description: string;
+  startTime: string;
+  endTime: string;
+  latitude: number;
+  longitude: number;
+  transportationMode: string;
+  workflow?: string;
+}
+
+interface CreateTaskScreenProps {
+  route: RouteProp<TabParamList, 'CreateTask'>;
+}
+
+const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
+  const isEditMode = route.params?.mode === 'edit' && route.params?.eventData;// eslint-disable-line @typescript-eslint/no-unnecessary-condition
+  const eventData = route.params?.eventData as EventData | undefined;// eslint-disable-line @typescript-eslint/no-unnecessary-condition
+
   const [title, setTitle] = useState<string>('');
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [autoSchedule, setAutoSchedule] = useState<boolean>(false);
   const [transportationMode, setTransportationMode] = useState<string>('');
-  const [workflow, setWorkflow] = useState<string>('')
+  const [workflow, setWorkflow] = useState<string>('');
   const [location, setLocation] = useState<Location | null>(null);
   const [longitude, setLongitude] = useState<number>(0.0);
   const [latitude, setLatitude] = useState<number>(0.0);
@@ -35,40 +56,60 @@ const CreateTaskScreen = (): JSX.Element => {
   ];
 
   const setDestCoords = (location: Location): void => {
-    setLatitude(location.Coordinates.Latitude)
-    setLongitude(location.Coordinates.Longitude)
+    setLatitude(location.Coordinates.Latitude);
+    setLongitude(location.Coordinates.Longitude);
   };
 
+  // Populate form with event data if in edit mode
+  useEffect(() => {
+    if (isEditMode && eventData) {
+      setTitle(eventData.name);
+      setDescription(eventData.description);
+      setStartDate(new Date(eventData.startTime));
+      setEndDate(new Date(eventData.endTime));
+      setLatitude(eventData.latitude);
+      setLongitude(eventData.longitude);
+      setTransportationMode(eventData.transportationMode);
+      setWorkflow(eventData.workflow ?? '');
+    }
+  }, [isEditMode, eventData]);
+
+  // Fetch location if not in edit mode
   useEffect(() => {
     const fetchLocation = async (): Promise<void> => {
+      if (!isEditMode) {
         const location = await getLocation();
-        if (location === null
-            || !location.Address
-            && location.Coordinates.Latitude === 0
-            && location.Coordinates.Longitude === 0
+        if (
+          location === null ||
+          (!location.Address &&
+            location.Coordinates.Latitude === 0 &&
+            location.Coordinates.Longitude === 0)
         ) {
-            const currentLocation = await getMyLocation();
-            if (currentLocation !== null) {
-                setLocation(currentLocation);
-            }
+          const currentLocation = await getMyLocation();
+          if (currentLocation !== null) {
+            setLocation(currentLocation);
+          }
         } else {
-            setLocation(location);
+          setLocation(location);
         }
+      }
     };
     void fetchLocation();
-  }, []);
+  }, [isEditMode]);
 
   useEffect(() => {
-    location && setDestCoords(location)
+    if (location) {
+      setDestCoords(location);
+    }
   }, [location]);
 
   return (
     <ScrollView>
-      <Text style={styles.title}>Add a task</Text>
+      <Text style={styles.title}>{isEditMode ? 'Edit task' : 'Add a task'}</Text>
 
       <TextInput
         style={styles.input}
-        testID='Title'
+        testID="Title"
         placeholder="Title"
         value={title}
         onChangeText={setTitle}
@@ -76,8 +117,19 @@ const CreateTaskScreen = (): JSX.Element => {
 
       <Text style={styles.label}>Select start time</Text>
       <View style={styles.row}>
-        <Button title={startDate.toDateString()} testID='Start Date' onPress={() => { setShowStartDatePicker(true); }} />
-        <Button title={startDate.toLocaleTimeString()} onPress={() => { setShowStartTimePicker(true); }} />
+        <Button
+          title={startDate.toDateString()}
+          testID="Start Date"
+          onPress={() => {
+            setShowStartDatePicker(true);
+          }}
+        />
+        <Button
+          title={startDate.toLocaleTimeString()}
+          onPress={() => {
+            setShowStartTimePicker(true);
+          }}
+        />
       </View>
 
       {showStartDatePicker && (
@@ -106,8 +158,18 @@ const CreateTaskScreen = (): JSX.Element => {
 
       <Text style={styles.label}>Select end time</Text>
       <View style={styles.row}>
-        <Button title={endDate.toDateString()} onPress={() => { setShowEndDatePicker(true); }} />
-        <Button title={endDate.toLocaleTimeString()} onPress={() => { setShowEndTimePicker(true); }} />
+        <Button
+          title={endDate.toDateString()}
+          onPress={() => {
+            setShowEndDatePicker(true);
+          }}
+        />
+        <Button
+          title={endDate.toLocaleTimeString()}
+          onPress={() => {
+            setShowEndTimePicker(true);
+          }}
+        />
       </View>
 
       {showEndDatePicker && (
@@ -142,26 +204,22 @@ const CreateTaskScreen = (): JSX.Element => {
         maxHeight={300}
         labelField="label"
         valueField="value"
-        testID='Transportation Mode'
+        testID="Transportation Mode"
         placeholder="Select Transportation Mode"
         searchPlaceholder="Search..."
         value={transportationMode}
-        onChange={(item:{ value: string }) => {
+        onChange={(item: { value: string }) => {
           setTransportationMode(item.value);
         }}
       />
-      
+
       <View style={styles.row}>
         <Switch value={autoSchedule} onValueChange={setAutoSchedule} />
         <Text style={styles.label}>Autoschedule?</Text>
       </View>
 
       <Text style={styles.label}>Enter workflow</Text>
-      <TextInput
-        style={styles.input}
-        value={workflow}
-        onChangeText={setWorkflow}
-      />
+      <TextInput style={styles.input} value={workflow} onChangeText={setWorkflow} />
 
       <View style={[styles.locationPicker, {}]}>
         <AddressPicker
@@ -176,32 +234,38 @@ const CreateTaskScreen = (): JSX.Element => {
       <TextInput
         style={[styles.input, styles.textArea]}
         placeholder="Description"
-        testID='Description'
+        testID="Description"
         value={description}
         onChangeText={setDescription}
         multiline
       />
 
-      <Pressable 
-        style={styles.container} 
-        testID='Save Task'
+      <Pressable
+        style={styles.container}
+        testID="Save Task"
         onPress={() => {
-            void (async () => {
-              const e = new Event(
-                title,
-                description,
-                formatDate(startDate),
-                formatDate(endDate),
-                longitude,
-                latitude,
-                transportationMode,
-                workflow
-              );
+          void (async () => {
+            const e = new Event(
+              title,
+              description,
+              formatDate(startDate),
+              formatDate(endDate),
+              longitude,
+              latitude,
+              transportationMode,
+              workflow
+            );
+            
+            if (isEditMode && eventData) {
+              e.id = eventData.id;
+              await updateEvent(e);
+            } else {
               await addEvent(e);
-            })();
-          }}
+            }
+          })();
+        }}
       >
-        <Text>Save Task</Text>
+        <Text>{isEditMode ? 'Update Task' : 'Create Task'}</Text>
       </Pressable>
     </ScrollView>
   );
@@ -212,7 +276,5 @@ const formatDate = (date: Date): string => {
   const timePart = date.toLocaleTimeString('en-GB');
   return `${datePart} ${timePart}`;
 };
-
-
 
 export default CreateTaskScreen;
