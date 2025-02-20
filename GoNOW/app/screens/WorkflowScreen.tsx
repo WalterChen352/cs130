@@ -1,7 +1,6 @@
-import { Alert, Button, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { Alert, Button, ScrollView, Switch, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import WheelPicker from 'react-native-wheel-color-picker';
