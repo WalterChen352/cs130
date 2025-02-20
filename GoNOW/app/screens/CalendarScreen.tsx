@@ -39,7 +39,7 @@ const CalendarScreen = (): JSX.Element => {
             end: end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
         };
     };
-    
+
     const [startDate, setStartDate] = useState(getLastSunday(new Date(Date.now())));
     const [weekRange, setWeekRange] = useState(getWeekRange(startDate));
 
@@ -124,75 +124,78 @@ const CalendarScreen = (): JSX.Element => {
     };
 
     return (
-        <GestureDetector gesture={Gesture.Exclusive(prevWeek, nextWeek)}>
+    <GestureDetector gesture={Gesture.Exclusive(prevWeek, nextWeek)}>
         <View style={CalendarStyles.container}>
-            <View style={CalendarStyles.header}>
-                <TouchableOpacity onPress={prevWeekPress}>
-                    <Ionicons name={'caret-back-outline'} size={27} />
-                </TouchableOpacity>
-                <Text style={CalendarStyles.headerText} testID='WeekHeader'>
-                    {`${weekRange.start} - ${weekRange.end}`}
-                </Text>
-                <TouchableOpacity onPress={nextWeekPress}>
-                    <Ionicons name={'caret-forward-outline'} size={27} />
-                </TouchableOpacity>
-            </View>
-
-            <View style={CalendarStyles.calendarContainer}>
-                <View style={CalendarStyles.headerRow}>
-                    <View style={CalendarStyles.timeColumn}>
-                        <Text style={CalendarStyles.timeHeaderText}>Time</Text>
-                    </View>
-                    {days.map(day => (
-                        <View key={day} style={CalendarStyles.dayHeader}>
-                            <Text style={CalendarStyles.dayText}>{day}</Text>
-                        </View>
-                    ))}
-                </View>
-
-                <ScrollView>
-                    <View style={CalendarStyles.gridContainer}>
-                        <View style={CalendarStyles.timeColumn}>
-                            {TIME_LABELS.map((timeLabel) => (
-                                <View key={timeLabel} style={CalendarStyles.timeSlot}>
-                                    <Text style={CalendarStyles.timeText}>{timeLabel}</Text>
-                                </View>
-                            ))}
-                        </View>
-
-                        {days.map(day => (
-                            <View key={`col-${day}`} style={CalendarStyles.dayColumn}>
-                                {TIME_LABELS.map((_, index) => (
-                                    <View key={`grid-${String(day)}-${String(index)}`} style={CalendarStyles.gridLine} />
-                                ))}
-                                
-                                {getEventsForDay(day).map((event: Event, index): JSX.Element => {
-                                    const position = getEventPosition(event.startTime, event.endTime);
-                                    return (
-                                        <TouchableOpacity
-                                            key={`event-${String(day)}-${String(index)}`}
-                                            style={[
-                                                CalendarStyles.event,
-                                                { top: position.top, height: Math.max(position.height, 20) }
-                                            ]}
-                                            onPress={() => {
-                                                const eventDate = new Date(event.startTime);
-                                                navigateToDaily(eventDate, event.id);
-                                            }}
-                                        >
-                                            <Text style={CalendarStyles.eventText} numberOfLines={1}>
-                                                {event.name || 'Event'}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    );
-                                })}
-                            </View>
-                        ))}
-                    </View>
-                </ScrollView>
-            </View>
+        <View style={CalendarStyles.header}>
+            <TouchableOpacity onPress={prevWeekPress} testID="back-button">
+            <Ionicons name={'caret-back-outline'} size={27} />
+            </TouchableOpacity>
+            <Text style={CalendarStyles.headerText} testID="WeekHeader">
+            {`${weekRange.start} - ${weekRange.end}`}
+            </Text>
+            <TouchableOpacity onPress={nextWeekPress} testID="forward-button">
+            <Ionicons name={'caret-forward-outline'} size={27} />
+            </TouchableOpacity>
         </View>
-        </GestureDetector>
+        <View style={CalendarStyles.calendarContainer}>
+            <View style={CalendarStyles.headerRow}>
+            <View style={CalendarStyles.timeColumn}>
+                <Text style={CalendarStyles.timeHeaderText}>Time</Text>
+            </View>
+            {days.map(day => (
+                <View key={day} style={CalendarStyles.dayHeader}>
+                <Text style={CalendarStyles.dayText}>{day}</Text>
+                </View>
+            ))}
+            </View>
+            <ScrollView>
+            <View style={CalendarStyles.gridContainer}>
+                <View style={CalendarStyles.timeColumn}>
+                {TIME_LABELS.map((timeLabel) => (
+                    <View key={timeLabel} style={CalendarStyles.timeSlot}>
+                    <Text style={CalendarStyles.timeText}>{timeLabel}</Text>
+                    </View>
+                ))}
+                </View>
+                {days.map(day => (
+                <View key={`col-${day}`} style={CalendarStyles.dayColumn}>
+                    {TIME_LABELS.map((_, index) => (
+                    <View 
+                        key={`grid-${String(day)}-${String(index)}`} 
+                        style={CalendarStyles.gridLine}
+                    />
+                    ))}
+                    {getEventsForDay(day).map((event: Event, index): JSX.Element => {
+                    const position = getEventPosition(event.startTime, event.endTime);
+                    return (
+                        <TouchableOpacity
+                        key={`event-${String(day)}-${String(index)}`}
+                        testID="calendar-event"
+                        style={[
+                            CalendarStyles.event,
+                            { top: position.top, height: Math.max(position.height, 20) }
+                        ]}
+                        onPress={() => {
+                            const eventDate = new Date(event.startTime);
+                            navigateToDaily(eventDate, event.id);
+                        }}
+                        >
+                        <Text 
+                            style={CalendarStyles.eventText} 
+                            numberOfLines={1}
+                        >
+                            {event.name || 'Event'}
+                        </Text>
+                        </TouchableOpacity>
+                    );
+                    })}
+                </View>
+                ))}
+            </View>
+            </ScrollView>
+        </View>
+        </View>
+    </GestureDetector>
     );
 };
 
