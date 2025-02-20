@@ -1,54 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , JSX} from 'react';
 import { Text, View, FlatList } from 'react-native';
-import { getDailyEvents } from "../scripts/database";
-import { styles } from './screen_styles/DailyScreen.styles';
+import { getDailyEvents } from '../scripts/Event';
+import { styles } from '../styles/DailyScreen.styles';
+import { Event } from '../models/Event';
 
-interface Event {
-  id: number;
-  name: string;
-  description: string;
-  startTime: string;
-  endTime: string;
-  latitude: number;
-  longitude: number;
-  transportationMode: string;
-}
-
-const DailyScreen = () => {
+const DailyScreen = () :JSX.Element=> {
   // set up
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const loadEvents = async () => {
-    try {
-        setLoading(true);
-        const dailyEvents = await getDailyEvents();
-        setEvents(dailyEvents);
-    } catch (error) {
-        console.error('Failed to get daily events.', error);
-    } finally {
-        setLoading(false);
-    }
-  };
+  
 
   useEffect(() => {
-    loadEvents();
+    const loadEvents = async () :Promise<void>=> {
+      try {
+          setLoading(true);
+          const dailyEvents = await getDailyEvents();
+          setEvents(dailyEvents);
+      } catch (error) {
+          console.error('Failed to get daily events.', error);
+      } finally {
+          setLoading(false);
+      }
+    };
+    void loadEvents();
   }, []);
 
-  const displayEvent = ({ item }: { item: Event }) => (
+  const LocalTimeStringOptions:Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
+
+  const displayEvent = ( {item} :{item: Event}):JSX.Element => {
+    return (
     <View style={styles.eventCard}>
       <Text style={styles.eventTitle}>{item.name}</Text>
       <Text style={styles.eventDescription}>{item.description}</Text>
       <Text style={styles.eventTime}>
-        Time: {new Date(item.startTime).toLocaleTimeString()} - {new Date(item.endTime).toLocaleTimeString()}
+        Time: {new Date(item.startTime).toLocaleTimeString([], LocalTimeStringOptions)} - {new Date(item.endTime).toLocaleTimeString([], LocalTimeStringOptions)}
       </Text>
     </View>
-  );
+  )};
 
   if (loading) {
     return <Text style={styles.loading}>
         Loading events!
-    </Text>
+    </Text>;
   }
 
   return (

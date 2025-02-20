@@ -1,27 +1,44 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from 'react-native-vector-icons';
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import MapScreen from './MapScreen';
 import ProfileScreen from './ProfileScreen';
 import CalendarScreen from './CalendarScreen';
 import DailyScreen from './DailyScreen';
 import CreateTaskScreen from './CreateTaskScreen';
+import WorkflowScreen from './WorkflowScreen';
+import { NavigatorStyles } from '../styles/Navigator.styles';
+import { Workflow } from '../models/Workflow';
+import { ParamListBase } from '@react-navigation/native';
 
-const Tab = createBottomTabNavigator();
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+export type TabParamList = ParamListBase & {
+  Map: undefined;
+  Daily: undefined;
+  CreateTask: undefined;
+  Calendar: undefined;
+  Profile: undefined;
+  Workflow: { workflow: Workflow };
+};
 
-const CustomTabBar = ({ state, descriptors, navigation }) => {
+const Tab = createBottomTabNavigator<TabParamList>();
+
+const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) => {
   return (
-    <View style={styles.container}>
+    <View style={NavigatorStyles.container}>
       {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
         const isFocused = state.index === index;
+
+        if (route.name === 'Workflow') {
+          return null;
+        }
 
         const onPress = () => {
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,
+            canPreventDefault: true,
           });
 
           if (!isFocused && !event.defaultPrevented) {
@@ -29,7 +46,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           }
         };
 
-        let iconName;
+        let iconName = '';
         if (route.name === 'Map') iconName = 'pin-outline';
         else if (route.name === 'Profile') iconName = 'person';
         else if (route.name === 'Calendar') iconName = 'calendar';
@@ -39,11 +56,12 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           <TouchableOpacity
             key={index}
             onPress={onPress}
-            style={styles.tabButton}
+            style={NavigatorStyles.tabButton}
           >
-            <Ionicons 
-              name={iconName} 
-              size={24} 
+            <Ionicons
+              testID="tab-icon"
+              name={iconName}
+              size={24}
               color={isFocused ? '#007AFF' : '#8E8E8F'}
             />
           </TouchableOpacity>
@@ -52,8 +70,8 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
       
       {/* Create Task Button */}
       <TouchableOpacity
-        style={styles.createButton}
-        onPress={() => navigation.navigate('CreateTask')}
+        style={NavigatorStyles.createButton}
+        onPress={() => { navigation.navigate('CreateTask'); }}
       >
         <Ionicons name="add" size={30} color="white" />
       </TouchableOpacity>
@@ -61,7 +79,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   );
 };
 
-export default function TabNavigator() {
+const Navigator: React.FC = () => {
   return (
     <Tab.Navigator
       tabBar={(props) => <CustomTabBar {...props} />}
@@ -81,43 +99,16 @@ export default function TabNavigator() {
       />
       <Tab.Screen name="Calendar" component={CalendarScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen 
+        name="Workflow" 
+        component={WorkflowScreen}
+        options={{
+          tabBarButton: () => null,
+          headerShown: false
+        }}
+      />
     </Tab.Navigator>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    backgroundColor: 'lightblue',
-    height: 80,
-    paddingBottom: 20,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  tabButton: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  createButton: {
-    backgroundColor: 'lightblue',
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    left: SCREEN_WIDTH / 2 - 28, // Centers button by offsetting by half its width
-    top: -28,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    borderWidth: 4,
-    borderColor: 'white',
-  },
-});
+export default Navigator;
