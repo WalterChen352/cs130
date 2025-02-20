@@ -1,4 +1,4 @@
-import { Alert, Button, ScrollView, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 import { useFocusEffect, useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -6,6 +6,8 @@ import { Picker } from '@react-native-picker/picker';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import WheelPicker from 'react-native-wheel-color-picker';
 
+import ButtonSave from '../components/ButtonSave';
+import ButtonDelete from '../components/ButtonDelete';
 import { getSchedulingStyles, getSchedulingStyle } from '../scripts/SchedulingStyle';
 import { DaysOfWeekNames, Time, TimeFromDate } from '../models/Time';
 import { Workflow } from '../models/Workflow';
@@ -14,10 +16,33 @@ import { WorkflowScreenStyles } from '../styles/WorkflowScreen.styles';
 import SchedulingStyle from '../models/SchedulingStyle';
 import { TabParamList } from './Navigator';
 
+/**
+ * Properties for screen `WorkflowScreen`.
+ *
+ * @interface WorkflowScreenProps
+ * @typedef {WorkflowScreenProps}
+ */
 interface WorkflowScreenProps {
+    
+    /**
+     * Route of Tab.Navigator that contains `workflow` object in params.
+     *
+     * @type {RouteProp<TabParamList, 'Workflow'>}
+     */
     route: RouteProp<TabParamList, 'Workflow'>;
 }
 
+/**
+ * `WorkflowScreen` component that displays a workflow recieved in the `route` prop.
+ *
+ * @component
+ * @example
+ * // Usage
+ * <WorkflowScreen route={{ params: { workflow: someWorkflowData } }} />
+ * 
+ * @param {WorkflowScreenProps} props - The props that includes the route object.
+ * @returns {React.FC} - The rendered `WorkflowScreen` component.
+ */
 const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
     const { workflow } = route.params;
     const navigation = useNavigation<NavigationProp<TabParamList>>();
@@ -37,21 +62,39 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
     const [showTimeStart, setShowTimeStart] = useState(false);
     const [showTimeEnd, setShowTimeEnd] = useState(false);
 
+    /** Shows pop-up window for select start time for the workflow. */
     const openTimeStart = (): void => {
         setShowTimeStart(true);
     };
 
-    const onChangeTimeStart = (event: DateTimePickerEvent, date?: Date  ): void => {
-        if (date) {
-            setTimeStart(new Date(0, 0, 0, date.getHours(), date.getMinutes()));
+    /**
+     * Keeps start time for the workflow from user input.
+     * This method does not return any value.
+     *
+     * @param {DateTimePickerEvent} event - The event of DateTimePickerEvent.
+     * @param {?Date} [time] - The `Date` object that contains time data selected by user.
+     * @returns {void} - This component does not return any value.
+     */
+    const onChangeTimeStart = (event: DateTimePickerEvent, time?: Date  ): void => {
+        if (time) {
+            setTimeStart(new Date(0, 0, 0, time.getHours(), time.getMinutes()));
         }
         setShowTimeStart(false);
     };
 
+    /** Shows pop-up window for select end time for the workflow. */
     const openTimeEnd = (): void => {
         setShowTimeEnd(true);
     };
 
+    /**
+     * Keeps end time for the workflow from user input.
+     * This method does not return any value.
+     *
+     * @param {DateTimePickerEvent} event - The event of DateTimePickerEvent.
+     * @param {(Date | undefined)} time - The `Date` object that contains time data selected by user.
+     * @returns {void} - This component does not return any value.
+     */
     const onChangeTimeEnd = (event: DateTimePickerEvent, time: Date | undefined): void => {
         if (time) {
             setTimeEnd(new Date(0, 0, 0, time.getHours(), time.getMinutes()));
@@ -59,6 +102,13 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         setShowTimeEnd(false);
     };
 
+    /**
+     * Keeps day of week for the workflow from user input.
+     * This method does not return any value.
+     *
+     * @param {number} indexDay - The index of the day of week that is included to or excluded from `daysOfWeek`.
+     * @returns {void} - This component does not return any value.
+     */
     const toggleDay = (indexDay: number): void => {
         setDaysOfWeek((prev) => {
             const next = [...prev];
@@ -67,6 +117,13 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         });
     };
 
+    /**
+     * Collect workflow form data and saves it into DB.
+     * This method does not return any value.
+     *
+     * @async
+     * @returns {Promise<void>} - A promise that resolves when the workflow is saved in DB.
+     */
     const handleSaveForm = async (): Promise<void> => {
         const workflowNew = new Workflow(
             workflow.id,
@@ -94,6 +151,7 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         navigation.navigate('Profile');
     };
 
+    /** Shows pop-up window and requests user confirmation to delete workflow. */
     const handleDelete = (): void => {
         Alert.alert(
             'Confirm',
@@ -114,6 +172,10 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         );
     };
 
+    /**
+     * Loads list of scheduling styles to `schedulingStyles` state.
+     * This method does not return any value.
+     */
     const loadSchedulingStyle = useCallback((): void => {
         setSchedulingStyles(getSchedulingStyles());
     }, []);
@@ -239,22 +301,16 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
                 <Text style={WorkflowScreenStyles.footer}> </Text>
             </ScrollView>
 
-            <TouchableOpacity
-                style={WorkflowScreenStyles.btnSave}
-                onPress={() => void handleSaveForm()}
+            <ButtonSave
+                onPress={handleSaveForm}
                 testID="workflow-btn-save"
-            >
-                <Ionicons name="checkmark" size={34} color="#fff" />
-            </TouchableOpacity>
-            {workflow.id > 0 && (
-                <TouchableOpacity
-                    style={WorkflowScreenStyles.btnDel}
-                    onPress={() => { handleDelete(); }}
+            />
+            {workflow.id > 0 &&
+                <ButtonDelete
+                    onPress={handleDelete}
                     testID="workflow-btn-delete"
-                >
-                    <Ionicons name="close" size={34} color="#fff" />
-                </TouchableOpacity>
-            )}
+                />
+            }
         </View>
     );
 };

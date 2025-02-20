@@ -1,7 +1,14 @@
-import* as ExpoLocation from 'expo-location';
+import * as ExpoLocation from 'expo-location';
 import { Platform } from 'react-native';
-import {Coordinates, Location} from '../models/Location';
+import { Coordinates, Location } from '../models/Location';
 
+/**
+ * Returns current geolocation of the user.
+ * Returns null if the user denied access to the phone geolocation.
+ *
+ * @async
+ * @returns {Promise<Location | null>} - A promise that resolves to `Location` object or null.
+ */
 export const getMyLocation = async (): Promise<Location | null> => {
   try {
     const { status } = await ExpoLocation.requestForegroundPermissionsAsync();
