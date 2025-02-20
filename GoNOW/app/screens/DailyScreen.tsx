@@ -15,8 +15,8 @@ const DailyScreen = ({ route }: DailyScreenProps) :JSX.Element=> {
   const [loading, setLoading] = useState(true);
 
   const eventDate = useMemo(() => 
-    new Date(route.params?.eventDate ?? Date.now()),
-    [route.params?.eventDate]
+    new Date(route.params.eventDate ?? Date.now()),
+    [route.params.eventDate]
   );
 
   useFocusEffect(
