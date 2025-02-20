@@ -30,7 +30,8 @@
     "eslint.config.mjs",
     ".expo/types/**/*",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "app/models/*"
   ],
   "exclude": [
     "node_modules",
