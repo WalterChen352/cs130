@@ -11,6 +11,7 @@ import {Event} from '../models/Event';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
 
+
 /**
  * React component for creating a new task.
  * Allows users to input task details such as title, time, location, transportation mode, and description.
