@@ -59,11 +59,13 @@ const CreateTaskScreen = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    location && setDestCoords(location)
+    if(location){
+      setDestCoords(location)
+    }
   }, [location]);
 
   return (
-    <ScrollView>
+    <ScrollView> {/*TODO:: replace with flatlist, or modify addresspicker to not use virtualizedlist*/}
       <Text style={styles.title}>Add a task</Text>
 
       <TextInput
