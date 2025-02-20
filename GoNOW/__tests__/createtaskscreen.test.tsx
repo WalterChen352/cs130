@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import CreateTaskScreen from '../app/screens/CreateTaskScreen';
+import { addEvent } from '../app/scripts/Event'
 
 jest.mock('../app/scripts/Event', () => ({
   addEvent: jest.fn(),

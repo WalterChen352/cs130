@@ -11,6 +11,12 @@ import {Event} from '../models/Event';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
 
+/**
+ * React component for creating a new task.
+ * Allows users to input task details such as title, time, location, transportation mode, and description.
+ * 
+ * @returns {JSX.Element} The CreateTaskScreen component.
+ */
 const CreateTaskScreen = (): JSX.Element => {
   const [title, setTitle] = useState<string>('');
   const [startDate, setStartDate] = useState<Date>(new Date());
@@ -27,6 +33,7 @@ const CreateTaskScreen = (): JSX.Element => {
   const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
 
+  /** Dropdown options for transportation modes */
   const dropdownOptions = [
     { label: 'Walk', value: 'walk' },
     { label: 'Public Transit', value: 'transit' },
@@ -34,11 +41,17 @@ const CreateTaskScreen = (): JSX.Element => {
     { label: 'Car', value: 'car' },
   ];
 
+  /**
+   * Sets the destination coordinates based on the selected location.
+   * 
+   * @param {Location} location - The selected location object.
+   */
   const setDestCoords = (location: Location): void => {
     setLatitude(location.Coordinates.Latitude)
     setLongitude(location.Coordinates.Longitude)
   };
 
+  /** Fetches the user's location on component mount */
   useEffect(() => {
     const fetchLocation = async (): Promise<void> => {
         const location = await getLocation();
@@ -58,14 +71,16 @@ const CreateTaskScreen = (): JSX.Element => {
     void fetchLocation();
   }, []);
 
+  /** Updates destination coordinates when location changes */
   useEffect(() => {
     if(location){
       setDestCoords(location)
     }
   }, [location]);
 
+  /*TODO:: replace scrollview with flatlist, or modify addresspicker to not use virtualizedlist*/
   return (
-    <ScrollView> {/*TODO:: replace with flatlist, or modify addresspicker to not use virtualizedlist*/}
+    <ScrollView> 
       <Text style={styles.title}>Add a task</Text>
 
       <TextInput
@@ -165,6 +180,7 @@ const CreateTaskScreen = (): JSX.Element => {
         onChangeText={setWorkflow}
       />
 
+      <Text style={styles.label}>Enter address</Text>
       <View style={[styles.locationPicker, {}]}>
         <AddressPicker
           initialAddress={location?.Address}
@@ -209,6 +225,13 @@ const CreateTaskScreen = (): JSX.Element => {
   );
 };
 
+
+/**
+   * Formats a date object into a string with date and time.
+   * 
+   * @param {Date} date - The date to format.
+   * @returns {string} The formatted date string.
+   */
 const formatDate = (date: Date): string => {
   const datePart = date.toLocaleDateString('en-CA');
   const timePart = date.toLocaleTimeString('en-GB');
