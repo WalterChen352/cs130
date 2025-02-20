@@ -1,5 +1,8 @@
 import { StyleSheet } from 'react-native';
 
+/**
+ * Styles for the Workflow Screen components.
+ */
 export const WorkflowScreenStyles = StyleSheet.create({
     container: {
         flex: 1,
@@ -53,42 +56,6 @@ export const WorkflowScreenStyles = StyleSheet.create({
     },
     wheelPicker: {
         height: 300
-    },
-    btnSave: {
-        position: 'absolute',
-        bottom: 20,
-        right: 20,
-        backgroundColor: '#388dff',
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        borderWidth: 4,
-        borderColor: 'white',
-    },
-    btnDel: {
-        position: 'absolute',
-        bottom: 20,
-        left: 20,
-        backgroundColor: '#ffa5a5',
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        borderWidth: 4,
-        borderColor: 'white',
     },
     footer: {
         paddingBottom: 100,
