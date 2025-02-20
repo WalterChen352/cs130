@@ -2,18 +2,14 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
 import CalendarScreen from '../app/screens/CalendarScreen';
 import { getWeeklyEvents } from '../app/scripts/Event';
-import { NavigationContainer } from '@react-navigation/native';
 
 const mockNavigate = jest.fn();
-jest.mock('@react-navigation/native', () => {
-  const actualNav = jest.requireActual('@react-navigation/native');
-  return {
-    ...actualNav,
-    useNavigation: () => ({
-      navigate: mockNavigate
-    })
-  };
-});
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: () => ({
+    navigate: mockNavigate
+  }),
+  useFocusEffect: jest.fn(),
+}));
 
 jest.mock('react-native-vector-icons', () => ({
   Ionicons: jest.fn(() => null),
@@ -23,14 +19,18 @@ jest.mock('../app/scripts/Event', () => ({
   getWeeklyEvents: jest.fn()
 }));
 
+interface GestureHandlerProps {
+  children: React.ReactNode;
+}
+
 jest.mock('react-native-gesture-handler', () => ({
-  GestureDetector: ({ children }) => children,
+  GestureDetector: ({ children }: GestureHandlerProps): React.ReactNode => children,
   Gesture: {
     Exclusive: jest.fn(),
     Fling: () => ({
       direction: () => ({
         onEnd: () => ({
-          runOnJS: () => {}
+          runOnJS: jest.fn()
         })
       })
     })
@@ -40,6 +40,7 @@ jest.mock('react-native-gesture-handler', () => ({
     RIGHT: 2
   }
 }));
+
 
 const mockEvents = [
   {
@@ -74,9 +75,7 @@ describe('CalendarScreen', () => {
 
   it('renders the basic calendar layout', async () => {
     render(
-      <NavigationContainer>
         <CalendarScreen />
-      </NavigationContainer>
     );
 
     await waitFor(() => {
@@ -97,9 +96,7 @@ describe('CalendarScreen', () => {
 
   it('displays events after fetching', async () => {
     render(
-      <NavigationContainer>
         <CalendarScreen />
-      </NavigationContainer>
     );
 
     await waitFor(() => {
@@ -108,7 +105,7 @@ describe('CalendarScreen', () => {
     
     await waitFor(() => {
       const events = screen.getAllByTestId('calendar-event');
-      expect(events.length).toBe(2);
+      expect(events).toHaveLength(2);
       expect(screen.getByText('Test Event 1')).toBeOnTheScreen();
       expect(screen.getByText('Test Event 2')).toBeOnTheScreen();
     });
@@ -116,9 +113,7 @@ describe('CalendarScreen', () => {
 
   it('navigates to daily view when event is pressed', async () => {
     render(
-      <NavigationContainer>
         <CalendarScreen />
-      </NavigationContainer>
     );
 
     await waitFor(() => {
@@ -135,13 +130,11 @@ describe('CalendarScreen', () => {
 
   it('updates week range when navigation buttons are pressed', async () => {
     render(
-      <NavigationContainer>
         <CalendarScreen />
-      </NavigationContainer>
     );
 
     const initialWeekHeader = await waitFor(() => screen.getByTestId('WeekHeader'));
-    const initialText = initialWeekHeader.props.children;
+    const initialText: string = initialWeekHeader.props.children as string;
 
     await waitFor(() => {
       const forwardButton = screen.getByTestId('forward-button');
