@@ -12,10 +12,10 @@ export default tseslint.config(
   tseslint.configs.stylisticTypeChecked,
   
   {
-    plugins: ['@typescript-eslint/eslint-plugin', 'eslint-plugin-tsdoc'],
-    rules: {
-      'tsdoc/syntax': 'warn',
-    },
+    // plugins: ['@typescript-eslint/eslint-plugin', 'eslint-plugin-tsdoc'],
+    // rules: {
+    //   'tsdoc/syntax': 'warn',
+    // },
     languageOptions: {
       parserOptions: {
         projectService: true,
