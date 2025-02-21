@@ -40,4 +40,12 @@ export const styles = StyleSheet.create({
     borderBottomColor: 'gray',
     borderBottomWidth: 0.5,
   },
+  locationPicker:{
+    height: 60,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    marginBottom: 20,
+    zIndex: 100
+},
 });
