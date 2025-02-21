@@ -4,10 +4,11 @@ import { getWeeklyEvents } from '../scripts/Event';
 import { useEffect, useState } from 'react';
 import {GestureDetector,Gesture,Directions} from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from 'react-native-vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {CalendarStyles} from '../styles/CalendarScreen.styles';
 import {Event} from '../models/Event';
-
+import { TabParamList } from './Navigator';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 const HOUR_HEIGHT = 20; // Height for each hour in pixels
 const START_HOUR = 0; // 12 AM
@@ -20,7 +21,8 @@ const TIME_LABELS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => {
 });
 
 const CalendarScreen = (): JSX.Element=> {
-    const navigation = useNavigation();
+    type NavigationProp = BottomTabNavigationProp<TabParamList>;
+    const navigation = useNavigation<NavigationProp>();
 
     const navigateToDaily= ():void => {
       navigation.navigate('Daily');

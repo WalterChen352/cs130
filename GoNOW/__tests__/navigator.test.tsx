@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Navigator from '../app/screens/Navigator';
-
+import { IoniconsProps } from '../__mocks__/ionicons';
 // Mock all the screen components
 jest.mock('../app/screens/MapScreen', () => () => null);
 jest.mock('../app/screens/DailyScreen', () => () => null);
@@ -11,9 +11,14 @@ jest.mock('../app/screens/CalendarScreen', () => () => null);
 jest.mock('../app/screens/ProfileScreen', () => () => null);
 
 // Mock the Ionicons component
-jest.mock('@expo/vector-icons', () => ({
-  Ionicons: 'Ionicons'
-}));
+
+
+jest.mock('react-native-vector-icons/Ionicons', () => {
+  return function MockIonicons(props: IoniconsProps) {
+    return <mock-ionicon {...props} />;
+  };
+});
+
 
 describe('TabNavigator', () => {
 

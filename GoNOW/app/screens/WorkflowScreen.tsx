@@ -1,4 +1,4 @@
-import { Alert, Button, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { Alert, Button, ScrollView, Switch, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
@@ -187,7 +187,7 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         setTimeStart(new Date(0, 0, 0, workflow.timeStart.Hours, workflow.timeStart.Minutes));
         setTimeEnd(new Date(0, 0, 0, workflow.timeEnd.Hours, workflow.timeEnd.Minutes));
         setDaysOfWeek(workflow.daysOfWeek);
-        setSchedulingStyle(workflow.schedulingStyle.Id);
+        setSchedulingStyle(workflow.schedulingStyle.Id.toString());
     }, [workflow, loadSchedulingStyle]);
 
     useFocusEffect(
@@ -222,12 +222,13 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
 
                 <Text style={WorkflowScreenStyles.header}>Time selection</Text>
                 <View style={WorkflowScreenStyles.center}>
-                    <Button
+                <TouchableOpacity
                         style={WorkflowScreenStyles.rightElem}
                         onPress={openTimeStart}
-                        title={TimeFromDate(timeStart).toString()}
                         testID="workflow-time-start"
-                    />
+                    >
+                        <Text>{TimeFromDate(timeStart).toString()}</Text>
+                    </TouchableOpacity>
                     {showTimeStart && (
                         <DateTimePicker
                             value={timeStart}
@@ -238,12 +239,14 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
                         />
                     )}
                     <Text />
-                    <Button
+                    <TouchableOpacity
                         style={WorkflowScreenStyles.rightElem}
                         onPress={openTimeEnd}
-                        title={TimeFromDate(timeEnd).toString()}
                         testID="workflow-time-end"
-                    />
+                    >
+                        <Text>{TimeFromDate(timeEnd).toString()}</Text>
+                    </TouchableOpacity>
+
                     {showTimeEnd && (
                         <DateTimePicker
                             value={timeEnd}

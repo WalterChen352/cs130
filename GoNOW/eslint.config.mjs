@@ -6,7 +6,7 @@ import globals from 'globals';
 
 export default tseslint.config(
   {
-    ignores: ['*.mjs']
+    ignores: ['*.mjs', 'docs']
   },
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,
