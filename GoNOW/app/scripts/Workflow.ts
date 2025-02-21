@@ -291,6 +291,6 @@ export const filterWfName=(workflows: Workflow[], name:string): Workflow=>{
     if (w.name===name)
       return w
   }
-  console.error('workflow not found');
+  console.error('workflow not found. May have been called with improper arguments:', workflows, name);
   return new Workflow(0, 'ERROR', '', false, new Time(0,0), new Time(0,0), [], new SchedulingStyle(0, ''));
 }
