@@ -7,12 +7,15 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {CalendarStyles} from '../styles/CalendarScreen.styles';
 import {Event} from '../models/Event';
+import { Workflow } from '../models/Workflow';
 import { TabParamList } from './Navigator';
+import { getWorkflows, filterWfName } from '../scripts/Workflow';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 const HOUR_HEIGHT = 20; // Height for each hour in pixels
 const START_HOUR = 0; // 12 AM
 const END_HOUR = 24; // 12 AM next day
+const DEFAULT_COLOR = 'lightblue';
 const TIME_LABELS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => {
   const hour = (START_HOUR + i) % 12 || 12;
   const ampm = (START_HOUR + i) < 12 ? 'AM' : 'PM';
@@ -47,20 +50,24 @@ const CalendarScreen = (): JSX.Element=> {
             end: end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
         };
     };
+    const [workflows, setWorkflows] = useState<Workflow[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
     const [startDate, setStartDate]=useState(getLastSunday(new Date(Date.now())));
     const [weekRange, setWeekRange]= useState(getWeekRange(startDate));
     useEffect(() => {
-        const fetchEvents = async ():Promise<void> => {
+        const init = async ():Promise<void> => {
             try {
                 const e: Event[] = await getWeeklyEvents(startDate);
                 setEvents(e);
                 setWeekRange(getWeekRange(startDate));
+                const w: Workflow[] = await getWorkflows();
+                setWorkflows(w);
+                console.log('workflows in calendar', workflows);
             } catch(error) {
                 console.error('error fetching events', error);
             }
         };
-        void fetchEvents();
+        void init();
     }, [startDate]);
 
     const days = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
@@ -185,7 +192,9 @@ const CalendarScreen = (): JSX.Element=> {
                                         key={`event-${String(day)}-${String(index)}`}
                                         style={[
                                             CalendarStyles.event,
-                                            { top: position.top, height: Math.max(position.height, 20) } // Dynamically setting top and height
+                                            { top: position.top, height: Math.max(position.height, 20), // Dynamically setting top and height
+                                                backgroundColor: event.workflow? filterWfName(workflows,event.workflow).color : DEFAULT_COLOR
+                                             }
                                         ]}
                                         onPress={() => {
                                             console.log('Clicked event:', event);
