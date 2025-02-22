@@ -66,7 +66,7 @@ export const addEvent = async (e: Event):Promise<void> => {
       console.log('db', DB);
       await DB.runAsync(`INSERT INTO events 
               (name, description, startTime, endTime, latitude, longitude, transportationMode, workflow) 
-              VALUES (?, ?, ?, ?, ?, ?, ?,?);`, [e.name, e.description, e.startTime, e.endTime, e.latitude, e.longitude, e.transportationMode, e.workflow? e.workflow: null]);
+              VALUES (?, ?, ?, ?, ?, ?, ?,?);`, [e.name, e.description, e.startTime, e.endTime, e.latitude, e.longitude, e.transportationMode, e.workflow]);
   } catch (error) {
       console.error('Error in addEvent function:', error);
   }

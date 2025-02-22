@@ -11,11 +11,12 @@ import { Workflow } from '../models/Workflow';
 import { TabParamList } from './Navigator';
 import { getWorkflows, filterWfName } from '../scripts/Workflow';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { DEFAULT_COLOR } from '../styles/Event.style';
+
 
 const HOUR_HEIGHT = 20; // Height for each hour in pixels
 const START_HOUR = 0; // 12 AM
 const END_HOUR = 24; // 12 AM next day
-const DEFAULT_COLOR = 'lightblue';
 const TIME_LABELS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => {
   const hour = (START_HOUR + i) % 12 || 12;
   const ampm = (START_HOUR + i) < 12 ? 'AM' : 'PM';
@@ -196,6 +197,7 @@ const CalendarScreen = (): JSX.Element=> {
                                                 backgroundColor: event.workflow? filterWfName(workflows,event.workflow).color : DEFAULT_COLOR
                                              }
                                         ]}
+                                        testID= {event.name}
                                         onPress={() => {
                                             console.log('Clicked event:', event);
                                             navigateToDaily();
