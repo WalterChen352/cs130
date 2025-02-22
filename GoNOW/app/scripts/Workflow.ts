@@ -2,6 +2,7 @@ import { openDatabase } from '../scripts/Database';
 import { getSchedulingStyle } from '../scripts/SchedulingStyle';
 import { Time, DaysOfWeekNames } from '../models/Time';
 import { Workflow } from '../models/Workflow';
+import SchedulingStyle from '../models/SchedulingStyle';
 
 /**
  * DB record representing a workflow.
@@ -284,3 +285,12 @@ export const validateWorkflow = async (workflow : Workflow): Promise<void> => {
     throw new Error(errors.join('\n'));
   }
 };
+
+export const filterWfName=(workflows: Workflow[], name:string): Workflow=>{
+  for (const w of workflows){
+    if (w.name===name)
+      return w
+  }
+  console.error('workflow not found. May have been called with improper arguments:', workflows, name);
+  return new Workflow(0, 'ERROR', '', false, new Time(0,0), new Time(0,0), [], new SchedulingStyle(0, ''));
+}

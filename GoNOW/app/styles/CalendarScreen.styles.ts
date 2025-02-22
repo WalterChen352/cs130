@@ -81,7 +81,6 @@ export const CalendarStyles = StyleSheet.create({
         padding: 4,
         overflow: 'hidden',
         minHeight: 20, 
-        backgroundColor: 'lightblue', 
     },
     eventText: {
         fontSize: 11,
