@@ -31,5 +31,30 @@ export const styles = StyleSheet.create({
     padding: 40,
     textAlign: 'center',
     fontSize: 20
+  },
+  highlightedEventCard: {
+    backgroundColor: '#f0f0f0', // or your preferred highlight color
+    borderWidth: 2,
+    borderColor: '#007AFF', // or your preferred border color
+  },
+  eventActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 10,
+    gap: 10,
+  },
+  editButton: {
+    backgroundColor: '#007AFF',
+    padding: 8,
+    borderRadius: 5,
+  },
+  deleteButton: {
+    backgroundColor: '#FF3B30',
+    padding: 8,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
   }
 });

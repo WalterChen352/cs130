@@ -26,49 +26,50 @@ export const openDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
  * @returns {Promise<void>} - A promise that resolves when the DB is initialized and all tables are created.
  */
 export const initDatabase = async (): Promise<void> => {
-  //console.log('> Start initialize DB');
-  try {
-    const DB = await openDatabase();
-    await DB.execAsync(`
-      PRAGMA journal_mode = WAL;
-      CREATE TABLE IF NOT EXISTS events (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        description TEXT,
-        startTime TEXT,
-        endTime TEXT,
-        latitude REAL,
-        longitude REAL,
-        transportationMode TEXT,
-        workflow, TEXT
-      );
-    `);
+    //console.log('> Start initialize DB');
+    try {
+        const DB = await openDatabase();
 
-    // Add your tables to create here
+        await DB.execAsync(`
+            PRAGMA journal_mode = WAL;
+            CREATE TABLE IF NOT EXISTS events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                description TEXT,
+                startTime TEXT,
+                endTime TEXT,
+                latitude REAL,
+                longitude REAL,
+                transportationMode TEXT,
+                workflow TEXT
+            );
+        `);
 
-    await DB.execAsync(`
-      PRAGMA journal_mode = WAL;
-      CREATE TABLE IF NOT EXISTS workflows (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        color TEXT,
-        pushNotifications BOOLEAN,
-        timeStart INTEGER,
-        timeEnd INTEGER,
-        daysOfWeek INTEGER,
-        schedulingStyle INTEGER
-      );
-    `);
+        // Add your tables to create here
 
-    await DB.execAsync(`
-      PRAGMA journal_mode = WAL;
-      CREATE TABLE IF NOT EXISTS profile (
-        id INTEGER PRIMARY KEY,
-        address TEXT,
-        lat REAL,
-        lon REAL
-      );
-    `);
+        await DB.execAsync(`
+            PRAGMA journal_mode = WAL;
+            CREATE TABLE IF NOT EXISTS workflows (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                color TEXT,
+                pushNotifications BOOLEAN,
+                timeStart INTEGER,
+                timeEnd INTEGER,
+                daysOfWeek INTEGER,
+                schedulingStyle INTEGER
+            );
+        `);
+
+        await DB.execAsync(`
+            PRAGMA journal_mode = WAL;
+            CREATE TABLE IF NOT EXISTS profile (
+              id INTEGER PRIMARY KEY,
+              address TEXT,
+              lat REAL,
+              lon REAL
+            );
+        `);
 
     try {
       await DB.execAsync(`
