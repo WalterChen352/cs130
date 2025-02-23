@@ -1,16 +1,25 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
+import { Event } from './models/Event';
+import { Workflow } from './models/Workflow';
 
 dotenv.config();
 
 const app: Express = express();
 const PORT = 3000;
 const apiKey = process.env.API_KEY;  // eslint-disable-line
+type autoscheduleInterface={
+    workflows: Workflow[],
+    events: Event[]
+}
 
 // TODO: Adding a lint ignore to make it go through for now, but
 // we should eventually remove this disable when we have implemented
 // more features with api key.
 app.get('/api/autoschedule', (req: Request, res: Response) => {
+    const workflows = req.body.workflows;
+    const events = req.body.events;
+    
     //TODO
     //parse incoming parameters
     //take into account existing events
