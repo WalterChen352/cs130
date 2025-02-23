@@ -1,39 +1,38 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, TextInput, FlatList, Text, TouchableOpacity } from 'react-native';
-import Select from 'react-select';
+import React from 'react';
+import { View } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 import { Workflow } from '../models/Workflow';
+import { WorkflowPickerStyles } from '../styles/WorkflowPickerStyles';
 
 interface WorkflowPickerProps {
   workflows: Workflow[];
-  onSelect: (workflow: Workflow) => void;
-}
-
-interface WorkflowOption {
-  value: Workflow;  // Stores the full workflow object
-  label: string;    // Display name in the dropdown
+  onSelect: (workflow_name: string) => void;
 }
 
 const WorkflowPicker: React.FC<WorkflowPickerProps> = ({
   workflows,
   onSelect
 }) => { 
-  const options: WorkflowOption[] = workflows.map((workflow) => ({
-      value: workflow,
-      label: workflow.name
-    }))
-
-  const handleChange = (selectedOption: WorkflowOption | null): void => {
-    if(selectedOption){
-      const selection = selectedOption.value;
-      onSelect(selection);
-    }
-  }
+  const [selectedWorkflowName, setSelectedWorkflowName] = React.useState<string>('');
   return (
-    <Select
-      onChange={handleChange} // Pass selected WorkflowOption
-      options={options}
-    />
+    <View style={WorkflowPickerStyles.container}>
+      <Picker
+        style={{color: 'black', opacity:100}}
+        selectedValue={selectedWorkflowName}
+        onValueChange={(itemValue) => {
+          setSelectedWorkflowName(itemValue);
+          if (itemValue) {
+            onSelect(itemValue);
+          }
+        }}
+      >
+        <Picker.Item key="None Selected" label="Select a workflow..."  />
+        {workflows.map((workflow) => (
+          <Picker.Item key={workflow.name} label={workflow.name} value={workflow.name} style={WorkflowPickerStyles.resultItem} />
+        ))}
+      </Picker>
+    </View>
   );
 };
 

@@ -4,12 +4,18 @@ import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 import AddressPicker from '../components/AddressPicker';
+import WorkflowPicker from '../components/WorkflowPicker';
+
+import { Workflow } from '../models/Workflow';
 import { Location } from '../models/Location';
-import { addEvent } from '../scripts/Event';
-import { styles } from '../styles/CreateTaskScreen.styles';
 import {Event} from '../models/Event';
+
+import { addEvent } from '../scripts/Event';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
+import { getWorkflows } from '../scripts/Workflow';
+
+import { styles } from '../styles/CreateTaskScreen.styles';
 
 
 /**
@@ -24,7 +30,7 @@ const CreateTaskScreen = (): JSX.Element => {
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [autoSchedule, setAutoSchedule] = useState<boolean>(false);
   const [transportationMode, setTransportationMode] = useState<string>('');
-  const [workflow, setWorkflow] = useState<string>('')
+  const [workflowName, setWorkflowName] = useState<string>('');
   const [location, setLocation] = useState<Location | null>(null);
   const [longitude, setLongitude] = useState<number>(0.0);
   const [latitude, setLatitude] = useState<number>(0.0);
@@ -33,6 +39,8 @@ const CreateTaskScreen = (): JSX.Element => {
   const [showStartTimePicker, setShowStartTimePicker] = useState<boolean>(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
+
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
 
   /** Dropdown options for transportation modes */
   const dropdownOptions = [
@@ -70,6 +78,11 @@ const CreateTaskScreen = (): JSX.Element => {
         }
     };
     void fetchLocation();
+
+    const fetchWorkflows = async (): Promise<void> => {
+        setWorkflows(await getWorkflows());
+    }
+    void fetchWorkflows();
   }, []);
 
   /** Updates destination coordinates when location changes */
@@ -174,11 +187,10 @@ const CreateTaskScreen = (): JSX.Element => {
         <Text style={styles.label}>Autoschedule?</Text>
       </View>
 
-      <Text style={styles.label}>Enter workflow</Text>
-      <TextInput
-        style={styles.input}
-        value={workflow}
-        onChangeText={setWorkflow}
+      <Text style={styles.label}>Select workflow</Text>
+      <WorkflowPicker
+        workflows={workflows}
+        onSelect={setWorkflowName}  
       />
 
       <Text style={styles.label}>Enter address</Text>
@@ -206,6 +218,7 @@ const CreateTaskScreen = (): JSX.Element => {
         testID='Save Task'
         onPress={() => {
             void (async () => {
+              console.log('workflow name:', workflowName);
               const e = new Event(
                 title,
                 description,
@@ -214,7 +227,7 @@ const CreateTaskScreen = (): JSX.Element => {
                 longitude,
                 latitude,
                 transportationMode,
-                workflow
+                workflowName
               );
               await addEvent(e);
             })();
