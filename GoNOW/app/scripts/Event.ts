@@ -1,6 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 import { Event } from '../models/Event';
 import { DB_NAME } from './Database';
+import { DB_NAME } from './Database';
 
 export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
   console.log('getting events for date:', eventDate);
@@ -38,6 +39,7 @@ export const clearEvents = async():Promise<void>=>{ //just for clearing local st
   console.log('dropping events table');
   try{
       const DB = SQLite.openDatabaseSync(DB_NAME);
+      const DB = SQLite.openDatabaseSync(DB_NAME);
       await DB.execAsync(`PRAGMA journal_mode = WAL;
         DROP TABLE events;
         `);
@@ -56,6 +58,7 @@ export const getWeeklyEvents = async(date:Date):Promise<Event[]>=>{
   endDate.setDate(endDate.getDate()+7);
   console.log('searching for events between ', startDate.toISOString(), endDate.toISOString());
   try{
+    const DB = await SQLite.openDatabaseAsync(DB_NAME);
     const DB = await SQLite.openDatabaseAsync(DB_NAME);
     const result = await DB.getAllAsync(` SELECT * FROM events 
     WHERE startTime >= datetime(?) AND startTime < datetime(?) 

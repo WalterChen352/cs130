@@ -1,7 +1,7 @@
 import { Alert, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { JSX, useCallback, useEffect, useState } from 'react';
-import { Ionicons } from 'react-native-vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import AddressPicker from '../components/AddressPicker';
@@ -23,7 +23,7 @@ import { TabParamList } from './Navigator';
  * @returns {JSX.Element} - The rendered `ProfileScreen` component.
  */
 const ProfileScreen = (): JSX.Element => {
-    const [workflows, setWorkflows] = useState<Workflow[]>([]);
+    const [workflows, setWorkflows] = useState<Workflow[] | undefined>([]);
     const [location, setLocation] = useState<Location | null>(null);
 
     const navigation = useNavigation<NavigationProp<TabParamList>>();
@@ -44,6 +44,10 @@ const ProfileScreen = (): JSX.Element => {
             void loadWorkflows();
         }, [])
     );
+
+    useEffect(() => {
+        void loadWorkflows();
+    }, []);
 
     useEffect(() => {
         const fetchLocation = async (): Promise<void> => {
@@ -166,7 +170,9 @@ const ProfileScreen = (): JSX.Element => {
                     <View style={ProfileScreenStyles.center}>
                         <TouchableOpacity onPress={handleAdd} testID="workflow-btn-add">
                             <Text style={ProfileScreenStyles.addLink} testID="workflow-btn-add-text">
-                                {workflows.length > 0 ? 'Add Another Workflow' : 'Add a Workflow'}
+                                {workflows !== undefined && workflows.length > 0
+                                    ? 'Add Another Workflow'
+                                    : 'Add a Workflow'}
                             </Text>
                         </TouchableOpacity>
                         <Text style={ProfileScreenStyles.footer}></Text>

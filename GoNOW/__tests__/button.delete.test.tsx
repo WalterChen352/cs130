@@ -1,10 +1,13 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import ButtonDelete from '../app/components/ButtonDelete';
+import { IoniconsProps } from '../__mocks__/ionicons';
 
-jest.mock('@expo/vector-icons', () => ({
-  Ionicons: 'Ionicons'
-}));
+jest.mock('react-native-vector-icons/Ionicons', () => {
+  return function MockIonicons(props: IoniconsProps) {
+    return <mock-ionicon {...props} />;
+  };
+});
 
 interface ButtonProps {
   style?: {

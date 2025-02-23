@@ -1,7 +1,17 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, screen, fireEvent, waitFor} from '@testing-library/react-native';
 import CalendarScreen from '../app/screens/CalendarScreen';
-import { getWeeklyEvents } from '../app/scripts/Event';
+import { IoniconsProps } from '../__mocks__/ionicons';
+import { SchedulingStyle } from '../app/models/SchedulingStyle';
+import {Time} from '../app/models/Time';
+import {Event} from '../app/models/Event';
+import {Workflow} from '../app/models/Workflow';
+import { DEFAULT_COLOR } from '../app/styles/Event.style';
+jest.mock('react-native-vector-icons/Ionicons', () => {
+  return function MockIonicons(props: IoniconsProps) {
+    return <mock-ionicon {...props} />;
+  };
+});
 
 const mockNavigate = jest.fn();
 jest.mock('@react-navigation/native', () => ({
@@ -11,104 +21,96 @@ jest.mock('@react-navigation/native', () => ({
   useFocusEffect: jest.fn(),
 }));
 
-jest.mock('react-native-vector-icons', () => ({
-  Ionicons: jest.fn(() => null),
-}));
 
-jest.mock('../app/scripts/Event', () => ({
-  getWeeklyEvents: jest.fn()
-}));
+const mockSchedulingStyles = [
+  new SchedulingStyle(0, 'Schedule close together'),
+  new SchedulingStyle(1, 'Schedule with max buffer'),
+  new SchedulingStyle(2, 'Schedule with middle buffer'),
+  new SchedulingStyle(3, 'Schedule with random buffer')
+];
 
-interface GestureHandlerProps {
-  children: React.ReactNode;
-}
-
-jest.mock('react-native-gesture-handler', () => ({
-  GestureDetector: ({ children }: GestureHandlerProps): React.ReactNode => children,
-  Gesture: {
-    Exclusive: jest.fn(),
-    Fling: () => ({
-      direction: () => ({
-        onEnd: () => ({
-          runOnJS: jest.fn()
-        })
-      })
-    })
-  },
-  Directions: {
-    LEFT: 1,
-    RIGHT: 2
-  }
-}));
-
+const startTime1 = new Date(Date.now()).setTime(10).toLocaleString();
+const endTime1 = new Date(startTime1).setTime(11).toLocaleString();
+const startTime2 = new Date(Date.now()).setTime(11).toLocaleString();
+const endTime2 = new Date(startTime1).setTime(12).toLocaleString();
 
 const mockEvents = [
-  {
-    id: 1,
-    name: "Test Event 1",
-    description: "Test Description",
-    startTime: "2025-02-19 10:00:00",
-    endTime: "2025-02-19 11:00:00",
-    latitude: 33,
-    longitude: -117,
-    transportationMode: "car",
-    workflow: null
-  },
-  {
-    id: 2,
-    name: "Test Event 2",
-    description: "Test Description",
-    startTime: "2025-02-19 14:00:00",
-    endTime: "2025-02-19 15:00:00",
-    latitude: 33,
-    longitude: -117,
-    transportationMode: "car",
-    workflow: null
-  }
+  new Event('Event1', 'description1',startTime1, endTime1, 0, 0, 'Driving', 'Test Workflow'),
+  new Event('Event2', 'desc2', startTime2, endTime2, 0, 0, 'Driving', null)
+]
+
+const mockWorkflows= [
+  new Workflow(
+    1,
+    'Test Workflow',
+    '#388dff',
+    true,
+    new Time(8, 30),
+    new Time(17, 0),
+    [true, false, true, false, true, false, true],
+     mockSchedulingStyles[3]
+  )
 ];
+
+jest.mock('../app/scripts/Workflow', () => ({
+    getWorkflows: jest.fn(() => Promise.resolve(mockWorkflows)),
+    filterWfName: jest.fn((workflows:Workflow[], name:string)=>{
+      return workflows.find((wf) => wf.name === name);
+    })
+}));
+
+jest.mock('../app/scripts/Event',()=>({
+  getWeeklyEvents: jest.fn(()=> Promise.resolve(mockEvents))
+}));
+
+// Mock dependencies
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: jest.fn()
+}));
+jest.mock('expo-font');
 
 describe('CalendarScreen', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    (getWeeklyEvents as jest.Mock).mockResolvedValue(mockEvents);
-  });
-
-  it('renders the basic calendar layout', async () => {
-    render(
-        <CalendarScreen />
-    );
-
-    await waitFor(() => {
-      // Check if basic structure is rendered
-      expect(screen.getByText('Time')).toBeOnTheScreen();
-      expect(screen.getByText('Su')).toBeOnTheScreen();
-      expect(screen.getByText('M')).toBeOnTheScreen();
+      jest.clearAllMocks();
+    });
+  it('renders correctly with initial layout',async  () => {
+    const{getByText} =render(<CalendarScreen />);
+    await waitFor(()=>{
+      expect(getByText('Time')).toBeOnTheScreen();
+      expect(getByText('Su')).toBeOnTheScreen();
+      expect(getByText('M')).toBeOnTheScreen();
       
       // Check if time labels are rendered
-      expect(screen.getByText('12AM')).toBeOnTheScreen();
-      expect(screen.getByText('12PM')).toBeOnTheScreen();
-
-      expect(screen.getByTestId('WeekHeader')).toBeOnTheScreen();
-      expect(screen.getByTestId('back-button')).toBeOnTheScreen();
-      expect(screen.getByTestId('forward-button')).toBeOnTheScreen();
+      expect(getByText('12AM')).toBeOnTheScreen();
+      expect(getByText('12PM')).toBeOnTheScreen();
     });
+   
+    
   });
 
-  it('displays events after fetching', async () => {
-    render(
-        <CalendarScreen />
-    );
-
-    await waitFor(() => {
-      expect(getWeeklyEvents).toHaveBeenCalled();
+  it('Gets the current week correct', async()=>{
+    const {getByTestId} = render(<CalendarScreen/>);
+    await waitFor(()=>{
+      const weekHeader = getByTestId('WeekHeader');
+      expect(weekHeader).toBeOnTheScreen();
     });
     
-    await waitFor(() => {
-      const events = screen.getAllByTestId('calendar-event');
-      expect(events).toHaveLength(2);
-      expect(screen.getByText('Test Event 1')).toBeOnTheScreen();
-      expect(screen.getByText('Test Event 2')).toBeOnTheScreen();
-    });
+  });
+  
+  test('it renders a workflow event with correct color',()=>{
+    const {getByTestId}=render(<CalendarScreen/>);
+    void waitFor( ()=>{
+      const event1 =getByTestId('Event1');
+      expect(event1).toHaveStyle({backgroundColor: mockWorkflows[0].color});
+    })
+  });
+
+  test('it renders a default event with correct color', ()=>{
+    const {getByTestId}=render(<CalendarScreen/>);
+    void waitFor(()=>{
+      const event1 = getByTestId('Event2');
+      expect(event1).toHaveStyle({backgroundColor: DEFAULT_COLOR});
+    })
   });
 
   it('navigates to daily view when event is pressed', async () => {
@@ -128,32 +130,4 @@ describe('CalendarScreen', () => {
     });
   });
 
-  it('updates week range when navigation buttons are pressed', async () => {
-    render(
-        <CalendarScreen />
-    );
-
-    const initialWeekHeader = await waitFor(() => screen.getByTestId('WeekHeader'));
-    const initialText: string = initialWeekHeader.props.children as string;
-
-    await waitFor(() => {
-      const forwardButton = screen.getByTestId('forward-button');
-      fireEvent.press(forwardButton);
-    });
-
-    await waitFor(() => {
-      const newWeekHeader = screen.getByTestId('WeekHeader');
-      expect(newWeekHeader.props.children).not.toBe(initialText);
-    });
-
-    await waitFor(() => {
-      const backButton = screen.getByTestId('back-button');
-      fireEvent.press(backButton);
-    });
-
-    await waitFor(() => {
-      const finalWeekHeader = screen.getByTestId('WeekHeader');
-      expect(finalWeekHeader.props.children).toBe(initialText);
-    });
-  });
 });

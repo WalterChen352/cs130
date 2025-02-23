@@ -29,6 +29,12 @@ interface CreateTaskScreenProps {
   route: RouteProp<TabParamList, 'CreateTask'>;
 }
 
+/**
+ * React component for creating a new task.
+ * Allows users to input task details such as title, time, location, transportation mode, and description.
+ * 
+ * @returns {JSX.Element} The CreateTaskScreen component.
+ */
 const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
   const isEditMode = route.params?.mode === 'edit' && route.params?.eventData;// eslint-disable-line @typescript-eslint/no-unnecessary-condition
   const eventData = route.params?.eventData as EventData | undefined;// eslint-disable-line @typescript-eslint/no-unnecessary-condition
@@ -48,6 +54,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
   const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
 
+  /** Dropdown options for transportation modes */
   const dropdownOptions = [
     { label: 'Walk', value: 'walk' },
     { label: 'Public Transit', value: 'transit' },
@@ -55,6 +62,11 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
     { label: 'Car', value: 'car' },
   ];
 
+  /**
+   * Sets the destination coordinates based on the selected location.
+   * 
+   * @param {Location} location - The selected location object.
+   */
   const setDestCoords = (location: Location): void => {
     setLatitude(location.Coordinates.Latitude);
     setLongitude(location.Coordinates.Longitude);
@@ -75,6 +87,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
   }, [isEditMode, eventData]);
 
   // Fetch location if not in edit mode
+  /** Fetches the user's location on component mount */
   useEffect(() => {
     const fetchLocation = async (): Promise<void> => {
       if (!isEditMode) {
@@ -97,14 +110,19 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
     void fetchLocation();
   }, [isEditMode]);
 
+  /** Updates destination coordinates when location changes */
   useEffect(() => {
     if (location) {
       setDestCoords(location);
     }
+    if(location){
+      setDestCoords(location)
+    }
   }, [location]);
 
+  /*TODO:: replace scrollview with flatlist, or modify addresspicker to not use virtualizedlist*/
   return (
-    <ScrollView>
+    <ScrollView> 
       <Text style={styles.title}>{isEditMode ? 'Edit task' : 'Add a task'}</Text>
 
       <TextInput
@@ -219,8 +237,13 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       </View>
 
       <Text style={styles.label}>Enter workflow</Text>
-      <TextInput style={styles.input} value={workflow} onChangeText={setWorkflow} />
+      <TextInput
+        style={styles.input}
+        value={workflow}
+        onChangeText={setWorkflow}
+      />
 
+      <Text style={styles.label}>Enter address</Text>
       <View style={[styles.locationPicker, {}]}>
         <AddressPicker
           initialAddress={location?.Address}
@@ -271,6 +294,13 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
   );
 };
 
+
+/**
+   * Formats a date object into a string with date and time.
+   * 
+   * @param {Date} date - The date to format.
+   * @returns {string} The formatted date string.
+   */
 const formatDate = (date: Date): string => {
   const datePart = date.toLocaleDateString('en-CA');
   const timePart = date.toLocaleTimeString('en-GB');

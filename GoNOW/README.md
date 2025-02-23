@@ -1,50 +1,89 @@
-# Welcome to your Expo app 👋
+# GoNOW
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is GoNow!, a mobile planner and calendar app for students and busy schedulers. The app uses Node.js for backend development, React Native for mobile platforms, and SQLite as storage. The main task is events planning taking into account travel time and local conditions.
 
-## Get started
+# Project Structure
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+The project follows a modular structure to keep the codebase clean and maintainable:
+```
+/GoNOW
+│── __mocks__             # Mock implementations of modules
+│── __tests__             # Unit and integration tests
+│── /assets               # Static assets (icons, images, etc.)
+│── /app
+│   │── /components       # Reusable UI components (e.g., AddressPicker, ButtonSave)
+│   │── /models           # Model classes used in the application
+│   │── /screens          # App screens (Calendar, Map, Tasks, Profile, Workflow, etc.)
+│   │── /scripts          # Class and methods for working with storage (SQLite)
+│   │── /styles           # Style files for application components
+│   |── __layout.tsx      # Global layout for the app
+│   |── index.tsx         # Entry point of the application
+│── /node_modules         # Dependencies (libraries, packages) required for project
+│── .gitignore            # Git file with list of files and directories to ignore in version control
+│── .env                  # Environment variables in a key-value format (everyone creates for themselves)
+│── package.json          # Project file with configuration and Dependencies
+│── app.js                # Main configuration file
+│── eslint.config.mjs     # ESLint configuration file for static code analysis
+│── README.md             # Project documentation
+│── tsconfig.json         # TypeScript configuration file
+│── typedoc.json          # Configuration file for TypeDoc
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Link: [TS Doc](https://walterchen352.github.io/)
 
-## Learn more
+# How to Run Mobile App Locally
 
-To learn more about developing your project with Expo, look at the following resources:
+## Prerequsites for Developer's Machine:
+- [Node.js](https://nodejs.org/en/download) 22.13.1 or higher
+- NPM 10.9.2 or higher
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Check Node.js and NPM:
+```shell
+node -v; # shold print ver
+npm -v; # shold print ver
+```
 
-## Join the community
+## Clone Project
+```shell
+cd YOUR_PROJECTS_FOLDER;
 
-Join our community of developers creating universal apps.
+# clone the project repo
+git clone https://github.com/WalterChen352/cs130;
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+# go to project folder
+cd cs130;
+```
+
+## Build Mobile App
+
+Go to project folder:
+```shell
+cd GoNOW;
+```
+
+Install dependencies from packege.json
+```shell
+npm install;
+```
+
+Build Mobile app start the Expo server:
+```shell
+npx expo start;
+```
+
+## Check Mobile App in your smartphone
+
+- Installed Expo Go ( [Apple Store](https://apps.apple.com/us/app/expo-go/id982107779), [Google Play](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US))
+- Your smartphone must be connected to the same network as the Expo server.
+- Open Expo Go app on your smartphone and use `Scan QR code` option to conect to Expo server and open the Mobile app.
+
+# Run Tests
+Run jest (unit) tests:
+```shell
+npm test;
+```
+
+Run static code analysis tests:
+```shell
+npm run lint;
+```

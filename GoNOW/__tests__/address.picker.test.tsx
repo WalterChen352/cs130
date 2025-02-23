@@ -9,6 +9,13 @@ jest.mock('lodash/debounce', () => {
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
+    ok: true,
+    status: 200,
+    headers: new Headers(),
+    redirected: false,
+    statusText: 'OK',
+    type: 'basic',
+    url: 'http://example.com',
     json: () =>
       Promise.resolve([
         {
@@ -18,10 +25,18 @@ global.fetch = jest.fn(() =>
           lon: '-118.4449446',
         },
       ]),
-  })
+    text: () => Promise.resolve(''),
+    blob: () => Promise.resolve(new Blob()),
+    arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
+    formData: () => Promise.resolve(new FormData()),
+    clone: () => ({
+      /* Mock clone method */
+    }),
+  } as Response)
 );
 
 describe('AddressPicker', () => {
+  
   beforeEach(() => {
     jest.clearAllMocks();
   });

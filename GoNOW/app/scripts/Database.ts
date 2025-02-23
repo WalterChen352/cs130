@@ -71,16 +71,6 @@ export const initDatabase = async (): Promise<void> => {
             );
         `);
 
-        try {
-            await DB.execAsync(`
-              PRAGMA journal_mode = WAL;
-              INSERT INTO profile (id, address, lat, lon) VALUES (1, '', 0, 0);
-            `);
-        }
-        catch {
-            console.log(''); //ignore second attempt of insert record
-        }
-
     try {
       await DB.execAsync(`
         PRAGMA journal_mode = WAL;

@@ -4,14 +4,18 @@ import { useNavigation } from '@react-navigation/native';
 
 import { getWorkflows} from '../app/scripts/Workflow';
 import { Workflow } from '../app/models/Workflow';
-import { SchedulingStyle } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
+import { SchedulingStyle } from '../app/models/SchedulingStyle';
+
 import ProfileScreen from '../app/screens/ProfileScreen';
 import { View } from 'react-native';
+import { IoniconsProps } from '../__mocks__/ionicons';
 
-jest.mock('react-native-vector-icons', () => ({
-  Ionicons: jest.fn(() => null),
-}));
+jest.mock('react-native-vector-icons/Ionicons', () => {
+  return function MockIonicons(props: IoniconsProps) {
+    return <mock-ionicon {...props} />;
+  };
+});
 
 jest.mock('../app/scripts/Workflow', () => ({
   getWorkflows: jest.fn(),
@@ -26,7 +30,7 @@ jest.mock('../app/components/AddressPicker', () => {
   return () => <MockAddressPicker />;
 });
 
-const MockAddressPicker = (props) => <View {...props} />;
+const MockAddressPicker = () => <View />; 
 
 jest.mock('../app/scripts/Geo', () => {
   return {
@@ -53,7 +57,6 @@ const mockSchedulingStyles = [
   new SchedulingStyle(2, 'Schedule with mmiddle buffer'),
   new SchedulingStyle(3, 'Schedule with random buffer')
 ];
-
 const mockWorkflows = [
   new Workflow(
     1,
@@ -86,45 +89,44 @@ describe('Profile Screen', () => {
   });
 
   test('should render the titles on profile screen', async () => {
-    const {getByTestId, unmount} = render(<ProfileScreen />);
+    const { getByTestId } = render(<ProfileScreen />);
+    
     await waitFor(() => {
       expect(getByTestId('workflow-title')).toHaveTextContent('Workflows');
       expect(getByTestId('home-location-title')).toHaveTextContent('Home Location');
     });
-    unmount();
   });
-
   test('should load and render workloads list on profile screen', async () => {
     (getWorkflows as jest.Mock).mockResolvedValue(mockWorkflows);
-    const {findByTestId, unmount} = render(<ProfileScreen />);
-    await waitFor(() => {
-      for (let i = 0; i < {mockWorkflows}.length; i++){
-        const w = mockWorkflows[i];
-        expect(findByTestId(`workflow-${String(w.id)}`)).toBeTruthy();
-        expect(findByTestId(`workflow-header-${String(w.id)}`)).toHaveTextContent(new RegExp(w.name, 'i'));
-        expect(findByTestId(`workflow-text-${String(w.id)}`)).toHaveTextContent(/Schedule/);
-        expect(findByTestId(`workflow-text-${String(w.id)}`)).toHaveTextContent(new RegExp(w.timeStart.toString(), 'i'));
-        expect(findByTestId(`workflow-text-${String(w.id)}`)).toHaveTextContent(new RegExp(w.timeEnd.toString(), 'i'));
-        expect(findByTestId(`workflow-scheduling-style-${String(w.id)}`)).toHaveTextContent(new RegExp(w.schedulingStyle.Name, 'i'));
+    const { findByTestId } = render(<ProfileScreen />);
+
+    await waitFor(async () => {
+      for (const w of mockWorkflows) {
+        const workflowElement = await findByTestId(`workflow-${String(w.id)}`);
+        const headerElement = await findByTestId(`workflow-header-${String(w.id)}`);
+        const textElement = await findByTestId(`workflow-text-${String(w.id)}`);
+        const timeStartElement = await findByTestId(`workflow-text-${String(w.id)}`);
+        const timeEndElement = await findByTestId(`workflow-text-${String(w.id)}`);
+        const styleElement = await findByTestId(`workflow-scheduling-style-${String(w.id)}`);
+
+        expect(workflowElement).toBeTruthy();
+        expect(headerElement).toHaveTextContent(new RegExp(w.name, 'i'));
+        expect(textElement).toHaveTextContent(/Schedule/);
+        expect(timeStartElement).toHaveTextContent(new RegExp(w.timeStart.toString(), 'i'));
+        expect(timeEndElement).toHaveTextContent(new RegExp(w.timeEnd.toString(), 'i'));
+        expect(styleElement).toHaveTextContent(new RegExp(w.schedulingStyle.Name, 'i'));
       }
-    });
-    await waitFor(() => {
-      unmount();
     });
   });
 
   test('should navigate to Workflow create screen when press Create Workload button', async () => {
-    const {getByTestId, unmount} = render(<ProfileScreen />);
+    const { getByTestId } = render(<ProfileScreen />);
+    
     await act(async () => {
       fireEvent.press(getByTestId('workflow-btn-add'));
       return Promise.resolve();
     });
-    await waitFor(() => {
-      expect(mockNavigation.navigate).toHaveBeenCalledWith('Workflow', expect.any(Object));
-    });
-    await waitFor(() => {
-      unmount();
-    });
-  });
 
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Workflow', expect.any(Object));
+  });
 });

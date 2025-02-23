@@ -1,5 +1,5 @@
 import React from 'react';
-import { Ionicons } from 'react-native-vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native';
 import { ButtonDeleteStyles } from '../styles/ButtonDelete.styles';
 

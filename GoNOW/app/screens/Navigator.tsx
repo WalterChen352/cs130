@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from 'react-native-vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import MapScreen from './MapScreen';
 import ProfileScreen from './ProfileScreen';
@@ -12,6 +12,7 @@ import WorkflowScreen from './WorkflowScreen';
 import { NavigatorStyles } from '../styles/Navigator.styles';
 import { Workflow } from '../models/Workflow';
 import { ParamListBase } from '@react-navigation/native';
+
 
 export type TabParamList = ParamListBase & {
   Map: undefined;

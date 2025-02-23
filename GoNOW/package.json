@@ -14,7 +14,8 @@
   "jest": {
     "preset": "jest-expo",
     "moduleNameMapper": {
-      "expo-sqlite": "<rootDir>/__mocks__/expo-sqlite.js"
+      "expo-sqlite": "<rootDir>/__mocks__/expo-sqlite.js",
+      "react-native-vector-icons/Ionicons": "<rootDir>/__mocks__/ionicons.tsx"
     },
     "testMatch": [
       "**/__tests__/**/*.test.js",
