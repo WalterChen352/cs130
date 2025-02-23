@@ -4,7 +4,7 @@ import type { Headers} from 'node-fetch';
 dotenv.config();
 
 const app: Express = express();
-const PORT = 3000;
+const PORT = 8080;
 const bodyParser= require('body-parser');
 app.use(bodyParser.json())
 
