@@ -9,6 +9,7 @@ const app: Express = express();
 const PORT = 3000;
 const apiKey = process.env.API_KEY;  // eslint-disable-line
 type autoscheduleInterface={
+    event: Event,
     workflows: Workflow[],
     events: Event[]
 }
@@ -19,9 +20,8 @@ type autoscheduleInterface={
 app.get('/api/autoschedule', (req: Request, res: Response) => {
     const workflows = req.body.workflows;
     const events = req.body.events;
-    
-    //TODO
     //parse incoming parameters
+    //take i
     //take into account existing events
     //determine some candidates
     //send send back to user
