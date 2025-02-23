@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, waitFor, cleanup, fireEvent, screen, act } from '@testing-library/react-native';
+import { render, waitFor, cleanup, fireEvent,  act } from '@testing-library/react-native';
 import CalendarScreen from '../app/screens/CalendarScreen';
+import { ReactTestInstance } from 'react-test-renderer';
 import { IoniconsProps } from '../__mocks__/ionicons';
 import { SchedulingStyle } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
@@ -155,14 +156,15 @@ describe('CalendarScreen', () => {
   it('navigates to daily view when event is pressed', async () => {
     const { getByTestId } = render(<CalendarScreen />);
     
-    let event;
+    let event: ReactTestInstance;
     await waitFor(() => {
-      event = getByTestId('Event1');
-      expect(event).toBeTruthy();
+      const foundEvent = getByTestId('Event1');
+      expect(foundEvent).toBeTruthy();
+      event = foundEvent;
     });
 
-    await act(async () => {
-      fireEvent.press(event!);
+    act(() => {
+      fireEvent.press(event);
     });
     
     await waitFor(() => {

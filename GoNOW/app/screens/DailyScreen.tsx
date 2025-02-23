@@ -1,4 +1,4 @@
-import React, { useState, useCallback, JSX, useMemo } from 'react';
+import React, { useState, useCallback, JSX, useMemo, useEffect } from 'react';
 import { Text, View, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { getDailyEvents, deleteEvent } from '../scripts/Event';
 import { styles } from '../styles/DailyScreen.styles';
@@ -14,12 +14,18 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
   const navigation = useNavigation<NavigationProp<TabParamList>>();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
 
   const eventDate = useMemo(() => {
     return new Date(route.params?.eventDate ?? Date.now()); // eslint-disable-line @typescript-eslint/no-unnecessary-condition
   }, [route.params?.eventDate]); // eslint-disable-line @typescript-eslint/no-unnecessary-condition
 
-  const highlightedEventId = route.params?.eventId; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+  const routeHighlightedEventId = route.params?.eventId; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+
+  // Update selection whenever route params change
+  useEffect(() => {
+    setSelectedEventId(routeHighlightedEventId ?? null);
+  }, [routeHighlightedEventId]);
 
   const loadEvents = useCallback(async (): Promise<void> => {
     try {
@@ -63,14 +69,12 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
           onPress: () => {
             void (async () => {
               try {
-                // Update local state immediately
                 setEvents(currentEvents => currentEvents.filter(event => event.id !== eventId));
-                // Then perform the deletion in the background
+                setSelectedEventId(null); // Clear selection when deleting
                 await deleteEvent(eventId);
               } catch (error) {
                 console.error('Failed to delete event', error);
                 Alert.alert('Error', 'Failed to delete event. Please try again.');
-                // Reload events if deletion failed to restore the correct state
                 void loadEvents();
               }
             })();
@@ -80,14 +84,21 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
     );
   };
 
+  const handleEventPress = (eventId: number) => {
+    setSelectedEventId(currentId => currentId === eventId ? null : eventId);
+  };
+
   const displayEvent = ({ item }: { item: Event }): JSX.Element => {
-    const isHighlighted = item.id === highlightedEventId;
+    const isHighlighted = item.id === selectedEventId;
 
     return (
-      <View style={[
-        styles.eventCard,
-        isHighlighted && styles.highlightedEventCard
-      ]}>
+      <TouchableOpacity 
+        onPress={() => { handleEventPress(item.id); }}
+        style={[
+          styles.eventCard,
+          isHighlighted && styles.highlightedEventCard
+        ]}
+      >
         <Text style={styles.eventTitle}>{item.name}</Text>
         <Text style={styles.eventDescription}>{item.description}</Text>
         <Text style={styles.eventTime}>
@@ -110,7 +121,7 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
             </TouchableOpacity>
           </View>
         )}
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -125,6 +136,7 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
           data={events}
           renderItem={displayEvent}
           keyExtractor={item => item.id.toString()}
+          extraData={selectedEventId} // Ensure FlatList rerenders when selection changes
         />
       ) : (
         <Text style={styles.noEvents}>No tasks today!</Text>
