@@ -10,9 +10,7 @@ import {Event} from '../models/Event';
 import { Workflow } from '../models/Workflow';
 import { TabParamList } from './Navigator';
 import { getWorkflows, filterWfName } from '../scripts/Workflow';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { DEFAULT_COLOR } from '../styles/Event.style';
-import { TabParamList } from './Navigator';
 
 const HOUR_HEIGHT = 20;
 const START_HOUR = 0;
@@ -25,7 +23,6 @@ const TIME_LABELS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => {
 
 const CalendarScreen = (): JSX.Element => {
     const navigation = useNavigation<NavigationProp<TabParamList>>();
-    const [events, setEvents] = useState<Event[]>([]);
 
     const getLastSunday = (d: Date): Date => {
         const t = new Date(d);
@@ -48,20 +45,18 @@ const CalendarScreen = (): JSX.Element => {
     const [events, setEvents] = useState<Event[]>([]);
     const [startDate, setStartDate]=useState(getLastSunday(new Date(Date.now())));
     const [weekRange, setWeekRange]= useState(getWeekRange(startDate));
-    useEffect(() => {
-        const init = async ():Promise<void> => {
-            try {
-                const e: Event[] = await getWeeklyEvents(startDate);
-                setEvents(e);
-                setWeekRange(getWeekRange(startDate));
-                const w: Workflow[] = await getWorkflows();
-                setWorkflows(w);
-                console.log('workflows in calendar', workflows);
-            } catch(error) {
-                console.error('error fetching events', error);
-            }
-        };
-        void init();
+
+    const fetchEvents = useCallback(async (): Promise<void> => {
+        try {
+            const e: Event[] = await getWeeklyEvents(startDate);
+            setEvents(e);
+            setWeekRange(getWeekRange(startDate));
+            const w: Workflow[] = await getWorkflows();
+            setWorkflows(w);
+            console.log('workflows in calendar', workflows);
+        } catch(error) {
+            console.error('error fetching events', error);
+        }
     }, [startDate]);
 
     useFocusEffect(
@@ -181,14 +176,13 @@ const CalendarScreen = (): JSX.Element => {
                     return (
                         <TouchableOpacity
                         key={`event-${String(day)}-${String(index)}`}
-                        testID="calendar-event"
+                        testID={event.name}
                         style={[
                             CalendarStyles.event,
-                            { top: position.top, height: Math.max(position.height, 20) }
+                            { top: position.top, height: Math.max(position.height, 20),
                                 backgroundColor: event.workflow? filterWfName(workflows,event.workflow).color : DEFAULT_COLOR
-                             }
+                            }
                         ]}
-                        testID= {event.name}
                         onPress={() => {
                             const eventDate = new Date(event.startTime);
                             navigateToDaily(eventDate, event.id);
