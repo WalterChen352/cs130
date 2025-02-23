@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor, cleanup, fireEvent, screen } from '@testing-library/react-native';
+import { render, waitFor, cleanup, fireEvent, screen, act } from '@testing-library/react-native';
 import CalendarScreen from '../app/screens/CalendarScreen';
 import { IoniconsProps } from '../__mocks__/ionicons';
 import { SchedulingStyle } from '../app/models/SchedulingStyle';
@@ -123,7 +123,6 @@ describe('CalendarScreen', () => {
       expect(getByText('Time')).toBeOnTheScreen();
       expect(getByText('Su')).toBeOnTheScreen();
       expect(getByText('M')).toBeOnTheScreen();
-      // Check if time labels are rendered
       expect(getByText('12AM')).toBeOnTheScreen();
       expect(getByText('12PM')).toBeOnTheScreen();
     });
@@ -139,35 +138,38 @@ describe('CalendarScreen', () => {
 
   test('it renders a workflow event with correct color', async () => {
     const { getByTestId } = render(<CalendarScreen />);
-    
     await waitFor(() => {
       const event1 = getByTestId('Event1');
       expect(event1).toHaveStyle({ backgroundColor: mockWorkflows[0].color });
-    }, { timeout: 5000 });
+    });
   });
 
   test('it renders a default event with correct color', async () => {
     const { getByTestId } = render(<CalendarScreen />);
-    
     await waitFor(() => {
       const event2 = getByTestId('Event2');
       expect(event2).toHaveStyle({ backgroundColor: DEFAULT_COLOR });
-    }, { timeout: 5000 });
+    });
   });
 
   it('navigates to daily view when event is pressed', async () => {
-    render(<CalendarScreen />);
+    const { getByTestId } = render(<CalendarScreen />);
     
+    let event;
     await waitFor(() => {
-      const event = screen.getByTestId('Event1');
-      fireEvent.press(event);
+      event = getByTestId('Event1');
+      expect(event).toBeTruthy();
     });
 
+    await act(async () => {
+      fireEvent.press(event!);
+    });
+    
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('Daily', {
         eventDate: new Date(mockEvents[0].startTime).toISOString(),
         eventId: mockEvents[0].id
       });
     });
-});
+  });
 });
