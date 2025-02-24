@@ -12,15 +12,6 @@ import * as EventScripts from '../app/scripts/Event';
 import * as WorkflowScripts from '../app/scripts/Workflow';
 
 // Mock the navigation hooks
-jest.mock('@react-navigation/native', () => {
-  const actualNav = jest.requireActual('@react-navigation/native');
-  return {
-    ...actualNav,
-    useNavigation: () => ({
-      navigate: jest.fn(),
-    }),
-  };
-});
 
 // Mock the Event and Workflow scripts
 jest.mock('../app/scripts/Event', () => ({
@@ -98,8 +89,8 @@ describe('DailyScreen', () => {
     // Setup mock return values
     (EventScripts.getDailyEvents as jest.Mock).mockResolvedValue(mockEvents);
     (WorkflowScripts.getWorkflows as jest.Mock).mockResolvedValue(mockWorkflows);
-    (WorkflowScripts.filterWFID as jest.Mock).mockImplementation((workflows, id) => {
-      return workflows.find(w => w.id === id) || { color: DEFAULT_COLOR };
+    (WorkflowScripts.filterWFID as jest.Mock).mockImplementation((workflows:Workflow[], id:number) => {
+      return workflows.find(w => w.id === id);
     });
   });
 
