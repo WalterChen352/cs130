@@ -286,11 +286,11 @@ export const validateWorkflow = async (workflow : Workflow): Promise<void> => {
   }
 };
 
-export const filterWFID=(workflows: Workflow[], id:number): Workflow=>{
+export const filterWFID=(workflows: Workflow[], id:number): Workflow | null=>{
   for (const w of workflows){
     if (w.id===id)
       return w
   }
   console.error('workflow not found. May have been called with improper arguments:', workflows, id);
-  return new Workflow(0, 'ERROR', '', false, new Time(0,0), new Time(0,0), [], new SchedulingStyle(0, ''));
+  return null;
 }

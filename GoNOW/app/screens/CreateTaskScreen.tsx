@@ -1,19 +1,29 @@
+//package imports
 import React, { useState, useEffect, JSX } from 'react';
 import { ScrollView, View, Text, TextInput, Button, Switch, Pressable } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { RouteProp } from '@react-navigation/native';
 
+//component imports
 import AddressPicker from '../components/AddressPicker';
 import WorkflowPicker from '../components/WorkflowPicker';
 
+//model imports
 import { Workflow } from '../models/Workflow';
 import { Location } from '../models/Location';
-import { addEvent, updateEvent } from '../scripts/Event';
-import { styles } from '../styles/CreateTaskScreen.styles';
 import { Event } from '../models/Event';
+import { addEvent, updateEvent } from '../scripts/Event';
+
+//script imports
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
-import { RouteProp } from '@react-navigation/native';
+import { getWorkflows, filterWFID } from '../scripts/Workflow';
+
+//style imports
+import { styles } from '../styles/CreateTaskScreen.styles';
+
+//misc imports TODO::
 import { TabParamList } from './Navigator';
 
 interface EventData {
@@ -30,9 +40,7 @@ interface EventData {
 
 interface CreateTaskScreenProps {
   route: RouteProp<TabParamList, 'CreateTask'>;
-}import { getWorkflows } from '../scripts/Workflow';
-
-import { styles } from '../styles/CreateTaskScreen.styles';
+}
 
 
 /**
@@ -50,7 +58,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [autoSchedule, setAutoSchedule] = useState<boolean>(false);
   const [transportationMode, setTransportationMode] = useState<string>('');
-  const [workflowName, setWorkflowName] = useState<string>('');
+  const [workflow, setWorkflow] = useState<Workflow | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
   const [longitude, setLongitude] = useState<number>(0.0);
   const [latitude, setLatitude] = useState<number>(0.0);
@@ -59,7 +67,6 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
   const [showStartTimePicker, setShowStartTimePicker] = useState<boolean>(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
-
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
 
   /** Dropdown options for transportation modes */
@@ -90,7 +97,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       setLatitude(eventData.latitude);
       setLongitude(eventData.longitude);
       setTransportationMode(eventData.transportationMode);
-      setWorkflow(eventData.workflow ?? '');
+      setWorkflow(filterWFID(workflows, eventData.id))
     }
   }, [isEditMode, eventData]);
 
@@ -252,7 +259,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       <Text style={styles.label}>Select workflow</Text>
       <WorkflowPicker
         workflows={workflows}
-        onSelect={setWorkflowName}  
+        onSelect={(id) => {setWorkflow(filterWFID(workflows, id))}}  
       />
 
       <Text style={styles.label}>Enter address</Text>
@@ -280,7 +287,6 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
         testID="Save Task"
         onPress={() => {
           void (async () => {
-              console.log('workflow name:', workflowName);
             const e = new Event(
               title,
               description,
@@ -289,7 +295,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
               longitude,
               latitude,
               transportationMode,
-              workflowName
+              workflow?.id ?? -1, //set workflow.id to -1 if workflow is null
             );
             
             if (isEditMode && eventData) {

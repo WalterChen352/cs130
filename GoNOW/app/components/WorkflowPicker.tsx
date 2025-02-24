@@ -7,21 +7,21 @@ import { WorkflowPickerStyles } from '../styles/WorkflowPickerStyles';
 
 interface WorkflowPickerProps {
   workflows: Workflow[];
-  onSelect: (workflow_name: string) => void;
+  onSelect: (workflow_id: number) => void;
 }
 
 const WorkflowPicker: React.FC<WorkflowPickerProps> = ({
   workflows,
   onSelect
 }) => { 
-  const [selectedWorkflowName, setSelectedWorkflowName] = React.useState<string>('');
+  const [selectedWorkflowID, setSelectedWorkflowID] = React.useState<number>(-1)
   return (
     <View style={WorkflowPickerStyles.container}>
       <Picker
         style={{color: 'black', opacity:100}}
-        selectedValue={selectedWorkflowName}
+        selectedValue={selectedWorkflowID}
         onValueChange={(itemValue) => {
-          setSelectedWorkflowName(itemValue);
+          setSelectedWorkflowID(itemValue);
           if (itemValue) {
             onSelect(itemValue);
           }
@@ -29,7 +29,7 @@ const WorkflowPicker: React.FC<WorkflowPickerProps> = ({
       >
         <Picker.Item key="None Selected" label="Select a workflow..."  />
         {workflows.map((workflow) => (
-          <Picker.Item key={workflow.name} label={workflow.name} value={workflow.name} style={WorkflowPickerStyles.resultItem} />
+          <Picker.Item key={workflow.name} label={workflow.name} value={workflow.id} style={WorkflowPickerStyles.resultItem} />
         ))}
       </Picker>
     </View>
