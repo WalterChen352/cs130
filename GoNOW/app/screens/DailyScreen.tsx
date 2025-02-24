@@ -5,6 +5,9 @@ import { styles } from '../styles/DailyScreen.styles';
 import { Event } from '../models/Event';
 import { TabParamList } from './Navigator';
 import { RouteProp, useFocusEffect, useNavigation, NavigationProp } from '@react-navigation/native';
+import { filterWFID, getWorkflows } from '../scripts/Workflow';
+import { DEFAULT_COLOR } from '../styles/Event.style';
+import { Workflow } from '../models/Workflow';
 
 interface DailyScreenProps {
   route: RouteProp<TabParamList, 'Daily'>;
@@ -15,6 +18,7 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
 
   const eventDate = useMemo(() => {
     return new Date(route.params?.eventDate ?? Date.now()); // eslint-disable-line @typescript-eslint/no-unnecessary-condition
@@ -32,6 +36,8 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
       setLoading(true);
       const dailyEvents = await getDailyEvents(eventDate);
       setEvents(dailyEvents);
+      const wfs = await getWorkflows();
+      setWorkflows(wfs);
     } catch (error) {
       console.error('Failed to get daily events.', error);
     } finally {
@@ -93,11 +99,14 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
 
     return (
       <TouchableOpacity 
+        testID={item.name}
         onPress={() => { handleEventPress(item.id); }}
         style={[
           styles.eventCard,
-          isHighlighted && styles.highlightedEventCard
+          isHighlighted && styles.highlightedEventCard,
+          {backgroundColor: item.workflow? filterWFID(workflows, item.workflow).color: DEFAULT_COLOR}
         ]}
+        
       >
         <Text style={styles.eventTitle}>{item.name}</Text>
         <Text style={styles.eventDescription}>{item.description}</Text>
