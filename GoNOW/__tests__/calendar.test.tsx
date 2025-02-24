@@ -41,7 +41,7 @@ const mockEvents = [
     0,
     0,
     'Driving',
-    'Test Workflow'
+    1
   ),
   new Event(
     'Event2',
@@ -70,8 +70,8 @@ const mockWorkflows = [
 
 jest.mock('../app/scripts/Workflow', () => ({
   getWorkflows: jest.fn(() => Promise.resolve(mockWorkflows)),
-  filterWfName: jest.fn((workflows: Workflow[], name: string) => {
-    return workflows.find((wf) => wf.name === name);
+  filterWFID: jest.fn((workflows: Workflow[], id: number) => {
+    return workflows.find((wf) => wf.id === id);
   })
 }));
 

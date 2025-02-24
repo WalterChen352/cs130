@@ -9,7 +9,7 @@ import {CalendarStyles} from '../styles/CalendarScreen.styles';
 import {Event} from '../models/Event';
 import { Workflow } from '../models/Workflow';
 import { TabParamList } from './Navigator';
-import { getWorkflows, filterWfName } from '../scripts/Workflow';
+import { getWorkflows, filterWFID } from '../scripts/Workflow';
 import { DEFAULT_COLOR } from '../styles/Event.style';
 
 const HOUR_HEIGHT = 20;
@@ -180,7 +180,7 @@ const CalendarScreen = (): JSX.Element => {
                         style={[
                             CalendarStyles.event,
                             { top: position.top, height: Math.max(position.height, 20),
-                                backgroundColor: event.workflow? filterWfName(workflows,event.workflow).color : DEFAULT_COLOR
+                                backgroundColor: event.workflow? filterWFID(workflows,event.workflow).color : DEFAULT_COLOR
                             }
                         ]}
                         onPress={() => {

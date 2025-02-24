@@ -41,7 +41,7 @@ export const initDatabase = async (): Promise<void> => {
                 latitude REAL,
                 longitude REAL,
                 transportationMode TEXT,
-                workflow TEXT
+                workflow INTEGER
             );
         `);
 
