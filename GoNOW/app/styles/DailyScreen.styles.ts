@@ -6,7 +6,6 @@ export const styles = StyleSheet.create({
   },
   eventCard: {
     padding: 20,
-    backgroundColor: '#a1ffba',
     marginTop: 10,
     marginHorizontal: 10,
     marginVertical: 10,
