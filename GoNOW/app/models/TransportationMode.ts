@@ -24,11 +24,11 @@ export class TransportationMode {
   name: string;
   
   /**
-   * Name of the transportation mode for goole map
+   * Name of the transportation mode for GIS
    *
    * @type {string}
    */
-  google: string;
+  apiName: string;
 
   
   /**
@@ -37,12 +37,12 @@ export class TransportationMode {
    * @constructor
    * @param {number} id - The unique id for the Transportation mode.
    * @param {string} name - The name of the Transportation mode
-   * @param {string} google - The google API prameter name for the Transportation mode.
+   * @param {string} apiName - The GIS API prameter name for the Transportation mode.
    */
-  constructor(id: number, name: string, google: string) {
+  constructor(id: number, name: string, apiName: string) {
     this.id = id;
     this.name = name;
-    this.google = google;
+    this.apiName = apiName;
   }
 }
 
