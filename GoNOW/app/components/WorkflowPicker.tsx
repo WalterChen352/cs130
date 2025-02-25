@@ -10,6 +10,19 @@ interface WorkflowPickerProps {
   onSelect: (workflow_id: number) => void;
 }
 
+/**
+ * A dropdown picker component for selecting a workflow.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <WorkflowPicker workflows={workflows} onSelect={(id) => console.log(id)} />
+ * ```
+ *
+ * @param {Object} props - The props for the WorkflowPicker component.
+ * @param {Workflow[]} props.workflows - An array of workflow objects to populate the picker.
+ * @param {(workflow_id: number) => void} props.onSelect - A callback function triggered when a workflow is selected.
+ */
 const WorkflowPicker: React.FC<WorkflowPickerProps> = ({
   workflows,
   onSelect
