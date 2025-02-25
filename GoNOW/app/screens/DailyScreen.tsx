@@ -5,7 +5,7 @@ import { styles } from '../styles/DailyScreen.styles';
 import { Event } from '../models/Event';
 import { TabParamList } from './Navigator';
 import { RouteProp, useFocusEffect, useNavigation, NavigationProp } from '@react-navigation/native';
-import { filterWFID, getWorkflows } from '../scripts/Workflow';
+import { filterWfId, getWorkflows } from '../scripts/Workflow';
 import { DEFAULT_COLOR } from '../styles/Event.style';
 import { Workflow } from '../models/Workflow';
 
@@ -104,7 +104,7 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
         style={[
           styles.eventCard,
           isHighlighted && styles.highlightedEventCard,
-          {backgroundColor: item.workflow? filterWFID(workflows, item.workflow).color: DEFAULT_COLOR}
+          {backgroundColor: item.workflow? filterWfId(workflows, item.workflow).color: DEFAULT_COLOR}
         ]}
         
       >

@@ -11,8 +11,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import * as EventScripts from '../app/scripts/Event';
 import * as WorkflowScripts from '../app/scripts/Workflow';
 
-// Mock the navigation hooks
-
 // Mock the Event and Workflow scripts
 jest.mock('../app/scripts/Event', () => ({
   getDailyEvents: jest.fn(),
@@ -21,7 +19,7 @@ jest.mock('../app/scripts/Event', () => ({
 
 jest.mock('../app/scripts/Workflow', () => ({
   getWorkflows: jest.fn(),
-  filterWFID: jest.fn(),
+  filterWfId: jest.fn(),
 }));
 
 const mockSchedulingStyles = [
@@ -89,7 +87,7 @@ describe('DailyScreen', () => {
     // Setup mock return values
     (EventScripts.getDailyEvents as jest.Mock).mockResolvedValue(mockEvents);
     (WorkflowScripts.getWorkflows as jest.Mock).mockResolvedValue(mockWorkflows);
-    (WorkflowScripts.filterWFID as jest.Mock).mockImplementation((workflows:Workflow[], id:number) => {
+    (WorkflowScripts.filterWfId as jest.Mock).mockImplementation((workflows:Workflow[], id:number) => {
       return workflows.find(w => w.id === id);
     });
   });
