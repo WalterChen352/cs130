@@ -7,8 +7,8 @@ export class Event {
     latitude: number;
     longitude: number;
     transportationMode: string;
-    workflow: string|null;
-    constructor(name: string, description: string, startTime: string, endTime: string, latitude: number ,longitude: number ,transportationMode: string, workflow: string|null){
+    workflow: number|null;
+    constructor(name: string, description: string, startTime: string, endTime: string, latitude: number ,longitude: number ,transportationMode: string, workflow: number|null){
         this.id=0;
         this.name=name;
         this.description=description;
