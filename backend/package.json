@@ -5,7 +5,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint . --fix",
-    "start": "tsx ./index.ts"
+    "start": "tsx index.ts"
   },
   "keywords": [],
   "author": "",

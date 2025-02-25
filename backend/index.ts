@@ -1,10 +1,11 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import type { Headers} from 'node-fetch';
+import fetch, { Headers } from 'node-fetch';
+
 dotenv.config();
 
 const app: Express = express();
-const PORT = 8080;
+const PORT = process.env.PORT||8080;
 const bodyParser= require('body-parser');
 app.use(bodyParser.json())
 
@@ -84,6 +85,6 @@ app.get('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, r
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Example app listening on port ${String(PORT)}`);
+app.listen(PORT,() => {
+    console.log(`Backend listening on port ${String(PORT)}`);
 });
