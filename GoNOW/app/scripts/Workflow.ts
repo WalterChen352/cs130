@@ -286,7 +286,7 @@ export const validateWorkflow = async (workflow : Workflow): Promise<void> => {
   }
 };
 
-export const filterWFID=(workflows: Workflow[], id:number): Workflow=>{
+export const filterWfId=(workflows: Workflow[], id:number): Workflow=>{
   for (const w of workflows){
     if (w.id===id)
       return w
