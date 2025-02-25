@@ -6,6 +6,6 @@ describe('Transportation Mode Scripts', () => {
     expect(mode).toBeInstanceOf(TransportationMode);
     expect(mode.id).toBe(1);
     expect(mode.name).toBe('Walk');
-    expect(mode.google).toBe('walking');
+    expect(mode.apiName).toBe('walking');
   });
 });
