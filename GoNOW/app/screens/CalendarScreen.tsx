@@ -180,7 +180,7 @@ const CalendarScreen = (): JSX.Element => {
                         style={[
                             CalendarStyles.event,
                             { top: position.top, height: Math.max(position.height, 20),
-                                backgroundColor: event.workflow? filterWFID(workflows,event.workflow).color : DEFAULT_COLOR
+                                backgroundColor: event.workflow? filterWFID(workflows,event.workflow)?.color : DEFAULT_COLOR
                             }
                         ]}
                         onPress={() => {
