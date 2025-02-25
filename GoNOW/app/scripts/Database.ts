@@ -50,7 +50,7 @@ export const initDatabase = async (): Promise<void> => {
       PRAGMA journal_mode = WAL;
       CREATE TABLE IF NOT EXISTS workflows (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT UNIQUE,
+        name TEXT UNIQUE NOT NULL,
         color TEXT,
         pushNotifications BOOLEAN,
         timeStart INTEGER,
