@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor, act } from '@testing-library/react-native';
 import CreateTaskScreen from '../app/screens/CreateTaskScreen';
 import { getLocation } from '../app/scripts/Profile';
 import { getMyLocation } from '../app/scripts/Geo';
@@ -80,7 +80,7 @@ describe('CreateTaskScreen', () => {
       expect(screen.getByText('Select start time')).toBeOnTheScreen();
       expect(screen.getByText('Select end time')).toBeOnTheScreen();
       expect(screen.getByText('Select transportation mode')).toBeOnTheScreen();
-      expect(screen.getByText('Enter workflow')).toBeOnTheScreen();
+      expect(screen.getByText('Select workflow')).toBeOnTheScreen();
       expect(screen.getByText("Create Task")).toBeOnTheScreen();
     });
   });
@@ -116,18 +116,17 @@ describe('CreateTaskScreen', () => {
   it('updates event when update task button is pressed', async () => {
     render(<CreateTaskScreen route={editMockRoute} />);
 
+    fireEvent.press(screen.getByText("Update Task"));
     await waitFor(() => {
-      fireEvent.press(screen.getByText("Update Task"));
       expect(updateEvent).toHaveBeenCalled();
-      
     });
   });
 
   it('adds event when create task button is pressed', async () => {
     render(<CreateTaskScreen route={createMockRoute} />);
 
+    fireEvent.press(screen.getByText("Create Task"));
     await waitFor(() => {
-      fireEvent.press(screen.getByText("Create Task"));
       expect(addEvent).toHaveBeenCalled();
     });
   });

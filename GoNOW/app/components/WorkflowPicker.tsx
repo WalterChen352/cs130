@@ -32,6 +32,7 @@ const WorkflowPicker: React.FC<WorkflowPickerProps> = ({
     <View style={WorkflowPickerStyles.container}>
       <Picker
         style={{color: 'black', opacity:100}}
+        testID='picker'
         selectedValue={selectedWorkflowID}
         onValueChange={(itemValue) => {
           setSelectedWorkflowID(itemValue);
@@ -40,7 +41,7 @@ const WorkflowPicker: React.FC<WorkflowPickerProps> = ({
           }
         }}
       >
-        <Picker.Item key="None Selected" label="Select a workflow..."  />
+        <Picker.Item key="None Selected" label="Select workflow"  />
         {workflows.map((workflow) => (
           <Picker.Item key={workflow.name} label={workflow.name} value={workflow.id} style={WorkflowPickerStyles.resultItem} />
         ))}
