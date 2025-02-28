@@ -125,7 +125,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
     void fetchLocation();
 
     const fetchWorkflows = async (): Promise<void> => {
-        setWorkflows(await getWorkflows());
+      setWorkflows(await getWorkflows());
     }
     void fetchWorkflows();
   }, [isEditMode]);
