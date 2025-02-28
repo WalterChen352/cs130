@@ -74,7 +74,7 @@ const MapScreen = (): JSX.Element => {
     if (mapRoute !== null && mapEvents.filter(e => e.id === mapRoute.event?.id).length === 0) {
       setMapRoute(null); // hide route if is opened and not actual
     }
-    console.log(">>> loadEvents", JSON.stringify(mapEvents));
+    //console.log(">>> loadEvents", JSON.stringify(mapEvents));
     setEvents(mapEvents);
   };
 
@@ -379,7 +379,7 @@ const MapScreen = (): JSX.Element => {
                 coordinate={step.startPoint}
                 title={step.title}
                 icon={{ uri: mapIcons.routePointDefault }}
-                anchor={{ x: 0.2, y:0.5}}
+                anchor={{ x: 0.2, y: 0.5 }}
                 description={step.description}
               />
               <Polyline
