@@ -8,9 +8,9 @@ jest.mock('../app/scripts/Database', () => ({
 
 const locationToDb = (location: Location) => ({
   id: 1,
-  address: location.Address,
-  lat: location.Coordinates.Latitude,
-  lon: location.Coordinates.Longitude,
+  address: location.address,
+  lat: location.coordinates.latitude,
+  lon: location.coordinates.longitude,
 });
 
 const mockLocation = new Location(
@@ -36,9 +36,9 @@ describe('Profile Database', () => {
     expect(location).not.toBeNull();
 
     if (location) {
-      expect(location.Address).toBe(mockLocation.Address);
-      expect(location.Coordinates.Latitude).toBe(mockLocation.Coordinates.Latitude);
-      expect(location.Coordinates.Longitude).toBe(mockLocation.Coordinates.Longitude);
+      expect(location.address).toBe(mockLocation.address);
+      expect(location.coordinates.latitude).toBe(mockLocation.coordinates.latitude);
+      expect(location.coordinates.longitude).toBe(mockLocation.coordinates.longitude);
     }
   });
 
