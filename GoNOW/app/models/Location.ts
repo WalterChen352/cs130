@@ -4,10 +4,10 @@
 export class Coordinates {
 
   /** The latitude component of the coordinates. */
-  Latitude: number;
+  latitude: number;
 
   /** The longitude component of the coordinates. */
-  Longitude: number;
+  longitude: number;
 
   /**
    * Creates an instance of the Coordinates class.
@@ -15,8 +15,8 @@ export class Coordinates {
    * @param log - The longitude component of the coordinates.
    */
   constructor(lat: number, log: number) {
-    this.Latitude = lat;
-    this.Longitude = log;
+    this.latitude = lat;
+    this.longitude = log;
   }
 
   /**
@@ -24,7 +24,7 @@ export class Coordinates {
    * @returns The coordinates as a string in `Latitude;Longitude` format.
    */
   toString(): string {
-    return `${String(this.Latitude)};${String(this.Longitude)}`;
+    return `${String(this.latitude)};${String(this.longitude)}`;
   }
 }
 
@@ -34,10 +34,10 @@ export class Coordinates {
 export class Location {
   
   /** The geographic coordinates (latitude and longitude) of the location. */
-  Coordinates: Coordinates;
+  coordinates: Coordinates;
 
   /** The address associated with the location. */
-  Address: string;
+  address: string;
 
   /**
    * Creates an instance of the Location class.
@@ -45,8 +45,8 @@ export class Location {
    * @param address - The address associated with the location.
    */
   constructor(coords: Coordinates, address: string) {
-    this.Coordinates = coords;
-    this.Address = address;
+    this.coordinates = coords;
+    this.address = address;
   }
 
   /**
@@ -54,7 +54,7 @@ export class Location {
    * @returns - The location as a string combining the coordinates and address.
    */
   toString(): string {
-    return `[${String(this.Coordinates.Latitude)};${String(this.Coordinates.Longitude)}] ${String(this.Address)}`;
+    return `[${String(this.coordinates.latitude)};${String(this.coordinates.longitude)}] ${String(this.address)}`;
   }
 }
 

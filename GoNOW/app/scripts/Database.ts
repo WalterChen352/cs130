@@ -15,7 +15,9 @@ export const DB_NAME = 'gonow.db';
  * @returns {Promise<SQLite.SQLiteDatabase>} - A promise that resolves to `SQLiteDatabase` object.
  */
 export const openDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
-  return await SQLite.openDatabaseAsync(DB_NAME);
+  return await SQLite.openDatabaseAsync(DB_NAME, {
+    useNewConnection: true  // https://github.com/expo/expo/issues/28176#issuecomment-2062361077
+  });
 };
 
 /**

@@ -4,10 +4,10 @@
 export class SchedulingStyle {
 
   /** The unique id of the scheduling style. */
-  Id: number;
+  id: number;
 
   /** Name of the scheduling style. */
-  Name: string;
+  name: string;
 
   /**
    * Creates an instance of the SchedulingStyle class.
@@ -15,8 +15,8 @@ export class SchedulingStyle {
    * @param name - The name of the scheduling style.
    */
   constructor(id: number, name: string) {
-    this.Id = id;
-    this.Name = name;
+    this.id = id;
+    this.name = name;
   }
 }
 

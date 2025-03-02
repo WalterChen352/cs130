@@ -26,8 +26,10 @@ describe('Transportation Mode Scripts', () => {
     expect(getTransportationMode(4).apiName).toEqual('driving');
   });
 
-  test('getTransportationMode should return default transportation mode when id is not found', () => {
-    expect(getTransportationMode(99)).toEqual(new TransportationMode(0, '', ''));
-    expect(getTransportationMode(-1)).toEqual(new TransportationMode(0, '', ''));
+  test('getTransportationMode should return default transportation mode when id is not found', () => 
+  {
+    const defaultColor = '#666666';
+    expect(getTransportationMode(99)).toEqual(new TransportationMode(0, '', '', defaultColor));
+    expect(getTransportationMode(-1)).toEqual(new TransportationMode(0, '', '', defaultColor));
   });
 });

@@ -24,7 +24,7 @@ interface WorkflowDbFormat {
   timeStart: number;
   timeEnd: number;
   daysOfWeek: number;
-  schedulingStyle: number;
+  schedulingStyleId: number;
 }
 
 const toDbFormat = (workflow: Workflow): WorkflowDbFormat => {
@@ -41,7 +41,7 @@ const toDbFormat = (workflow: Workflow): WorkflowDbFormat => {
     timeStart: workflow.timeStart.toInt(),
     timeEnd: workflow.timeEnd.toInt(),
     daysOfWeek: daysOfWeekMask,
-    schedulingStyle: workflow.schedulingStyle.Id,
+    schedulingStyleId: workflow.schedulingStyle.id,
   };
 };
 
@@ -85,11 +85,11 @@ describe('Workflow Database', () => {
       expect(workflows[i]?.name).toBe(wf.name);
       expect(workflows[i]?.color).toBe(wf.color);
       expect(workflows[i]?.pushNotifications).toBe(wf.pushNotifications);
-      expect(workflows[i]?.timeStart.Hours).toBe(wf.timeStart.Hours);
-      expect(workflows[i]?.timeStart.Minutes).toBe(wf.timeStart.Minutes);
-      expect(workflows[i]?.timeEnd.Hours).toBe(wf.timeEnd.Hours);
-      expect(workflows[i]?.timeEnd.Minutes).toBe(wf.timeEnd.Minutes);
-      expect(workflows[i]?.schedulingStyle.Name).toBe(wf.schedulingStyle.Name);
+      expect(workflows[i]?.timeStart.hours).toBe(wf.timeStart.hours);
+      expect(workflows[i]?.timeStart.minutes).toBe(wf.timeStart.minutes);
+      expect(workflows[i]?.timeEnd.hours).toBe(wf.timeEnd.hours);
+      expect(workflows[i]?.timeEnd.minutes).toBe(wf.timeEnd.minutes);
+      expect(workflows[i]?.schedulingStyle.name).toBe(wf.schedulingStyle.name);
       expect(workflows[i]?.daysOfWeek).toEqual(wf.daysOfWeek);
     });
   });
@@ -117,7 +117,7 @@ describe('Workflow Database', () => {
         mockWorkflowsDb[0].timeStart,
         mockWorkflowsDb[0].timeEnd,
         mockWorkflowsDb[0].daysOfWeek,
-        mockWorkflowsDb[0].schedulingStyle
+        mockWorkflowsDb[0].schedulingStyleId
       ])
     );
   });

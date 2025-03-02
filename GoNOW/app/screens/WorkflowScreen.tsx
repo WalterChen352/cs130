@@ -51,10 +51,10 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
     const [name, setName] = useState<string>(workflow.name);
     const [color, setColor] = useState<string>(workflow.color);
     const [pushNotifications, setPushNotifications] = useState<boolean>(workflow.pushNotifications);
-    const [timeStart, setTimeStart] = useState<Date>(new Date(0, 0, 0, workflow.timeStart.Hours, workflow.timeStart.Minutes));
-    const [timeEnd, setTimeEnd] = useState<Date>(new Date(0, 0, 0, workflow.timeEnd.Hours, workflow.timeEnd.Minutes));
+    const [timeStart, setTimeStart] = useState<Date>(new Date(0, 0, 0, workflow.timeStart.hours, workflow.timeStart.minutes));
+    const [timeEnd, setTimeEnd] = useState<Date>(new Date(0, 0, 0, workflow.timeEnd.hours, workflow.timeEnd.minutes));
     const [daysOfWeek, setDaysOfWeek] = useState<boolean[]>(workflow.daysOfWeek);
-    const [schedulingStyle, setSchedulingStyle] = useState<string>(workflow.schedulingStyle.Id.toString());
+    const [schedulingStyle, setSchedulingStyle] = useState<string>(workflow.schedulingStyle.id.toString());
 
     const [schedulingStyles, setSchedulingStyles] = useState<SchedulingStyle[]>([]);
 
@@ -184,10 +184,10 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         setName(workflow.name);
         setColor(workflow.color);
         setPushNotifications(workflow.pushNotifications);
-        setTimeStart(new Date(0, 0, 0, workflow.timeStart.Hours, workflow.timeStart.Minutes));
-        setTimeEnd(new Date(0, 0, 0, workflow.timeEnd.Hours, workflow.timeEnd.Minutes));
+        setTimeStart(new Date(0, 0, 0, workflow.timeStart.hours, workflow.timeStart.minutes));
+        setTimeEnd(new Date(0, 0, 0, workflow.timeEnd.hours, workflow.timeEnd.minutes));
         setDaysOfWeek(workflow.daysOfWeek);
-        setSchedulingStyle(workflow.schedulingStyle.Id.toString());
+        setSchedulingStyle(workflow.schedulingStyle.id.toString());
     }, [workflow, loadSchedulingStyle]);
 
     useFocusEffect(
@@ -222,13 +222,22 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
 
                 <Text style={WorkflowScreenStyles.header}>Time selection</Text>
                 <View style={WorkflowScreenStyles.center}>
-                <TouchableOpacity
-                        style={WorkflowScreenStyles.rightElem}
+                    <TouchableOpacity
+                        style={WorkflowScreenStyles.time}
                         onPress={openTimeStart}
                         testID="workflow-time-start"
                     >
-                        <Text>{TimeFromDate(timeStart).toString()}</Text>
+                        <Text style={WorkflowScreenStyles.timeText}>{TimeFromDate(timeStart).toString()}</Text>
                     </TouchableOpacity>
+                    <Text />
+                    <TouchableOpacity
+                        style={WorkflowScreenStyles.time}
+                        onPress={openTimeEnd}
+                        testID="workflow-time-end"
+                    >
+                        <Text style={WorkflowScreenStyles.timeText}>{TimeFromDate(timeEnd).toString()}</Text>
+                    </TouchableOpacity>
+                </View>
                     {showTimeStart && (
                         <DateTimePicker
                             value={timeStart}
@@ -238,15 +247,6 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
                             onChange={onChangeTimeStart}
                         />
                     )}
-                    <Text />
-                    <TouchableOpacity
-                        style={WorkflowScreenStyles.rightElem}
-                        onPress={openTimeEnd}
-                        testID="workflow-time-end"
-                    >
-                        <Text>{TimeFromDate(timeEnd).toString()}</Text>
-                    </TouchableOpacity>
-
                     {showTimeEnd && (
                         <DateTimePicker
                             value={timeEnd}
@@ -256,7 +256,6 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
                             onChange={onChangeTimeEnd}
                         />
                     )}
-                </View>
 
                 <View style={WorkflowScreenStyles.centerWrap}>
                     {daysOfWeek.map((day, ind) => (
@@ -281,10 +280,10 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
                 >
                     {schedulingStyles.map((s: SchedulingStyle) => (
                         <Picker.Item
-                            key={s.Id.toString()}
-                            label={s.Name}
-                            value={s.Id.toString()}  // Convert to string
-                            testID={`workflow-scheduling-style-${String(s.Id)}`}
+                            key={s.id.toString()}
+                            label={s.name}
+                            value={s.id.toString()}  // Convert to string
+                            testID={`workflow-scheduling-style-${String(s.id)}`}
                         />
                     ))}
                 </Picker>

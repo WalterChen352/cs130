@@ -4,10 +4,10 @@
 export class Time {
 
   /** The hour component of the time (0-23). */
-  Hours: number;
+  hours: number;
 
   /** The minute component of the time (0-59). */
-  Minutes: number;
+  minutes: number;
 
   /**
    * Creates an instance of the Time class.
@@ -15,8 +15,8 @@ export class Time {
    * @param minutes - The minute component of the time (0-59).
    */
   constructor(hour: number, minutes: number) {
-    this.Hours = hour;
-    this.Minutes = minutes;
+    this.hours = hour;
+    this.minutes = minutes;
   }
 
   /**
@@ -24,7 +24,7 @@ export class Time {
    * @returns - The total number of minutes since midnight.
    */
   toInt(): number {
-    return this.Hours*60 + this.Minutes;
+    return this.hours*60 + this.minutes;
   }
 
   /**
@@ -32,7 +32,7 @@ export class Time {
    * @returns - The time as a string in `HH:mm` format.
    */
   toString(): string {
-    return `${this.Hours < 10 ? '0' + String(this.Hours) :String( this.Hours)}:${this.Minutes < 10 ? '0' + String(this.Minutes): String(this.Minutes)}`;
+    return `${this.hours < 10 ? '0' + String(this.hours) :String( this.hours)}:${this.minutes < 10 ? '0' + String(this.minutes): String(this.minutes)}`;
   }
 }
 

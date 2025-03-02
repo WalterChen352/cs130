@@ -59,5 +59,15 @@ export const WorkflowScreenStyles = StyleSheet.create({
     },
     footer: {
         paddingBottom: 100,
-    }
+    },
+    time: {
+        backgroundColor: '#388dff',
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        marginBottom: 10
+    },
+    timeText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
 });

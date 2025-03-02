@@ -55,18 +55,18 @@ describe('CreateTaskScreen', () => {
     
     // Setup default mock returns
     (getLocation as jest.Mock).mockResolvedValue({
-      Address: "123 Test St",
-      Coordinates: {
-        Latitude: 34.0522,
-        Longitude: -118.2437
+      address: "123 Test St",
+      coordinates: {
+        latitude: 34.0522,
+        longitude: -118.2437
       }
     });
 
     (getMyLocation as jest.Mock).mockResolvedValue({
-      Address: null,
-      Coordinates: {
-        Latitude: 34.0522,
-        Longitude: -118.2437
+      address: null,
+      coordinates: {
+        latitude: 34.0522,
+        longitude: -118.2437
       }
     });
   });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, JSX } from 'react';
+import React, { useState, useEffect, useMemo, JSX } from 'react';
 import { ScrollView, View, Text, TextInput, Button, Switch, Pressable } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -10,6 +10,7 @@ import { styles } from '../styles/CreateTaskScreen.styles';
 import { Event } from '../models/Event';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
+import { getTransportationModes } from '../scripts/TransportationMode'
 import { RouteProp } from '@react-navigation/native';
 import { TabParamList } from './Navigator';
 
@@ -55,12 +56,18 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
   const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
 
   /** Dropdown options for transportation modes */
-  const dropdownOptions = [
-    { label: 'Walk', value: 'walk' },
-    { label: 'Public Transit', value: 'transit' },
-    { label: 'Bike', value: 'bike' },
-    { label: 'Car', value: 'car' },
-  ];
+  //const dropdownOptions = [
+  //  { label: 'Walk', value: 'walk' },
+  //  { label: 'Public Transit', value: 'transit' },
+  //  { label: 'Bike', value: 'bike' },
+  //  { label: 'Car', value: 'car' },
+  //];
+  const dropdownOptions = useMemo(() =>
+    getTransportationModes().filter(tm => tm.id > 0).map((tm) => ({
+      label: tm.name,
+      value: tm.id.toString()
+    }))
+  , []);
 
   /**
    * Sets the destination coordinates based on the selected location.
@@ -68,8 +75,8 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
    * @param {Location} location - The selected location object.
    */
   const setDestCoords = (location: Location): void => {
-    setLatitude(location.Coordinates.Latitude);
-    setLongitude(location.Coordinates.Longitude);
+    setLatitude(location.coordinates.latitude);
+    setLongitude(location.coordinates.longitude);
   };
 
   // Populate form with event data if in edit mode
@@ -94,9 +101,9 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
         const location = await getLocation();
         if (
           location === null ||
-          (!location.Address &&
-            location.Coordinates.Latitude === 0 &&
-            location.Coordinates.Longitude === 0)
+          (!location.address &&
+            location.coordinates.latitude === 0 &&
+            location.coordinates.longitude === 0)
         ) {
           const currentLocation = await getMyLocation();
           if (currentLocation !== null) {
@@ -246,8 +253,8 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       <Text style={styles.label}>Enter address</Text>
       <View style={[styles.locationPicker, {}]}>
         <AddressPicker
-          initialAddress={location?.Address}
-          initialCoordinates={location?.Coordinates}
+          initialAddress={location?.address}
+          initialCoordinates={location?.coordinates}
           onSelect={setDestCoords}
           placeHolder="Address"
         />
@@ -273,8 +280,8 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
               description,
               formatDate(startDate),
               formatDate(endDate),
-              longitude,
               latitude,
+              longitude,
               transportationMode,
               workflow
             );

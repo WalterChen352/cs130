@@ -53,9 +53,9 @@ const ProfileScreen = (): JSX.Element => {
         const fetchLocation = async (): Promise<void> => {
             const location = await getLocation();
             if (location === null
-                || !location.Address
-                && location.Coordinates.Latitude === 0
-                && location.Coordinates.Longitude === 0
+                || !location.address
+                && location.coordinates.latitude === 0
+                && location.coordinates.longitude === 0
             ) {
                 const currentLocation = await getMyLocation();
                 if (currentLocation !== null) {
@@ -126,8 +126,8 @@ const ProfileScreen = (): JSX.Element => {
             <View>
                 <View style={[ProfileScreenStyles.locationPicker, {}]}>
                     <AddressPicker
-                        initialAddress={location?.Address}
-                        initialCoordinates={location?.Coordinates}
+                        initialAddress={location?.address}
+                        initialCoordinates={location?.coordinates}
                         onSelect={handleLocation}
                         placeHolder="Your home location"
                     />
@@ -161,7 +161,7 @@ const ProfileScreen = (): JSX.Element => {
                                 {item.daysOfWeek.map((day, ind) => day ? DaysOfWeekNames[ind] : null).filter(Boolean).join(' ')}
                             </Text>
                             <Text style={ProfileScreenStyles.center} testID={`workflow-scheduling-style-${String(item.id)}`}>
-                                {item.schedulingStyle.Name}
+                                {item.schedulingStyle.name}
                             </Text>
                         </TouchableOpacity>
                     </View>

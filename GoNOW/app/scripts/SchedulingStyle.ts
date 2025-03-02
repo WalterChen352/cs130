@@ -27,7 +27,7 @@ export const getSchedulingStyles = ():SchedulingStyle[] => {
  */
 export const getSchedulingStyle = (id: number):SchedulingStyle => {
     for (const schedulingStyle of listSchedulingStyles){
-        if(schedulingStyle.Id === id)
+        if(schedulingStyle.id === id)
             return schedulingStyle;
     }
     return listSchedulingStyles[0]; // default value
