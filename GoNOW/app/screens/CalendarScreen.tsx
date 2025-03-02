@@ -9,7 +9,7 @@ import {CalendarStyles} from '../styles/CalendarScreen.styles';
 import {Event} from '../models/Event';
 import { Workflow } from '../models/Workflow';
 import { TabParamList } from './Navigator';
-import { getWorkflows, filterWFID } from '../scripts/Workflow';
+import { getWorkflows, filterWfId } from '../scripts/Workflow';
 import { DEFAULT_COLOR } from '../styles/Event.style';
 
 const HOUR_HEIGHT = 20;
