@@ -2,7 +2,6 @@ import { openDatabase } from '../scripts/Database';
 import { getSchedulingStyle } from '../scripts/SchedulingStyle';
 import { Time, DaysOfWeekNames } from '../models/Time';
 import { Workflow } from '../models/Workflow';
-import SchedulingStyle from '../models/SchedulingStyle';
 
 /**
  * DB record representing a workflow.
