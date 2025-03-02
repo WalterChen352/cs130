@@ -303,8 +303,9 @@ export const filterWfId=(workflows: Workflow[], id:number): Workflow=>{
  * @returns {Promise<Workflow | null>} - The `TransportationMode` object with given name.
  */
 export const getWorkflowByName = async (name: string):Promise<Workflow | null> => {
+  name = name.toLowerCase();
   for (const workflow of await getWorkflows()){
-    if(workflow.name === name)
+    if(workflow.name.toLowerCase() === name)
       return workflow;
   }
   return null; // default value
@@ -327,7 +328,11 @@ export const getWorkflowById = async (id:number):Promise<Workflow | null> => {
     `, [id]
     );
     
-    const row = query as row;
+    const row = query as row | null;
+    if (!row) {
+      console.log('Workflow id not found.');
+      return null;
+    }
     const daysOfWeek = new Array<boolean>(7).fill(false);
     for (let d=0; d<7; d++) {
       daysOfWeek[d] = ((row.daysOfWeek & (1 << d)) !==0);
@@ -349,7 +354,7 @@ export const getWorkflowById = async (id:number):Promise<Workflow | null> => {
     return workflowTemp;
   }
   catch (error) {
-    console.error('Error getting workflow by id: ', error);
+    console.log('Error getting workflow by id: ', error);
   }
   
   return null; // default value
