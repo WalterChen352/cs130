@@ -45,21 +45,21 @@ export const initDatabase = async (): Promise<void> => {
             );
         `);
 
-        // Add your tables to create here
-
         await DB.execAsync(`
-            PRAGMA journal_mode = WAL;
-            CREATE TABLE IF NOT EXISTS workflows (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT,
-                color TEXT,
-                pushNotifications BOOLEAN,
-                timeStart INTEGER,
-                timeEnd INTEGER,
-                daysOfWeek INTEGER,
-                schedulingStyle INTEGER
-            );
+          PRAGMA journal_mode = WAL;
+          CREATE TABLE IF NOT EXISTS workflows (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT UNIQUE NOT NULL,
+            color TEXT,
+            pushNotifications BOOLEAN,
+            timeStart INTEGER,
+            timeEnd INTEGER,
+            daysOfWeek INTEGER,
+            schedulingStyleId INTEGER
+          );
         `);
+
+        // Add your tables to create here
 
         await DB.execAsync(`
             PRAGMA journal_mode = WAL;
