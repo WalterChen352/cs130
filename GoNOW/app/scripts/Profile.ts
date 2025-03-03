@@ -51,9 +51,9 @@ export const updateLocation = async (location : Location): Promise<void> => {
         lon = ?
       WHERE id = 1;
     `, [
-      location.Address,
-      location.Coordinates.Latitude,
-      location.Coordinates.Longitude
+      location.address,
+      location.coordinates.latitude,
+      location.coordinates.longitude
     ]
     );
   } catch (error) {

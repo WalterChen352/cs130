@@ -148,3 +148,47 @@ export const deleteEvent = async (eventId: number): Promise<void> => {
   }
   return new Promise(() => { return; });
 };
+
+/**
+ * Checks if the values of new or changed event's parameters are valid.
+ * Ensures that the event has either name + autoschedule + workflow or name + time
+ * This method does not return any value.
+ * Based on validateWorkflow function in Workflow.ts
+ *
+ * @async
+ * @param {Event} event - The `Workflow` object
+ * @param {boolean} auto_schedule - A boolean value to check if the event is to be auto scheduled.
+ */
+export const validateEvent = (event : Event, auto_schedule : boolean): void => {
+  const errors = [];
+
+  //check if event name empty
+  if (!event.name) {
+    errors.push('The Event Name field is required.');
+  }
+
+  //check if event has start time but no end time
+  if(event.startTime !== "" && event.endTime === "") {
+    errors.push('The event has a start time but no end time.');
+  }
+
+  //check if event has end time but no start time
+  if(event.endTime !== "" && event.startTime === "") {
+    errors.push('The event has an end time but no start time.');
+  }
+
+ 
+  if(event.endTime === "" && event.startTime === ""){
+     //check if event ends before it starts
+    if (Number(event.startTime) > Number(event.endTime)) {
+      errors.push('The end time of the event must not be later than the start time. Overnight events are not supported.');
+    }
+    if(!auto_schedule || event.workflow === null){
+      errors.push('The event must be auto-scheduled to a workflow if you do not set a time.');
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(errors.join('\n'));
+  }
+};
