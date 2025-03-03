@@ -5,7 +5,7 @@ import { getLocation } from '../app/scripts/Profile';
 import { getMyLocation } from '../app/scripts/Geo';
 import { RouteProp } from '@react-navigation/native';
 import { TabParamList } from '../app/screens/Navigator';
-import { addEvent, updateEvent } from '../app/scripts/Event';
+import { addEvent } from '../app/scripts/Event';
 
 jest.mock('../app/scripts/Profile', () => ({
   getLocation: jest.fn()
