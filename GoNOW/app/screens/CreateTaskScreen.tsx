@@ -1,5 +1,5 @@
 import React, { useState, useEffect, JSX } from 'react';
-import { ScrollView, View, Text, TextInput, Button, Switch, Pressable } from 'react-native';
+import { ScrollView, View, Text, TextInput, Button, Switch, Pressable, Alert } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
@@ -278,7 +278,15 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
               transportationMode,
               workflow
             );
-            validateEvent(e, autoSchedule);
+
+            //validate event input
+            try {
+              validateEvent(e, autoSchedule);
+            } catch (error) {
+              Alert.alert('Validation Error', error instanceof Error ? error.message : 'Unknown error');
+              return;
+            }
+
             if (isEditMode && eventData) {
               e.id = eventData.id;
               await updateEvent(e);
