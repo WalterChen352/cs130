@@ -4,15 +4,15 @@ describe('Model Coordinates', () => {
   test('should create a Coordinates instance', () => {
     const coords = new Coordinates(33, 44);
     expect(coords).toBeInstanceOf(Coordinates);
-    expect(coords.Latitude).toBe(33);
-    expect(coords.Longitude).toBe(44);
+    expect(coords.latitude).toBe(33);
+    expect(coords.longitude).toBe(44);
   });
 
   test('should create a Coordinates instance negative and real', () => {
     const coords = new Coordinates(33, -44.044);
     expect(coords).toBeInstanceOf(Coordinates);
-    expect(coords.Latitude).toBe(33);
-    expect(coords.Longitude).toBe(-44.044);
+    expect(coords.latitude).toBe(33);
+    expect(coords.longitude).toBe(-44.044);
   });
 
   test('should return correct string representation from toString()', () => {
@@ -37,8 +37,8 @@ describe('Model Location', () => {
     const location = new Location(coords, '7400 Boelter Hall, Los Angeles, CA 90095');
     
     expect(location).toBeInstanceOf(Location);
-    expect(location.Coordinates).toBe(coords);
-    expect(location.Address).toBe('7400 Boelter Hall, Los Angeles, CA 90095');
+    expect(location.coordinates).toBe(coords);
+    expect(location.address).toBe('7400 Boelter Hall, Los Angeles, CA 90095');
   });
 
   test('should return correct string representation from toString()', () => {
