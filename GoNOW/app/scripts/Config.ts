@@ -6,3 +6,6 @@ export const GOOGLE_API_KEY: string =
   typeof process.env.EXPO_PUBLIC_GOOGLE_API_KEY === 'string'
     ? process.env.EXPO_PUBLIC_GOOGLE_API_KEY
     : '';
+
+/** User agent for fetch requests */
+export const WEB_USER_AGENT = 'GoNOW/1.0';
