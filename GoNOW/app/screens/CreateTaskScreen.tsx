@@ -5,7 +5,7 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 
 import AddressPicker from '../components/AddressPicker';
 import { Location } from '../models/Location';
-import { addEvent, updateEvent } from '../scripts/Event';
+import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
 import { styles } from '../styles/CreateTaskScreen.styles';
 import { Event } from '../models/Event';
 import { getMyLocation } from '../scripts/Geo';
@@ -278,7 +278,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
               transportationMode,
               workflow
             );
-            
+            validateEvent(e, autoSchedule);
             if (isEditMode && eventData) {
               e.id = eventData.id;
               await updateEvent(e);
