@@ -67,7 +67,7 @@ interface row {
    *
    * @type {number}
    */
-  schedulingStyle: number
+  schedulingStyleId: number
 }
 
 /**
@@ -92,7 +92,7 @@ export const getWorkflows = async (): Promise<Workflow[]> => {
       for (let d=0; d<7; d++) {
         daysOfWeek[d] = ((row.daysOfWeek & (1 << d)) !==0);
       }
-      const schedulingStyle = getSchedulingStyle(Number(row.schedulingStyle));
+      const schedulingStyle = getSchedulingStyle(Number(row.schedulingStyleId));
       const timeStart = Number(row.timeStart);
       const timeEnd = Number(row.timeEnd);
       const workflowTemp = new Workflow(
@@ -160,7 +160,7 @@ export const addWorkflow = async (workflow: Workflow): Promise<void> => {
         timeStart,
         timeEnd,
         daysOfWeek,
-        schedulingStyle
+        schedulingStyleId
       ) VALUES (?, ?, ?, ?, ?, ?, ?);
        `, [
         workflow.name,
@@ -169,7 +169,7 @@ export const addWorkflow = async (workflow: Workflow): Promise<void> => {
         workflow.timeStart.toInt(),
         workflow.timeEnd.toInt(),
         daysOfWeekMask,
-        workflow.schedulingStyle.Id
+        workflow.schedulingStyle.id
       ]
     );
   }
@@ -205,7 +205,7 @@ export const updateWorkflow = async (workflow: Workflow): Promise<void> => {
         timeStart = ?,
         timeEnd = ?,
         daysOfWeek = ?,
-        schedulingStyle = ?
+        schedulingStyleId = ?
       WHERE id = ?;
       `, [
         workflow.name,
@@ -214,7 +214,7 @@ export const updateWorkflow = async (workflow: Workflow): Promise<void> => {
         workflow.timeStart.toInt(),
         workflow.timeEnd.toInt(),
         daysOfWeekMask,
-        workflow.schedulingStyle.Id,
+        workflow.schedulingStyle.id,
         workflow.id
       ]
     );  }
@@ -294,3 +294,68 @@ export const filterWfId=(workflows: Workflow[], id:number): Workflow=>{
   console.error('workflow not found. May have been called with improper arguments:', workflows, id);
   return new Workflow(0, 'ERROR', '', false, new Time(0,0), new Time(0,0), [], new SchedulingStyle(0, ''));
 }
+
+/**
+ * Returns a Workflow with certain name.
+ *
+ * @async
+ * @param {string} name - The name of `TransportationMode` object.
+ * @returns {Promise<Workflow | null>} - The `TransportationMode` object with given name.
+ */
+export const getWorkflowByName = async (name: string):Promise<Workflow | null> => {
+  name = name.toLowerCase();
+  for (const workflow of await getWorkflows()){
+    if(workflow.name.toLowerCase() === name)
+      return workflow;
+  }
+  return null; // default value
+};
+
+/**
+ * Returns a Workflow with certain id.
+ *
+ * @async
+ * @param {number} id - The id of `TransportationMode` object.
+ * @returns {Promise<Workflow | null>} - The `TransportationMode` object with given id.
+ */
+export const getWorkflowById = async (id:number):Promise<Workflow | null> => {
+  try {
+    const DB = await openDatabase();
+    const query = await DB.getFirstAsync(`
+      SELECT *
+      FROM workflows
+      WHERE id = ?;
+    `, [id]
+    );
+    
+    const row = query as row | null;
+    if (!row) {
+      console.log('Workflow id not found.');
+      return null;
+    }
+    const daysOfWeek = new Array<boolean>(7).fill(false);
+    for (let d=0; d<7; d++) {
+      daysOfWeek[d] = ((row.daysOfWeek & (1 << d)) !==0);
+    }
+    const schedulingStyle = getSchedulingStyle(Number(row.schedulingStyleId));
+    const timeStart = Number(row.timeStart);
+    const timeEnd = Number(row.timeEnd);
+    
+    const workflowTemp = new Workflow(
+      id,
+      row.name,
+      row.color,
+      (Number(row.pushNotifications) === 1),
+      new Time(Math.floor(timeStart / 60), timeStart % 60),
+      new Time(Math.floor(timeEnd / 60), timeEnd % 60),
+      daysOfWeek,
+      schedulingStyle
+    );
+    return workflowTemp;
+  }
+  catch (error) {
+    console.log('Error getting workflow by id: ', error);
+  }
+  
+  return null; // default value
+};

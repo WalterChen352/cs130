@@ -35,8 +35,8 @@ const MockAddressPicker = () => <View />;
 jest.mock('../app/scripts/Geo', () => {
   return {
     getMyLocation: jest.fn().mockResolvedValue({
-      Coordinates: { Latitude: 33, Longitude: 44 },
-      Address: 'Los Angeles, CA 90095',
+      coordinates: { latitude: 33, longitude: 44 },
+      address: 'Los Angeles, CA 90095',
     }),
   };
 });
@@ -44,8 +44,8 @@ jest.mock('../app/scripts/Geo', () => {
 jest.mock('../app/scripts/Profile', () => {
   return {
     getLocation: jest.fn().mockResolvedValue({
-      Coordinates: { Latitude: 33, Longitude: 44 },
-      Address: 'Los Angeles, CA 90095',
+      coordinates: { latitude: 33, longitude: 44 },
+      address: 'Los Angeles, CA 90095',
     }),
     updateLocation: jest.fn(),
   };
@@ -114,7 +114,7 @@ describe('Profile Screen', () => {
         expect(textElement).toHaveTextContent(/Schedule/);
         expect(timeStartElement).toHaveTextContent(new RegExp(w.timeStart.toString(), 'i'));
         expect(timeEndElement).toHaveTextContent(new RegExp(w.timeEnd.toString(), 'i'));
-        expect(styleElement).toHaveTextContent(new RegExp(w.schedulingStyle.Name, 'i'));
+        expect(styleElement).toHaveTextContent(new RegExp(w.schedulingStyle.name, 'i'));
       }
     });
   });
