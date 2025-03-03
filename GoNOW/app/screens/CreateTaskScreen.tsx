@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, JSX } from 'react';
-import { ScrollView, View, Text, TextInput, Button, Switch, Pressable } from 'react-native';
+import { ScrollView, View, Text, TextInput, Button, Switch, Pressable, Alert } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 import AddressPicker from '../components/AddressPicker';
 import { Location } from '../models/Location';
-import { addEvent, updateEvent } from '../scripts/Event';
+import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
 import { styles } from '../styles/CreateTaskScreen.styles';
 import { Event } from '../models/Event';
 import { getMyLocation } from '../scripts/Geo';
@@ -239,8 +239,8 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       />
 
       <View style={styles.row}>
-        <Switch value={autoSchedule} onValueChange={setAutoSchedule} />
-        <Text style={styles.label}>Autoschedule?</Text>
+        <Switch value={autoSchedule} onValueChange={setAutoSchedule} testID='Autoschedule' />
+        <Text style={styles.label}>Autoschedule</Text>
       </View>
 
       <Text style={styles.label}>Enter workflow</Text>
@@ -285,7 +285,15 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
               transportationMode,
               workflow
             );
-            
+
+            //validate event input
+            try {
+              validateEvent(e, autoSchedule);
+            } catch (error) {
+              Alert.alert('Validation Error', error instanceof Error ? error.message : 'Unknown error');
+              return;
+            }
+
             if (isEditMode && eventData) {
               e.id = eventData.id;
               await updateEvent(e);
