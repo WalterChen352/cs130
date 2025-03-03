@@ -1,7 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, TextInput, FlatList, Text, TouchableOpacity } from 'react-native';
 import debounce from 'lodash/debounce';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, TextInput, FlatList, Modal, Text, TouchableOpacity } from 'react-native';
+import MapView, { Marker, MarkerDragStartEndEvent } from "react-native-maps";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import ButtonDelete from '../components/ButtonDelete';
+import ButtonSave from '../components/ButtonSave';
 import { Coordinates, Location } from '../models/Location';
+import { WEB_USER_AGENT } from '../scripts/Config';
+import { getAddressByCoordinates } from '../scripts/Geo';
 import { AddressPickerStyles } from '../styles/AddressPicker.styles';
 
 /**
@@ -64,6 +71,9 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
   const [address, setAddress] = useState(initialAddress);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(initialCoordinates);
   const [results, setResults] = useState<NominatimResult[]>([]);
+  const [mapOpened, setMapOpened] = useState<boolean>(false);
+  const [mapAddress, setMapAddress] = useState(initialAddress);
+  const [mapCoordinates, setMapCoordinates] = useState<Coordinates | null>(initialCoordinates);
 
   useEffect(() => {
     if (initialAddress !== address) {
@@ -95,7 +105,7 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
         {
           headers: {
             'Accept': 'application/json',
-            'User-Agent': 'GoNOW/1.0'
+            'User-Agent': WEB_USER_AGENT
           }
         }
       );
@@ -144,6 +154,42 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     }
   };
 
+  /** Open map for select location on the map. */
+  const openMap = (): void => {
+    setResults([]);
+    setMapCoordinates(coordinates);
+    setMapOpened(true)
+  }
+
+  /**
+   * After moving the marker, handler receives the marker coordinates and
+   * the address for these coordinates.
+   *
+   * @async
+   * @param {MarkerDragStartEndEvent} event - The Google event of the marker dropped on the map.
+   * @returns {Promise<void>} - A promise that resolves when the method
+   * complete successfully.
+   */
+  const handleMarkerDragEnd = async (event: MarkerDragStartEndEvent): Promise<void> => {
+    const coords = new Coordinates(
+      event.nativeEvent.coordinate.latitude,
+      event.nativeEvent.coordinate.longitude
+    );
+    setMapCoordinates(coords);
+    const tmpAddress = await getAddressByCoordinates(coords);
+    setMapAddress(tmpAddress);
+  }
+
+  /** Save coordinates selected on map and return by onselect . */
+  const handleSaveMap = (): void => {
+    setCoordinates(mapCoordinates);
+    setAddress(mapAddress);
+    setMapOpened(false);
+    if (onSelect && mapCoordinates) {
+      onSelect(new Location(mapCoordinates, mapAddress));
+    }
+  }
+
   return (
     <View style={AddressPickerStyles.container}>
       <TextInput
@@ -153,9 +199,18 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
         onChangeText={handleTextChange}
         testID={testID}
       />
+      <TouchableOpacity
+        onPress={openMap}
+        style={AddressPickerStyles.iconButton}
+        testID="map-btn"
+      >
+        <Ionicons name="location-outline" size={20} color="#555" />
+      </TouchableOpacity>
+
       {results.length > 0 && (
         <FlatList
           style={AddressPickerStyles.listView}
+          scrollEnabled={false}
           data={results}
           keyExtractor={(item) => item.place_id.toString()}
           renderItem={({ item }) => (
@@ -168,6 +223,45 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
           )}
         />
       )}
+      <Modal
+        visible={mapOpened}
+        onRequestClose={() => { setMapOpened(false); }}
+        animationType="slide"
+        transparent={false}
+      >
+        <View style={AddressPickerStyles.mapContainer}>
+          
+          <MapView
+            style={AddressPickerStyles.mapView}
+            initialRegion={{
+              latitude: coordinates?.latitude ?? 0,
+              longitude: coordinates?.longitude ?? 0,
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.005,
+            }}
+          >
+            <Marker
+              coordinate={coordinates ?? {latitude: 0, longitude: 0}}
+              draggable={true}
+              onDragEnd={(event:MarkerDragStartEndEvent) => void handleMarkerDragEnd(event)}
+              icon={{ uri: `https://mt.google.com/vt/icon/text=%E2%80%A2&psize=36&color=ffd5f9cf&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=4` }}
+              testID={`map-marker`}
+            />
+          </MapView>
+
+          <View style={AddressPickerStyles.addressPanel}>
+            <Text style={AddressPickerStyles.addressPanelText}>
+              { mapAddress ? mapAddress : 'Drag me' }
+            </Text>
+          </View>
+          <ButtonSave onPress={handleSaveMap} testID="map-btn-save" />
+          <ButtonDelete
+            onPress={() => { setMapOpened(false); }} 
+            testID="map-btn-close"
+          />
+
+        </View>
+      </Modal>
     </View>
   );
 };
