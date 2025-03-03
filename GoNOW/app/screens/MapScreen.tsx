@@ -71,7 +71,8 @@ const MapScreen = (): JSX.Element => {
     //console.log("MAP SCREEN. load events: ", mapEvents);
     const now = new Date();
     mapEvents = mapEvents.filter(e => e.startTime > now);
-    if (mapRoute !== null && mapEvents.filter(e => e.id === mapRoute.event?.id).length === 0) {
+    if (mapRoute !== null 
+        && mapEvents.filter(e => e.id === mapRoute.event?.id).length === 0) {
       setMapRoute(null); // hide route if is opened and not actual
     }
     //console.log(">>> loadEvents", JSON.stringify(mapEvents));
@@ -323,6 +324,38 @@ const MapScreen = (): JSX.Element => {
     routePointDefault: 'https://mt.google.com/vt/icon/name=icons/spotlight/directions_transfer_icon_10px.png&scale=3',
   }
 
+  // Marker doc: https://github.com/react-native-maps/react-native-maps/blob/master/docs/marker.md
+  // pinColor sets color of the map marker.
+  // BUT for Android, the set of available colors is limited with red as default for all others.
+  // See https://github.com/react-native-maps/react-native-maps/issues/887
+  // Also for Android, there is an issue with nested elements (36x36 points max).
+  // See https://github.com/react-native-maps/react-native-maps/issues/4803
+  
+  /**
+   * Generate link to event icon, use color from event workflow.
+   *
+   * @param {IMapEvent} event - The event to create icon link for the map.
+   * @param {number} index - The index of event (show as text on the icon).
+   * @returns {string} - The icon URI for given event.
+   */
+  const getEventIcon = (event: IMapEvent, index: number):string => {
+    const iconColor = event.workflow?.color.replace('#','') ?? 'f9675c';
+    const iconText = (index + 1).toString();
+    const iconTextSize = index < 10 ? 16 : 14;
+    const iconTextColor = '333333';
+    const iconSize = 4;
+    const uri = `https://mt.google.com/vt/icon/text=${iconText}`
+              + `&psize=${iconTextSize.toString()}`
+              + `&color=ff${iconTextColor}`
+              + `&highlight=${iconColor}`
+              + `&scale=${iconSize.toString()}`
+              //+ `&ax=44`
+              + `&ay=48`
+              + `&name=icons/spotlight/spotlight-waypoint-b.png`;
+    //console.log(uri);
+    return uri;
+  }
+  
   return (
     <View style={styles.container}>
       <MapView style={styles.map} region={mapRegionDefault} ref={mapRef} testID='map'>
@@ -349,7 +382,8 @@ const MapScreen = (): JSX.Element => {
             testID={`marker-home`}
           />
         }
-        {events.filter(event => event.coordinates.latitude !==0 && event.coordinates.longitude !== 0).map((event, index) =>
+        {events.filter(event => event.coordinates.latitude !==0 
+          && event.coordinates.longitude !== 0).map((event, index) =>
           <Marker
             key={`marker-${event.id.toString()}`}
             coordinate={{
@@ -363,11 +397,7 @@ const MapScreen = (): JSX.Element => {
               + ` - `
               + event.endTime.toLocaleTimeString().replace(/:\d\d\s/,' ')
             }
-            icon={{
-              uri: `https://mt.google.com/vt/icon/text=${(index + 1).toString()}`
-                + `&psize=16&color=ff${event.workflow?.color.replace('#','') ?? "330000"}`
-                + `&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=4`,
-            }}
+            icon={{ uri: getEventIcon(event, index) }}
             testID={`marker-event-${event.id.toString()}`}
           />
         )}
@@ -403,10 +433,12 @@ const MapScreen = (): JSX.Element => {
             <Text style={styles.routeText}>From: {mapRoute.departureName}</Text>
             <Text style={styles.routeText}>To: {mapRoute.destinationName}</Text>
             <Text style={styles.routeText}>Travel time: {mapRoute.durationText}</Text>
-            <Text style={[{ color: mapRoute.leftTime > 0 ? '' : 'red'}, styles.routeText]}>
+            <Text style={[{ color: mapRoute.leftTime >= 0 ? '' : 'red'}, styles.routeText]}>
               Left time before departure: {
-                String(Math.trunc(mapRoute.leftTime / 3600)).padStart(2, '0') + `:` +
-                String(Math.trunc((Math.abs(mapRoute.leftTime) % 3600) / 60)).padStart(2, '0')
+                (mapRoute.leftTime >= 0 ? '' : '-')
+                + String(Math.trunc(Math.abs(mapRoute.leftTime) / 3600)).padStart(2, '0')
+                + `:`
+                + String(Math.trunc((Math.abs(mapRoute.leftTime) % 3600) / 60)).padStart(2, '0')
               }
             </Text>
             <Text style={styles.routeText}>Distance: {mapRoute.distanceText}</Text>
