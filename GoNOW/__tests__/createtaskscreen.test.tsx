@@ -6,6 +6,7 @@ import { getMyLocation } from '../app/scripts/Geo';
 import { RouteProp } from '@react-navigation/native';
 import { TabParamList } from '../app/screens/Navigator';
 import { addEvent } from '../app/scripts/Event';
+import { IoniconsProps } from '../__mocks__/ionicons'
 
 jest.mock('../app/scripts/Profile', () => ({
   getLocation: jest.fn()
@@ -19,6 +20,12 @@ jest.mock('../app/scripts/Event', () => ({
   addEvent: jest.fn(),
   updateEvent: jest.fn()
 }));
+
+jest.mock('react-native-vector-icons/Ionicons', () => {
+  return function MockIonicons(props: IoniconsProps) {
+    return <mock-ionicon {...props} />;
+  };
+});
 
 // Create mock routes
 const createMockRoute: RouteProp<TabParamList, 'CreateTask'> = {

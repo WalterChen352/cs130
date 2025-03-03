@@ -19,23 +19,11 @@ export const getMyLocation = async (): Promise<Location | null> => {
     if (status === ExpoLocation.PermissionStatus.GRANTED) {
       const { coords } = await ExpoLocation.getCurrentPositionAsync({});
       const { latitude, longitude } = coords;
-      const location = new Location(new Coordinates(latitude, longitude), '');
-      const reverseGeocode = await ExpoLocation.reverseGeocodeAsync({
-        latitude,
-        longitude,
-      });
-      if (reverseGeocode.length > 0) {
-        location.address = Platform.select({
-          ios: `${String(reverseGeocode[0].streetNumber)}
-            ${String(reverseGeocode[0].street)},
-            ${String(reverseGeocode[0].city)},
-            ${String(reverseGeocode[0].region)}
-            ${String(reverseGeocode[0].postalCode)},
-            ${String(reverseGeocode[0].country)}`,
-          android: String(reverseGeocode[0].formattedAddress) || '',
-          default: ''
-        });
-      }
+      const coordinates = new Coordinates(latitude, longitude)
+      const location = new Location(
+        coordinates,
+        await getAddressByCoordinates(coordinates)
+      );
       return location;
     } else {
       console.log('Permission to access location was denied');
@@ -44,6 +32,30 @@ export const getMyLocation = async (): Promise<Location | null> => {
     console.log('Error fetching location:', error);
   }
   return null;
+};
+
+/**
+ * Get address by given coordinates.
+ *
+ * @async
+ * @param {Coordinates} coordinates - The coordinates given to define address.
+ * @returns {Promise<string>} - The address on given coordinates.
+ */
+export const getAddressByCoordinates = async (coordinates: Coordinates): Promise<string> => {
+  try {
+    const reverseGeocode = await ExpoLocation.reverseGeocodeAsync(coordinates);
+    if (reverseGeocode.length > 0) {
+      const address = Platform.select({
+        ios: `${String(reverseGeocode[0].streetNumber)} ${String(reverseGeocode[0].street)}, ${String(reverseGeocode[0].city)}, ${String(reverseGeocode[0].region)} ${String(reverseGeocode[0].postalCode)}, ${String(reverseGeocode[0].country)}`,
+        android: String(reverseGeocode[0].formattedAddress) || '',
+        default: ''
+      });
+      return address;
+    }
+  } catch (error) {
+    console.log('Error fetching location:', error);
+  }
+  return '';
 };
 
 /**
