@@ -36,15 +36,15 @@ const WorkflowPicker: React.FC<WorkflowPickerProps> = ({
         testID='picker'
         selectedValue={selectedWorkflowID}
         onValueChange={(itemValue) => {
-          setSelectedWorkflowID(itemValue);
+          setSelectedWorkflowID(Number(itemValue));
           if (itemValue) {
-            onSelect(itemValue);
+            onSelect(Number(itemValue));
           }
         }}
       >
         <Picker.Item key="None Selected" label="Select workflow"  />
         {workflows.map((workflow) => (
-          <Picker.Item key={workflow.name} label={workflow.name} value={workflow.id} style={WorkflowPickerStyles.resultItem} />
+          <Picker.Item key={workflow.name} label={workflow.name} value={workflow.id.toString()} style={WorkflowPickerStyles.resultItem} />
         ))}
       </Picker>
     </View>

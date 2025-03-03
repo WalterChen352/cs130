@@ -1,7 +1,7 @@
 import { JSX, useEffect, useState } from 'react';
 import { ActivityIndicator, Linking, Text, TouchableOpacity, View } from 'react-native';
 
-import { initDatabase } from './scripts/Database';
+import { initDatabase, resetDatabase } from './scripts/Database';
 import { IndexStyles as styles } from './styles/Index.styles';
 import Navigator from './screens/Navigator';
 
@@ -11,6 +11,7 @@ export default function Index(): JSX.Element {
   useEffect(() => {
     const appInit = async (): Promise<void> => {
       try {
+        await resetDatabase();
         await initDatabase();
         setStatus(1);
       } catch (error) {
