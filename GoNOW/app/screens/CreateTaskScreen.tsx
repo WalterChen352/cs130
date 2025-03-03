@@ -232,8 +232,8 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       />
 
       <View style={styles.row}>
-        <Switch value={autoSchedule} onValueChange={setAutoSchedule} />
-        <Text style={styles.label}>Autoschedule?</Text>
+        <Switch value={autoSchedule} onValueChange={setAutoSchedule} testID='Autoschedule' />
+        <Text style={styles.label}>Autoschedule</Text>
       </View>
 
       <Text style={styles.label}>Enter workflow</Text>
