@@ -17,12 +17,15 @@ export default tseslint.config(
     //   'tsdoc/syntax': 'warn',
     // },
     languageOptions: {
+      parser: tsParser,
       parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        ecmaFeatures:{
+          jsx: true,
+        }
       },
       globals: {
         ...globals.node,
+        ...jestPlugin.environments.globals.globals
       }
     },
   },
