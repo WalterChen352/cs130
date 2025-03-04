@@ -119,12 +119,26 @@ const ProfileScreen = (): JSX.Element => {
         });
     };
 
+    /**
+     * Formats the days of the week as a readable string
+     * 
+     * @param {boolean[]} daysOfWeek - Array of 7 booleans representing days of the week
+     * @returns {string} - Formatted days string
+     */
+    const formatDays = (daysOfWeek: boolean[]): string => {
+        const selectedDays = daysOfWeek
+            .map((day, idx) => day ? DaysOfWeekNames[idx] : null)
+            .filter(Boolean);
+        
+        return selectedDays.length > 0 ? selectedDays.join(' ') : 'None';
+    };
+
     return (
         <View style={ProfileScreenStyles.container}>
             <Text style={ProfileScreenStyles.title} testID="home-location-title">Home Location</Text>
 
             <View>
-                <View style={[ProfileScreenStyles.locationPicker, {}]}>
+                <View style={ProfileScreenStyles.locationPicker}>
                     <AddressPicker
                         initialAddress={location?.address}
                         initialCoordinates={location?.coordinates}
@@ -147,22 +161,47 @@ const ProfileScreen = (): JSX.Element => {
                     >
                         <TouchableOpacity
                             onPress={() => { navigation.navigate('Workflow', { workflow: item }); }}
+                            activeOpacity={0.9}
+                            style={ProfileScreenStyles.workflowTouchable}
                             testID={`workflow-link-${String(item.id)}`}
                         >
-                            <Text style={ProfileScreenStyles.header} testID={`workflow-header-${String(item.id)}`}>
-                                {item.name}
-                                {item.pushNotifications && <Ionicons name="notifications" size={14} />}
-                            </Text>
-                            <Text style={ProfileScreenStyles.center} testID={`workflow-text-${String(item.id)}`}>
-                                Schedule{' '}
-                                <Text style={ProfileScreenStyles.emphasis}>
-                                    between {item.timeStart.toString()} and {item.timeEnd.toString()}{' '}
+                            <View style={ProfileScreenStyles.headerContainer}>
+                                <Text style={ProfileScreenStyles.header} testID={`workflow-header-${String(item.id)}`}>
+                                    {item.name}
                                 </Text>
-                                {item.daysOfWeek.map((day, ind) => day ? DaysOfWeekNames[ind] : null).filter(Boolean).join(' ')}
-                            </Text>
-                            <Text style={ProfileScreenStyles.center} testID={`workflow-scheduling-style-${String(item.id)}`}>
-                                {item.schedulingStyle.name}
-                            </Text>
+                                {item.pushNotifications && (
+                                    <Ionicons name="notifications" size={16} style={ProfileScreenStyles.notificationIcon} />
+                                )}
+                            </View>
+                            
+                            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 2}}>
+                                <View style={ProfileScreenStyles.timeContainer}>
+                                    <View style={ProfileScreenStyles.iconText}>
+                                        <Ionicons name="time-outline" size={14} color="#666" style={{ marginRight: 4 }} />
+                                        <Text style={ProfileScreenStyles.infoValue}>
+                                            {item.timeStart.toString()} - {item.timeEnd.toString()}
+                                        </Text>
+                                    </View>
+                                </View>
+                                
+                                <View style={ProfileScreenStyles.daysContainer}>
+                                    <View style={ProfileScreenStyles.iconText}>
+                                        <Ionicons name="calendar-outline" size={14} color="#666" style={{ marginRight: 4 }} />
+                                        <Text style={ProfileScreenStyles.infoValue}>
+                                            {formatDays(item.daysOfWeek)}
+                                        </Text>
+                                    </View>
+                                </View>
+                            </View>
+                            
+                            <View style={ProfileScreenStyles.styleContainer}>
+                                <View style={ProfileScreenStyles.iconText}>
+                                    <Ionicons name="options-outline" size={14} color="#666" style={{ marginRight: 4 }} />
+                                    <Text style={ProfileScreenStyles.infoValue}>
+                                        {item.schedulingStyle.name}
+                                    </Text>
+                                </View>
+                            </View>
                         </TouchableOpacity>
                     </View>
                 )}

@@ -11,12 +11,10 @@ import {
 } from 'react-native';
 import DropdownPickerStyles from '../styles/DropdownPicker.styles';
 
-// Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-// Define types for the component props
 interface DropdownItem {
   label: string;
   value: string | number;
