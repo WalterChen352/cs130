@@ -10,8 +10,6 @@ jest.mock('../mapsQueries', ()=>({
   computeTravelTime: jest.fn(
      
     (_apiKey: string,origin: {latitude: number, longitude: number}, destination: {latitude: number, longitude: number}): number|null=> {
-    // In a real implementation, this would call a mapping service API
-    // For now, we'll use a simple distance-based heuristic
     
     // Calculate straight-line distance (Haversine formula)
     const R = 6371; // Earth's radius in km
@@ -31,7 +29,6 @@ jest.mock('../mapsQueries', ()=>({
 }))
 
 describe('autoschedule function', () => {
-  // Interfaces needed for testing
 
 
   // Time objects for workflow time bounds
