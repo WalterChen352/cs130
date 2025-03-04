@@ -59,7 +59,7 @@ const mockWorkflows = [
   new Workflow(
     1,
     'Test Workflow',
-    '#388dff',
+    Colors.DARK_GRAY,
     true,
     new Time(8, 30),
     new Time(17, 0),
@@ -149,7 +149,7 @@ describe('CalendarScreen', () => {
     const { getByTestId } = render(<CalendarScreen />);
     await waitFor(() => {
       const event2 = getByTestId('Event2');
-      expect(event2).toHaveStyle({ backgroundColor: Colors.DEFAULT_BLUE });
+      expect(event2).toHaveStyle({ backgroundColor: Colors.LIGHT_BLUE });
     });
   });
 

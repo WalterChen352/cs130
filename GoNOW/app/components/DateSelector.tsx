@@ -36,7 +36,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
       <Text style={styles.label}>{label}</Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => setShow(true)}
+        onPress={() => { setShow(true); }}
         activeOpacity={0.7}
       >
         <Text style={styles.dateText}>{formattedDate}</Text>

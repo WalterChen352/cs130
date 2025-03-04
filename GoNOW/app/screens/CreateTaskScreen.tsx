@@ -48,11 +48,11 @@ interface CreateTaskScreenProps {
  * 
  * @returns {JSX.Element} The CreateTaskScreen component.
  */
-const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
+const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element => {
 
   const navigation = useNavigation<NavigationProp<TabParamList>>();
-  const isEditMode = route.params?.mode === 'edit' && route.params?.eventData;
-  const eventData = route.params?.eventData as EventData | undefined;
+  const isEditMode = route.params.mode === 'edit' && route.params.eventData;
+  const eventData = route.params.eventData as EventData | undefined;
 
   const [title, setTitle] = useState<string>('');
   const [startDate, setStartDate] = useState<Date>(new Date());
@@ -213,7 +213,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       }
       
       resetForm();
-      // navigation.navigate('Daily', { date: e.startDate });
+      navigation.navigate('Daily', { date: e.startTime });
       
     } catch (error) {
       Alert.alert('Validation Error', error instanceof Error ? error.message : 'Unknown error');
@@ -275,7 +275,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
         <View style={styles.dropdownSection1}>
           <DropdownPicker
             selectedValue={transportationMode}
-            onValueChange={(value) => setTransportationMode(value.toString())}
+            onValueChange={(value) => { setTransportationMode(value.toString()); }}
             items={transportModeOptions}
             testID="Transportation-Mode"
             placeholder="Select Transportation Mode"

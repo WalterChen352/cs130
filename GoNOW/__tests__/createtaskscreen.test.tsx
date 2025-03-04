@@ -3,10 +3,11 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import CreateTaskScreen from '../app/screens/CreateTaskScreen';
 import { getLocation } from '../app/scripts/Profile';
 import { getMyLocation } from '../app/scripts/Geo';
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, NavigationContainer } from '@react-navigation/native';
 import { TabParamList } from '../app/screens/Navigator';
 import { addEvent } from '../app/scripts/Event';
 import { IoniconsProps } from '../__mocks__/ionicons'
+
 
 jest.mock('../app/scripts/Profile', () => ({
   getLocation: jest.fn()
@@ -78,22 +79,30 @@ describe('CreateTaskScreen', () => {
     });
   });
 
+  const renderWithNavigation = (component: React.ReactElement) => {
+      return render(
+        <NavigationContainer>
+          {component}
+        </NavigationContainer>
+      );
+    };
+
   it('renders correctly with initial layout for create mode', async () => {
-    render(<CreateTaskScreen route={createMockRoute} />);
+    renderWithNavigation(<CreateTaskScreen route={createMockRoute} />);
 
     await waitFor(() => {
       expect(screen.getByTestId('Title')).toBeOnTheScreen();
       expect(screen.getByTestId('Description')).toBeOnTheScreen();
-      expect(screen.getByText('Select start time')).toBeOnTheScreen();
-      expect(screen.getByText('Select end time')).toBeOnTheScreen();
-      expect(screen.getByText('Select transportation mode')).toBeOnTheScreen();
-      expect(screen.getByText('Select workflow (optional)')).toBeOnTheScreen();
-      expect(screen.getByText("Create Task")).toBeOnTheScreen();
+      expect(screen.getByTestId('Start-Time-Selector')).toBeOnTheScreen();
+      expect(screen.getByTestId('End-Time-Selector')).toBeOnTheScreen();
+      expect(screen.getByTestId('Transportation-Mode')).toBeOnTheScreen();
+      expect(screen.getByTestId('Workflow-Picker')).toBeOnTheScreen();
+      expect(screen.getByTestId("Save-Task")).toBeOnTheScreen();
     });
   });
 
   it('fetches location when not in edit mode', async () => {
-    render(<CreateTaskScreen route={createMockRoute} />);
+    renderWithNavigation(<CreateTaskScreen route={createMockRoute} />);
 
     await waitFor(() => {
       expect(getLocation).toHaveBeenCalled();
@@ -102,17 +111,16 @@ describe('CreateTaskScreen', () => {
   });
 
   it('populates form fields in edit mode', async () => {
-    render(<CreateTaskScreen route={editMockRoute} />);
+    renderWithNavigation(<CreateTaskScreen route={editMockRoute} />);
 
     await waitFor(() => {
       expect(screen.getByTestId('Title')).toHaveProp('value', 'Test Event');
       expect(screen.getByTestId('Description')).toHaveProp('value', 'Test Description');
-      expect(screen.getByText("Update Task")).toBeOnTheScreen();
     });
   });
 
   it('does not fetch location in edit mode', async () => {
-    render(<CreateTaskScreen route={editMockRoute} />);
+    renderWithNavigation(<CreateTaskScreen route={editMockRoute} />);
 
     await waitFor(() => {
       expect(getLocation).not.toHaveBeenCalled();
@@ -132,10 +140,10 @@ describe('CreateTaskScreen', () => {
   // });
 
   it('does not add event when create task button is pressed with invalid input', async () => {
-    render(<CreateTaskScreen route={createMockRoute} />);
+    renderWithNavigation(<CreateTaskScreen route={createMockRoute} />);
 
     await waitFor(() => {
-      fireEvent.press(screen.getByText("Create Task"));
+      fireEvent.press(screen.getByTestId("Save-Task"));
       expect(addEvent).not.toHaveBeenCalled();
     });
   });

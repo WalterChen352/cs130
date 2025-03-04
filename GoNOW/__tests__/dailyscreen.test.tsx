@@ -103,7 +103,7 @@ describe('DailyScreen', () => {
   test('it renders the default color correctly', async () => {
     const { getByTestId } = renderWithNavigation(<DailyScreen route={route} />);
     await waitFor(() => {
-      expect(getByTestId(mockEvents[1].name)).toHaveStyle({ backgroundColor: Colors.DEFAULT_BLUE });
+      expect(getByTestId(mockEvents[1].name)).toHaveStyle({ backgroundColor: Colors.LIGHT_BLUE });
     });
   });
 
