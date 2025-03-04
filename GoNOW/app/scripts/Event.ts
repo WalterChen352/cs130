@@ -72,7 +72,7 @@ export const getWeeklyEvents = async(date: Date): Promise<Event[]> => {
 function formatDateForSQLite(date: Date): string {
   const pad = (num: number) => num.toString().padStart(2, '0');
   
-  const year = date.getFullYear();
+  const year = String(date.getFullYear());
   const month = pad(date.getMonth() + 1); // Months are 0-indexed
   const day = pad(date.getDate());
   const hours = pad(date.getHours());
