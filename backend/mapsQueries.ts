@@ -5,18 +5,20 @@ const apiKey = process.env.API_KEY;
 
 const url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
 
-const getTimeHeaders = new Headers({
+
+
+
+
+export const computeTravelTime= async(apiKey:string,origin: Location, destination: Location, travelMode: string, departureTime:string|null, arrivalTime:string|null ):Promise<number>=>{
+    if((arrivalTime===null && departureTime===null)|| (arrivalTime !== null && departureTime !==null)){
+        throw new Error('cannot call getTime with both arrival and departure time')
+    }
+    const getTimeHeaders = new Headers({
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey ?? '',
         'X-Goog-FieldMask': 'routes.duration'
     });
-
-
-
-export const computeTravelTime= async(origin: Location, destination: Location, travelMode: string, departureTime:string|null, arrivalTime:string|null ):Promise<number>=>{
-    if((arrivalTime===null && departureTime===null)|| (arrivalTime !== null && departureTime !==null)){
-        throw new Error('cannot call getTime with both arrival and departure time')
-    }
+    console.log('apikey', apiKey)
     const params = departureTime!==null?{
         origin: {
             location: { latLng: { latitude: origin.latitude, longitude: origin.longitude } }
@@ -48,8 +50,12 @@ export const computeTravelTime= async(origin: Location, destination: Location, t
     
             if (!response.ok) throw new Error(`HTTP Error: ${String(response.status)}`);
             const data = await response.json() as {routes:[{duration:string}]};
+            console.log('data from api req', data)
             const duration = data.routes[0].duration
-            return Number(duration)
+            //they are all strings that end in s
+            const parsedDuration= duration.slice(0, duration.length-1)
+            console.log(parsedDuration)
+            return Math.ceil(Number(parsedDuration)/60) //returns in minutes round up
     
         } catch (error) {
             console.error('Error fetching route:', error);
