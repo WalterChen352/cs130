@@ -77,7 +77,7 @@ export const addEvent = async (e: Event): Promise<void> => {
     const DB = await SQLite.openDatabaseAsync(DB_NAME);
     console.log('db', DB);
     
-    // Since workflow is string|null, we don't need to check for undefined
+    // Since workflow is number|null, we don't need to check for undefined
     const query = `INSERT INTO events
       (name, description, startTime, endTime, latitude, longitude, transportationMode, workflow)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?);`;
@@ -90,7 +90,7 @@ export const addEvent = async (e: Event): Promise<void> => {
       e.latitude, 
       e.longitude, 
       e.transportationMode,
-      e.workflow // workflow is already either string or null
+      e.workflow // workflow is already either number or null
     ];
     
     await DB.runAsync(query, params);

@@ -2,16 +2,24 @@ import React, { useState, useEffect, useMemo, JSX } from 'react';
 import { ScrollView, View, Text, TextInput, Button, Switch, Pressable, Alert } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { RouteProp } from '@react-navigation/native';
 
+//component imports
 import AddressPicker from '../components/AddressPicker';
+import WorkflowPicker from '../components/WorkflowPicker';
+
+//model imports
+import { Workflow } from '../models/Workflow';
 import { Location } from '../models/Location';
-import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
-import { styles } from '../styles/CreateTaskScreen.styles';
 import { Event } from '../models/Event';
+import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
+
+//script imports
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
-import { getTransportationModes } from '../scripts/TransportationMode'
-import { RouteProp } from '@react-navigation/native';
+import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
+import { styles } from '../styles/CreateTaskScreen.styles';
+import { getTransportationModes } from '../scripts/TransportationMode';
 import { TabParamList } from './Navigator';
 
 interface EventData {
@@ -30,6 +38,7 @@ interface CreateTaskScreenProps {
   route: RouteProp<TabParamList, 'CreateTask'>;
 }
 
+
 /**
  * React component for creating a new task.
  * Allows users to input task details such as title, time, location, transportation mode, and description.
@@ -45,7 +54,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [autoSchedule, setAutoSchedule] = useState<boolean>(false);
   const [transportationMode, setTransportationMode] = useState<string>('');
-  const [workflow, setWorkflow] = useState<string>('');
+  const [workflow, setWorkflow] = useState<Workflow | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
   const [longitude, setLongitude] = useState<number>(0.0);
   const [latitude, setLatitude] = useState<number>(0.0);
@@ -54,6 +63,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
   const [showStartTimePicker, setShowStartTimePicker] = useState<boolean>(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
 
   /** Dropdown options for transportation modes */
   //const dropdownOptions = [
@@ -89,7 +99,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       setLatitude(eventData.latitude);
       setLongitude(eventData.longitude);
       setTransportationMode(eventData.transportationMode);
-      setWorkflow(eventData.workflow ?? '');
+      setWorkflow(tryFilterWfId(workflows, eventData.id))
     }
   }, [isEditMode, eventData]);
 
@@ -115,6 +125,11 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       }
     };
     void fetchLocation();
+
+    const fetchWorkflows = async (): Promise<void> => {
+      setWorkflows(await getWorkflows());
+    }
+    void fetchWorkflows();
   }, [isEditMode]);
 
   /** Updates destination coordinates when location changes */
@@ -243,11 +258,10 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
         <Text style={styles.label}>Autoschedule</Text>
       </View>
 
-      <Text style={styles.label}>Enter workflow</Text>
-      <TextInput
-        style={styles.input}
-        value={workflow}
-        onChangeText={setWorkflow}
+      <Text style={styles.label}>Select workflow</Text>
+      <WorkflowPicker
+        workflows={workflows}
+        onSelect={(id) => {setWorkflow(tryFilterWfId(workflows, id))}}  
       />
 
       <Text style={styles.label}>Enter address</Text>
@@ -283,7 +297,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
               latitude,
               longitude,
               transportationMode,
-              workflow
+              workflow?.id ?? -1, //set workflow.id to -1 if workflow is null
             );
 
             //validate event input
