@@ -17,7 +17,7 @@ import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
 //script imports
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
-import { getWorkflows, filter_workflows_by_id } from '../scripts/Workflow';
+import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
 import { styles } from '../styles/CreateTaskScreen.styles';
 import { getTransportationModes } from '../scripts/TransportationMode';
 import { TabParamList } from './Navigator';
@@ -99,7 +99,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       setLatitude(eventData.latitude);
       setLongitude(eventData.longitude);
       setTransportationMode(eventData.transportationMode);
-      setWorkflow(filter_workflows_by_id(workflows, eventData.id))
+      setWorkflow(tryFilterWfId(workflows, eventData.id))
     }
   }, [isEditMode, eventData]);
 
@@ -261,7 +261,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       <Text style={styles.label}>Select workflow</Text>
       <WorkflowPicker
         workflows={workflows}
-        onSelect={(id) => {setWorkflow(filter_workflows_by_id(workflows, id))}}  
+        onSelect={(id) => {setWorkflow(tryFilterWfId(workflows, id))}}  
       />
 
       <Text style={styles.label}>Enter address</Text>
