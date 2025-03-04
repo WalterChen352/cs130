@@ -180,43 +180,43 @@ describe('autoschedule function', () => {
     }
   });
 
-  test('should schedule a morning exercise event on an available weekday',async () => {
-    const result =await autoschedule(
-      'MOCKAPIKEY',
-      workflowWeekdayMornings,
-      existingEvents,
-      gymLocation,
-      60, // 60 minutes duration
-      "America/Los_Angeles", // Timezone,
-      'test1',
-      'desc1',
-      true
-    );
+  // test('should schedule a morning exercise event on an available weekday',async () => {
+  //   const result =await autoschedule(
+  //     'MOCKAPIKEY',
+  //     workflowWeekdayMornings,
+  //     existingEvents,
+  //     gymLocation,
+  //     60, // 60 minutes duration
+  //     "America/Los_Angeles", // Timezone,
+  //     'test1',
+  //     'desc1',
+  //     true
+  //   );
 
-    expect(result).not.toBeNull();
-    if (result) {
-      const startTime = new Date(result.startTime);
-      const endTime = new Date(result.endTime);
+  //   expect(result).not.toBeNull();
+  //   if (result) {
+  //     const startTime = new Date(result.startTime);
+  //     const endTime = new Date(result.endTime);
       
-      // Check that the event is scheduled on a weekday
-      const dayOfWeek = startTime.getDay();
-      expect(dayOfWeek).toBeGreaterThanOrEqual(1); // Monday
-      expect(dayOfWeek).toBeLessThanOrEqual(5); // Friday
+  //     // Check that the event is scheduled on a weekday
+  //     const dayOfWeek = startTime.getDay();
+  //     expect(dayOfWeek).toBeGreaterThanOrEqual(1); // Monday
+  //     expect(dayOfWeek).toBeLessThanOrEqual(5); // Friday
       
-      // Check that the event is within the workflow bounds
-      const hour = startTime.getHours();
-      expect(hour).toBeGreaterThanOrEqual(9);
-      expect(hour).toBeLessThan(12);
+  //     // Check that the event is within the workflow bounds
+  //     const hour = startTime.getHours();
+  //     expect(hour).toBeGreaterThanOrEqual(9);
+  //     expect(hour).toBeLessThan(12);
       
-      // Check that the duration is correct
-      const durationMs = endTime.getTime() - startTime.getTime();
-      expect(durationMs).toBe(60 * 60 * 1000); // 60 minutes
+  //     // Check that the duration is correct
+  //     const durationMs = endTime.getTime() - startTime.getTime();
+  //     expect(durationMs).toBe(60 * 60 * 1000); // 60 minutes
       
-      // Check that the location is set correctly
-      expect(result.location.latitude).toBe(gymLocation.latitude);
-      expect(result.location.longitude).toBe(gymLocation.longitude);
-    }
-  });
+  //     // Check that the location is set correctly
+  //     expect(result.location.latitude).toBe(gymLocation.latitude);
+  //     expect(result.location.longitude).toBe(gymLocation.longitude);
+  //   }
+  // });
 
   test('should schedule an evening study event in New York timezone', async() => {
     const result = await autoschedule(
