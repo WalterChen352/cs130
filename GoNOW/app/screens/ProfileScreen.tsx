@@ -178,7 +178,7 @@ const ProfileScreen = (): JSX.Element => {
                                 <View style={ProfileScreenStyles.timeContainer}>
                                     <View style={ProfileScreenStyles.iconText}>
                                         <Ionicons name="time-outline" size={14} color="#666" style={{ marginRight: 4 }} />
-                                        <Text style={ProfileScreenStyles.infoValue}>
+                                        <Text style={ProfileScreenStyles.infoValue} testID={`workflow-text-${String(item.id)}`}>
                                             {item.timeStart.toString()} - {item.timeEnd.toString()}
                                         </Text>
                                     </View>
@@ -197,7 +197,7 @@ const ProfileScreen = (): JSX.Element => {
                             <View style={ProfileScreenStyles.styleContainer}>
                                 <View style={ProfileScreenStyles.iconText}>
                                     <Ionicons name="options-outline" size={14} color="#666" style={{ marginRight: 4 }} />
-                                    <Text style={ProfileScreenStyles.infoValue}>
+                                    <Text style={ProfileScreenStyles.infoValue} testID={`workflow-scheduling-style-${String(item.id)}`}>
                                         {item.schedulingStyle.name}
                                     </Text>
                                 </View>
