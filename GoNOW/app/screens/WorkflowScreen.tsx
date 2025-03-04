@@ -1,19 +1,20 @@
-import { Alert, Button, ScrollView, Switch, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { Alert, Platform, ScrollView, Switch, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Picker } from '@react-native-picker/picker';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import WheelPicker from 'react-native-wheel-color-picker';
 
 import ButtonSave from '../components/ButtonSave';
 import ButtonDelete from '../components/ButtonDelete';
 import { getSchedulingStyles, getSchedulingStyle } from '../scripts/SchedulingStyle';
-import { DaysOfWeekNames, Time, TimeFromDate } from '../models/Time';
+import { DaysOfWeekNames, Time} from '../models/Time';
 import { Workflow } from '../models/Workflow';
 import { addWorkflow, updateWorkflow, deleteWorkflow, validateWorkflow } from '../scripts/Workflow';
 import { WorkflowScreenStyles } from '../styles/WorkflowScreen.styles';
 import SchedulingStyle from '../models/SchedulingStyle';
 import { TabParamList } from './Navigator';
+import DropdownPicker from '../components/DropdownPicker';
+import TimeSelector from '../components/TimeSelector';
 
 /**
  * Properties for screen `WorkflowScreen`.
@@ -61,11 +62,6 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
     const [showTimeStart, setShowTimeStart] = useState(false);
     const [showTimeEnd, setShowTimeEnd] = useState(false);
 
-    /** Shows pop-up window for select start time for the workflow. */
-    const openTimeStart = (): void => {
-        setShowTimeStart(true);
-    };
-
     /**
      * Keeps start time for the workflow from user input.
      * This method does not return any value.
@@ -79,11 +75,6 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
             setTimeStart(new Date(0, 0, 0, time.getHours(), time.getMinutes()));
         }
         setShowTimeStart(false);
-    };
-
-    /** Shows pop-up window for select end time for the workflow. */
-    const openTimeEnd = (): void => {
-        setShowTimeEnd(true);
     };
 
     /**
@@ -179,6 +170,14 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         setSchedulingStyles(getSchedulingStyles());
     }, []);
 
+    const handleTimeStartChange = (newTime: Date) => {
+        setTimeStart(new Date(0, 0, 0, newTime.getHours(), newTime.getMinutes()));
+    };
+
+    const handleTimeEndChange = (newTime: Date) => {
+        setTimeEnd(new Date(0, 0, 0, newTime.getHours(), newTime.getMinutes()));
+    };
+
     useEffect(() => {
         loadSchedulingStyle();
         setName(workflow.name);
@@ -199,7 +198,7 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
 
     return (
         <View style={WorkflowScreenStyles.container}>
-            <ScrollView style={WorkflowScreenStyles.scrollContainer} ref={scrollRef}>
+            <ScrollView style={WorkflowScreenStyles.scrollContainer} ref={scrollRef} keyboardShouldPersistTaps="handled">
                 <Text style={WorkflowScreenStyles.title} testID="workflow-title">
                     {workflow.id === 0 ? 'Add a workflow' : 'Update the workflow'}
                 </Text>
@@ -212,88 +211,82 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
                 />
 
                 <View style={WorkflowScreenStyles.center}>
-                    <Switch
-                        value={pushNotifications}
-                        onValueChange={setPushNotifications}
-                        testID="workflow-push-notifications"
-                    />
-                    <Text style={WorkflowScreenStyles.rightElem}>Push notifications</Text>
+                <Switch
+                    value={pushNotifications}
+                    onValueChange={setPushNotifications}
+                    testID="workflow-push-notifications"
+                />
+                <Text style={WorkflowScreenStyles.notificationText}>Push notifications</Text>
                 </View>
 
                 <Text style={WorkflowScreenStyles.header}>Time selection</Text>
-                <View style={WorkflowScreenStyles.center}>
-                    <TouchableOpacity
-                        style={WorkflowScreenStyles.time}
-                        onPress={openTimeStart}
+                <View style={WorkflowScreenStyles.timeSelectors}>
+                    <TimeSelector
+                        value={timeStart}
+                        onChange={handleTimeStartChange}
+                        label="Start"
                         testID="workflow-time-start"
-                    >
-                        <Text style={WorkflowScreenStyles.timeText}>{TimeFromDate(timeStart).toString()}</Text>
-                    </TouchableOpacity>
-                    <Text />
-                    <TouchableOpacity
-                        style={WorkflowScreenStyles.time}
-                        onPress={openTimeEnd}
+                    />
+                    <TimeSelector
+                        value={timeEnd}
+                        onChange={handleTimeEndChange}
+                        label="End"
                         testID="workflow-time-end"
-                    >
-                        <Text style={WorkflowScreenStyles.timeText}>{TimeFromDate(timeEnd).toString()}</Text>
-                    </TouchableOpacity>
+                    />
                 </View>
-                    {showTimeStart && (
-                        <DateTimePicker
-                            value={timeStart}
-                            mode="time"
-                            is24Hour={true}
-                            display="default"
-                            onChange={onChangeTimeStart}
-                        />
-                    )}
-                    {showTimeEnd && (
-                        <DateTimePicker
-                            value={timeEnd}
-                            mode="time"
-                            is24Hour={true}
-                            display="default"
-                            onChange={onChangeTimeEnd}
-                        />
-                    )}
+                {showTimeStart && Platform.OS === 'android' && (
+                    <DateTimePicker
+                        value={timeStart}
+                        mode="time"
+                        is24Hour={true}
+                        display="default"
+                        onChange={onChangeTimeStart}
+                    />
+                )}
+                {showTimeEnd && Platform.OS === 'android' && (
+                    <DateTimePicker
+                        value={timeEnd}
+                        mode="time"
+                        is24Hour={true}
+                        display="default"
+                        onChange={onChangeTimeEnd}
+                    />
+                )}
 
-                <View style={WorkflowScreenStyles.centerWrap}>
-                    {daysOfWeek.map((day, ind) => (
-                        <View key={ind} style={WorkflowScreenStyles.blockDayOfWeek}>
-                            <Button
-                                title={DaysOfWeekNames[ind]}
-                                onPress={() => { toggleDay(ind); }}
-                                color={day ? '#388dff' : 'lightgray'}
-                                testID={`workflow-day-of-week-${String(ind)}`}
-                            />
-                        </View>
-                    ))}
+                <Text style={WorkflowScreenStyles.header}>Days of week</Text>
+                <View style={WorkflowScreenStyles.daysContainer}>
+                {daysOfWeek.map((day, ind) => (
+                    <TouchableOpacity
+                    key={ind}
+                    style={day ? WorkflowScreenStyles.dayButtonActive : WorkflowScreenStyles.dayButtonInactive}
+                    onPress={() => { toggleDay(ind); }}
+                    testID={`workflow-day-of-week-${String(ind)}`}
+                    activeOpacity={0.7}
+                    >
+                    <Text style={day ? WorkflowScreenStyles.dayButtonText : WorkflowScreenStyles.dayButtonTextInactive}>
+                        {DaysOfWeekNames[ind]}
+                    </Text>
+                    </TouchableOpacity>
+                ))}
                 </View>
 
                 <Text style={WorkflowScreenStyles.header}>Scheduling style</Text>
-                <View style={WorkflowScreenStyles.center}>
-                <Picker
-                    style={WorkflowScreenStyles.picker}
-                    selectedValue={schedulingStyle}
-                    testID="workflow-scheduling-style"
-                    onValueChange={(value: string) => { setSchedulingStyle(value); }}
-                >
-                    {schedulingStyles.map((s: SchedulingStyle) => (
-                        <Picker.Item
-                            key={s.id.toString()}
-                            label={s.name}
-                            value={s.id.toString()}  // Convert to string
-                            testID={`workflow-scheduling-style-${String(s.id)}`}
-                        />
-                    ))}
-                </Picker>
+                <View style={WorkflowScreenStyles.pickerContainer}>
+                    <DropdownPicker
+                        selectedValue={schedulingStyle}
+                        onValueChange={(value) => { setSchedulingStyle(value); }}
+                        items={schedulingStyles.map((s) => ({
+                            label: s.name,
+                            value: s.id.toString()
+                        }))}
+                        testID="workflow-scheduling-style"
+                        placeholder="Select scheduling style"
+                    />
                 </View>
 
                 <Text style={WorkflowScreenStyles.header}>Color</Text>
-                <View style={WorkflowScreenStyles.center}>
-                    <View style={WorkflowScreenStyles.wheelPicker} testID="workflow-color">
-                        <WheelPicker color={color} onColorChange={setColor} />
-                    </View>
+                <View style={WorkflowScreenStyles.wheelPicker} testID="workflow-color">
+                    <WheelPicker color={color} onColorChange={setColor} />
                 </View>
 
                 <Text style={WorkflowScreenStyles.footer}> </Text>
@@ -312,5 +305,6 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         </View>
     );
 };
+
 
 export default WorkflowScreen;
