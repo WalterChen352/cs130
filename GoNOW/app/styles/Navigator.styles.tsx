@@ -1,4 +1,4 @@
-import { StyleSheet , Dimensions} from 'react-native';
+import { StyleSheet , Dimensions, Platform } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -7,7 +7,7 @@ export const NavigatorStyles = StyleSheet.create({
       flexDirection: 'row',
       backgroundColor: 'lightblue',
       height: 80,
-      paddingBottom: 20,
+      paddingBottom: Platform.OS === 'android' ? 0 : 20,
       justifyContent: 'space-around',
       alignItems: 'center',
     },

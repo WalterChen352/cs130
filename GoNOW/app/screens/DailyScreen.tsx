@@ -24,6 +24,15 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
     return new Date(route.params?.eventDate ?? Date.now()); // eslint-disable-line @typescript-eslint/no-unnecessary-condition
   }, [route.params?.eventDate]); // eslint-disable-line @typescript-eslint/no-unnecessary-condition
 
+  const formattedDate = useMemo(() => {
+    return eventDate.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  }, [eventDate]);
+
   const routeHighlightedEventId = route.params?.eventId; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
 
   // Update selection whenever route params change
@@ -135,17 +144,24 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
   };
 
   if (loading) {
-    return <Text style={styles.loading}>Loading events!</Text>;
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>{formattedDate}</Text>
+        <Text style={styles.loading}>Loading events!</Text>
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>{formattedDate}</Text>
       {events.length > 0 ? (
         <FlatList<Event>
           data={events}
           renderItem={displayEvent}
           keyExtractor={item => item.id.toString()}
           extraData={selectedEventId} // Ensure FlatList rerenders when selection changes
+          contentContainerStyle={styles.listContainer}
         />
       ) : (
         <Text style={styles.noEvents}>No tasks today!</Text>
