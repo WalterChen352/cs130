@@ -296,7 +296,7 @@ export const filterWfId=(workflows: Workflow[], id:number): Workflow=>{
 }
 
 //IMPORTANT DISTINCTION FROM filterWfId: NULL RETURN VALUE IF NOTHING IS FOUND
-export const filter_workflows_by_id=(workflows: Workflow[], id:number): Workflow|null=>{ 
+export const tryFilterWfId=(workflows: Workflow[], id:number): Workflow|null=>{ 
   for (const w of workflows){
     if (w.id===id)
       return w

@@ -19,8 +19,7 @@ import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
 import { getWorkflows, filter_workflows_by_id } from '../scripts/Workflow';
 import { styles } from '../styles/CreateTaskScreen.styles';
-import { getTransportationModes } from '../scripts/TransportationMode'
-import { RouteProp } from '@react-navigation/native';
+import { getTransportationModes } from '../scripts/TransportationMode';
 import { TabParamList } from './Navigator';
 
 interface EventData {
