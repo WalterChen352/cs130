@@ -1,7 +1,7 @@
 import type{ Event, Workflow, Location, Time } from "./types";
 import { computeTravelTime } from "./mapsQueries";
 
-export const autoschedule = async(w: Workflow, events: Event[], location: Location, duration: number, timeZone: string, name: string, description: string, onePerDay:boolean, transportation:string='DRIVE'): Promise<Event | null> => {
+export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], location: Location, duration: number, timeZone: string, name: string, description: string, onePerDay:boolean, transportation:string='DRIVE'): Promise<Event | null> => {
     // Get the current date in the specified timezone
     const now = new Date();
     
@@ -71,6 +71,7 @@ export const autoschedule = async(w: Workflow, events: Event[], location: Locati
         
         // Check if we can fit the event between workflow bounds
         const eventStartTime =await  findAvailableTime(
+            apiKey,
             events,
             dayStart,
             dayEnd,
@@ -110,6 +111,7 @@ export const autoschedule = async(w: Workflow, events: Event[], location: Locati
 
 // Helper function to find an available time slot for the event
 const findAvailableTime=async(
+    apiKey:string,
     events: Event[],
     dayStart: Date,
     dayEnd: Date, 
@@ -130,6 +132,7 @@ const findAvailableTime=async(
         
         // Estimate travel time from event location to our target location
         const travelTimeAfter = await computeTravelTime(
+            apiKey,
             {latitude: event.location.latitude, longitude: event.location.longitude},
             location,
             transportationMode, null, String(eventStart.getTime())
@@ -137,6 +140,7 @@ const findAvailableTime=async(
         
         // Estimate travel time from our location to event location
         const travelTimeBefore = await computeTravelTime(
+            apiKey,
             location,
             {latitude: event.location.latitude, longitude: event.location.longitude},
             transportationMode, String(eventEnd.getTime()), null

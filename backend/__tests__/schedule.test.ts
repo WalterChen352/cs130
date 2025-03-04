@@ -5,28 +5,9 @@ import { computeTravelTime } from '../mapsQueries';
 const mockDate = new Date('2025-03-03T12:00:00Z'); // Using the current date from your session
 jest.useFakeTimers().setSystemTime(mockDate);
 // The rest of the code remains the same...
-const mockComputeTravelTime=(origin: {latitude: number, longitude: number}, destination: {latitude: number, longitude: number}, travelMode: string,  departureTime:string|null, arrivalTime:string|null): number|null=> {
-  // In a real implementation, this would call a mapping service API
-  // For now, we'll use a simple distance-based heuristic
-  
-  // Calculate straight-line distance (Haversine formula)
-  const R = 6371; // Earth's radius in km
-  const dLat = (destination.latitude - origin.latitude) * Math.PI / 180;
-  const dLon = (destination.longitude - origin.longitude) * Math.PI / 180;
-  const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(origin.latitude * Math.PI / 180) * Math.cos(destination.latitude * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  const distance = R * c;
-  
-  // Assume average speed of 30 km/h in an urban setting
-  // This returns travel time in minutes
-  return Math.ceil(distance / 30 * 60);
-}
 
 jest.mock('../mapsQueries', ()=>({
-  computeTravelTime: jest.fn((origin: {latitude: number, longitude: number}, destination: {latitude: number, longitude: number}, travelMode: string,  departureTime:string|null, arrivalTime:string|null): number|null=> {
+  computeTravelTime: jest.fn((apiKey: string,origin: {latitude: number, longitude: number}, destination: {latitude: number, longitude: number}, travelMode: string,  departureTime:string|null, arrivalTime:string|null): number|null=> {
     // In a real implementation, this would call a mapping service API
     // For now, we'll use a simple distance-based heuristic
     
@@ -203,6 +184,7 @@ describe('autoschedule function', () => {
 
   test('should schedule a morning exercise event on an available weekday',async () => {
     const result =await autoschedule(
+      'MOCKAPIKEY',
       workflowWeekdayMornings,
       existingEvents,
       gymLocation,
@@ -240,6 +222,7 @@ describe('autoschedule function', () => {
 
   test('should schedule an evening study event in New York timezone', async() => {
     const result = await autoschedule(
+      'MOCKAPIKEY',
       workflowEveningStudy,
       existingEvents,
       libraryLocation,
@@ -276,6 +259,7 @@ describe('autoschedule function', () => {
 
   test('should schedule a weekend outing in London timezone', async () => {
     const result = await autoschedule(
+      'MOCKAPIKEY',
       workflowWeekendOutings,
       existingEvents,
       parkLocation,
@@ -307,6 +291,7 @@ describe('autoschedule function', () => {
 
   test('should return null when no available slots due to conflicts',async () => {
     const result = await autoschedule(
+      'MOCKAPIKEY',
       workflowWeekdayMornings,
       conflictingEvents,
       gymLocation,
@@ -343,6 +328,7 @@ describe('autoschedule function', () => {
     const farEastTz = "Asia/Tokyo";
     
     const result = await autoschedule(
+      'MOCKAPIKEY',
       mondayOnlyWorkflow,
       [], // No existing events
       homeLocation,
@@ -387,6 +373,7 @@ describe('autoschedule function', () => {
     const eventsWithTravel = [...existingEvents, nearbyEvent];
     
     const result = await autoschedule(
+      'MOCKAPIKEY',
       workflowWeekdayMornings,
       eventsWithTravel,
       gymLocation, 
