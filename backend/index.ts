@@ -4,28 +4,23 @@ import fetch, { Headers } from 'node-fetch';
 import { autoschedule } from './scheudle';
 import type {Workflow,Location, Event, SchedulingStyle} from './types'
 import { computeTravelTime } from './mapsQueries';
-
+import bodyParser from 'body-parser';
 
 dotenv.config();
 
 const app: Express = express();
-const PORT = process.env.PORT||8080;
-const bodyParser= require('body-parser');
+const PORT = process.env.PORT??8080;
 app.use(bodyParser.json())
 
-const apiKey = process.env.API_KEY as string;   
-
-
+const apiKey = process.env.API_KEY??'';   
 
 interface RouteRequestBody {
-    oriLat: number;
-    oriLong: number;
-    destLat: number;
-    destLong: number;
+    origin:Location;
+    destination:Location;
     travelMode: string;
-  }
+}
 
-type AutoscheduleRequestBody={
+interface AutoscheduleRequestBody {
     events:Event[],
     workflow: Workflow,
     location: Location,
@@ -75,23 +70,23 @@ app.get('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, r
     //TODO
     //parse incoming task for location
     console.log(req.body)
-    const { oriLat, oriLong, destLat, destLong, travelMode } = req.body;
+    const { origin, destination, travelMode } = req.body;
     
     //construct request
     const url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
 
     const headers = new Headers({
         'Content-Type': 'application/json',
-        'X-Goog-Api-Key': apiKey ?? '',
+        'X-Goog-Api-Key': apiKey,
         'X-Goog-FieldMask': 'routes.polyline.encodedPolyline'
     });
 
     const body = JSON.stringify({
         origin: {
-            location: { latLng: { latitude: oriLat, longitude: oriLong } }
+            location: { latLng: { latitude: origin.latitude, longitude: origin.longitude } }
         },
         destination: {
-            location: { latLng: { latitude: destLat, longitude: destLong } }
+            location: { latLng: { latitude: destination.latitude, longitude: destination.latitude } }
         },
         travelMode: travelMode
     });
@@ -105,8 +100,8 @@ app.get('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, r
 
         if (!response.ok) throw new Error(`HTTP Error: ${String(response.status)}`);
 
-        const json = await response.json() as Record<string, unknown>;
-        res.send(json);
+        const responseData = await response.json() as Record<string, unknown>;
+        res.send(responseData);
 
     } catch (error) {
         console.error('Error fetching route:', error);

@@ -1,7 +1,6 @@
-import dotenv from 'dotenv';
+
 import { Location } from './types';
 
-const apiKey = process.env.API_KEY;   
 
 const url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
 
@@ -15,7 +14,7 @@ export const computeTravelTime= async(apiKey:string,origin: Location, destinatio
     }
     const getTimeHeaders = new Headers({
         'Content-Type': 'application/json',
-        'X-Goog-Api-Key': apiKey ?? '',
+        'X-Goog-Api-Key': apiKey,
         'X-Goog-FieldMask': 'routes.duration'
     });
     console.log('apikey', apiKey)
