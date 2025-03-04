@@ -1,76 +1,104 @@
 import { StyleSheet } from 'react-native';
+import { Colors, Borders, Spacing, FontSizes, Shadows } from './Common.styles';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 40,
-    margin: 20,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.BACKGROUND,
+  },
+  scrollContainer: {
+    flex: 1,
+    paddingHorizontal: Spacing.PADDING_LARGE,
+    paddingTop: Spacing.PADDING_LARGE,
   },
   title: {
-    fontSize: 24,
+    fontSize: FontSizes.HEADER,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: Spacing.PADDING_LARGE,
+    color: Colors.TEXT,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 15,
-    marginBottom: 10,
+    borderWidth: Borders.WIDTH,
+    borderColor: Colors.BORDER,
+    borderRadius: Borders.RADIUS_MEDIUM,
+    padding: Spacing.PADDING_MEDIUM,
+    marginBottom: Spacing.PADDING_MEDIUM,
+    backgroundColor: Colors.WHITE,
+    fontSize: FontSizes.REGULAR,
   },
   textArea: {
-    height: 80,
+    height: 100,
     textAlignVertical: 'top',
   },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
+  timeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.BUTTON_SPACING,
+    marginBottom: Spacing.PADDING_MEDIUM,
   },
-  row: {
+  dropdownSection1: {
+    position: 'relative',
+    zIndex: 3000,
+    marginBottom: Spacing.PADDING_MEDIUM,
+    width: '100%',
+  },
+  dropdownSection2: {
+    position: 'relative',
+    zIndex: 2000,
+    marginBottom: Spacing.PADDING_MEDIUM,
+    width: '100%',
+  },
+  locationSection: {
+    position: 'relative',
+    zIndex: 1000,
+    marginBottom: Spacing.PADDING_MEDIUM,
+    width: '100%',
+  },
+  switchRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
+    justifyContent: 'center',
+    marginBottom: Spacing.PADDING_MEDIUM,
   },
-  dropdown: {
-    margin: 16,
-    height: 50,
-    borderBottomColor: 'gray',
-    borderBottomWidth: 0.5,
+  switchLabel: {
+    marginLeft: Spacing.PADDING_MEDIUM,
+    fontSize: FontSizes.REGULAR,
+    color: Colors.TEXT,
   },
-  locationPicker: {
-    height: 60,
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    marginBottom: 20,
-    zIndex: 100,
+  footer: {
+    paddingBottom: 120, // Keeping as is since it's a specific value
   },
-  // Adding the missing styles
-  button: {
-    backgroundColor: '#2196F3',
-    borderRadius: 5,
-    padding: 15,
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+  saveButton: {
+    position: 'absolute',
+    bottom: Spacing.BUTTON_SPACING,
+    right: Spacing.BUTTON_SPACING,
+    backgroundColor: Colors.DEFAULT_BLUE,
+    borderRadius: Borders.RADIUS_MEDIUM,
+    padding: Spacing.PADDING_MEDIUM,
+    ...Shadows.BUTTON,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+  dateContainer: {
+    marginBottom: Spacing.PADDING_MEDIUM,
   },
-  // In case you need error styles in the future
-  errorContainer: {
-    backgroundColor: '#ffebee',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
+  dateButton: {
+    backgroundColor: Colors.WHITE,
+    borderWidth: Borders.WIDTH,
+    borderColor: Colors.BORDER,
+    borderRadius: Borders.RADIUS_MEDIUM,
+    padding: Spacing.PADDING_MEDIUM,
+    marginHorizontal: Spacing.BUTTON_SPACING,
   },
-  errorText: {
-    color: '#d32f2f',
-    fontSize: 14,
+  dateButtonText: {
+    fontSize: FontSizes.REGULAR,
+    color: Colors.TEXT,
+    textAlign: 'center',
+  },
+  dateLabel: {
+    fontSize: FontSizes.REGULAR,
+    fontWeight: '600',
+    color: Colors.TEXT,
+    textAlign: 'center',
+    marginBottom: Spacing.PADDING_SMALL,
   },
 });

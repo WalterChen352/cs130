@@ -6,7 +6,7 @@ import { SchedulingStyle } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import { Event } from '../app/models/Event';
 import { Workflow } from '../app/models/Workflow';
-import { DEFAULT_COLOR } from '../app/styles/Event.style';
+import { Colors } from '../app/styles/Common.styles';
 import { NavigationContainer } from '@react-navigation/native';
 
 const mockSchedulingStyles = [
@@ -103,7 +103,7 @@ describe('DailyScreen', () => {
   test('it renders the default color correctly', async () => {
     const { getByTestId } = renderWithNavigation(<DailyScreen route={route} />);
     await waitFor(() => {
-      expect(getByTestId(mockEvents[1].name)).toHaveStyle({ backgroundColor: DEFAULT_COLOR });
+      expect(getByTestId(mockEvents[1].name)).toHaveStyle({ backgroundColor: Colors.DEFAULT_BLUE });
     });
   });
 

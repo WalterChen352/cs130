@@ -32,7 +32,6 @@ const WorkflowPicker: React.FC<WorkflowPickerProps> = ({
   return (
     <View style={WorkflowPickerStyles.container}>
       <Picker
-      style={{color: 'black', opacity:100}}
       testID='picker'
       selectedValue={selectedWorkflowID}
       onValueChange={(itemValue) => {

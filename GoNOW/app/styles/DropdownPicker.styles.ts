@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { Colors, Borders, Spacing, FontSizes } from './Common.styles';
 
 const DropdownPickerStyles = StyleSheet.create({
   container: {
@@ -10,33 +11,33 @@ const DropdownPickerStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#DDD',
-    borderRadius: 10,
-    padding: 15,
+    backgroundColor: Colors.WHITE,
+    borderWidth: Borders.WIDTH,
+    borderColor: Colors.BORDER,
+    borderRadius: Borders.RADIUS_MEDIUM,
+    padding: Spacing.PADDING_LARGE,
     height: 50,
   },
   selectedText: {
-    fontSize: 16,
-    color: '#333',
+    fontSize: FontSizes.REGULAR,
+    color: Colors.DARK_GRAY
   },
   placeholderText: {
-    color: '#999',
+    color: Colors.BORDER
   },
   arrow: {
-    fontSize: 14,
-    color: '#007AFF',
+    fontSize: FontSizes.SMALL,
+    color: Colors.DEFAULT_BLUE,
   },
   dropdownListContainer: {
     position: 'absolute',
     top: 55,
     width: '100%',
     maxHeight: 200,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#DDD',
-    borderRadius: 10,
+    backgroundColor: Colors.WHITE,
+    borderWidth: Borders.WIDTH,
+    borderColor: Colors.BORDER,
+    borderRadius: Borders.RADIUS_MEDIUM,
     overflow: 'hidden',
     elevation: 0,
     zIndex: 1000,
@@ -48,19 +49,16 @@ const DropdownPickerStyles = StyleSheet.create({
     flexGrow: 1,
   },
   dropdownItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  selectedItem: {
-    backgroundColor: '#F0F8FF',
+    padding: Spacing.PADDING_LARGE,
+    borderBottomWidth: Borders.WIDTH,
+    borderBottomColor: Colors.BORDER,
   },
   dropdownItemText: {
-    fontSize: 16,
-    color: '#333',
+    fontSize: FontSizes.REGULAR,
+    color: Colors.DARK_GRAY,
   },
   selectedItemText: {
-    color: '#007AFF',
+    color: Colors.DEFAULT_BLUE,
     fontWeight: '500',
   }
 });

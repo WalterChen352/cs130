@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { Colors, Borders, Spacing, FontSizes, Shadows } from './Common.styles';
 
 /**
  * Styles for the Profile Screen components.
@@ -6,15 +7,15 @@ import { StyleSheet } from 'react-native';
 export const ProfileScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#f9f9f9'
+    padding: Spacing.PADDING_LARGE,
+    backgroundColor: Colors.BACKGROUND
   },
   title: {
-    fontSize: 23,
-    fontWeight: '600',
+    fontSize: FontSizes.HEADER,
+    fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 16,
-    color: '#333'
+    marginBottom: Spacing.PADDING_LARGE,
+    color: Colors.TEXT
   },
   center: {
     alignItems: 'center',
@@ -24,93 +25,88 @@ export const ProfileScreenStyles = StyleSheet.create({
     fontWeight: 'bold',
   },
   workflow: {
-    marginBottom: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    marginBottom: Spacing.PADDING_LARGE,
+    borderRadius: Borders.RADIUS_MEDIUM,
+    ...Shadows.BUTTON,
     overflow: 'hidden',
   },
   workflowTouchable: {
-    padding: 16,
+    padding: Spacing.PADDING_LARGE,
     width: '100%',
   },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 6,
-    paddingBottom: 4,
-    borderBottomWidth: 1,
+    marginBottom: Spacing.PADDING_SMALL,
+    paddingBottom: Spacing.PADDING_SMALL,
+    borderBottomWidth: Borders.WIDTH,
     borderBottomColor: 'rgba(0,0,0,0.06)',
   },
   header: {
-    fontSize: 18,
+    fontSize: FontSizes.SUBHEADER,
     fontWeight: '600',
-    color: '#333',
+    color: Colors.TEXT,
     flex: 1,
   },
   notificationIcon: {
     opacity: 0.8,
   },
   infoGrid: {
-    marginTop: 4,
+    marginTop: Spacing.PADDING_SMALL,
   },
   infoItem: {
     paddingVertical: 3,
     paddingHorizontal: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 10,
+    marginRight: Spacing.PADDING_MEDIUM,
   },
   infoLabel: {
-    fontSize: 13,
-    color: '#666',
+    fontSize: FontSizes.SMALL,
+    color: Colors.DARK_GRAY,
     marginRight: 4,
   },
   infoValue: {
-    fontSize: 14,
-    color: '#333',
+    fontSize: FontSizes.SMALL,
+    color: Colors.TEXT,
     fontWeight: '500',
   },
   addLink: {
-    marginTop: 24,
+    marginTop: Spacing.PADDING_LARGE + Spacing.PADDING_MEDIUM,
     textAlign: 'center',
-    color: '#388dff',
-    fontSize: 16,
-    fontWeight: '500',
-    padding: 8,
+    color: Colors.DEFAULT_BLUE,
+    fontSize: FontSizes.REGULAR,
+    padding: Spacing.PADDING_SMALL,
   },
   workflowList: {
-    marginBottom: 40,
+    marginBottom: Spacing.PADDING_LARGE + Spacing.PADDING_LARGE + Spacing.PADDING_MEDIUM,
   },
   emptyContainer: {
     textAlign: 'center',
   },
   emptyText: {
-    color: '#999',
+    color: Colors.DARK_GRAY,
   },
   block: {
-    paddingVertical: 26,
+    paddingVertical: Spacing.PADDING_LARGE
   },
   locationPicker: {
     height: 60,
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    marginBottom: 20,
+    paddingBottom: Spacing.PADDING_MEDIUM,
+    borderBottomWidth: Borders.WIDTH,
+    borderBottomColor: Colors.BORDER,
+    marginBottom: Spacing.PADDING_LARGE,
     zIndex: 100
   },
   footer: {
-    paddingBottom: 40,
+    paddingBottom: Spacing.PADDING_LARGE
   },
   timeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 3,
-    marginRight: 16,
+    marginRight: Spacing.PADDING_LARGE,
   },
   daysContainer: {
     flexDirection: 'row',

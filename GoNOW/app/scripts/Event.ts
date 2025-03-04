@@ -12,17 +12,19 @@ export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
     
     const startOfDay = new Date(dateToUse);
     startOfDay.setHours(0, 0, 0, 0);
+    const startStr = formatDateForSQLite(startOfDay);
     
     const endOfDay = new Date(dateToUse);
     endOfDay.setHours(23, 59, 59, 999);
-
+    const endStr = formatDateForSQLite(endOfDay);
+    
     const result = await DB.getAllAsync(`
-      SELECT * FROM events 
+      SELECT * FROM events
       WHERE datetime(startTime) >= datetime(?)
       AND datetime(startTime) < datetime(?)
       ORDER BY startTime;
-    `, [startOfDay.toISOString(), endOfDay.toISOString()]);
-
+    `, [startStr, endStr]);
+    
     console.log('Query result:', result);
     console.log('done txn');
     
@@ -33,6 +35,52 @@ export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
     return [];
   }
 };
+
+export const getWeeklyEvents = async(date: Date): Promise<Event[]> => {
+  console.log('getting weekly events for ', date);
+  
+  const startDate = new Date(date);
+  const endDate = new Date(date);
+  endDate.setDate(endDate.getDate() + 7);
+  
+  const startStr = formatDateForSQLite(startDate);
+  const endStr = formatDateForSQLite(endDate);
+  
+  console.log('searching for events between ', startStr, endStr);
+  
+  try {
+    const DB = await SQLite.openDatabaseAsync(DB_NAME);
+    const result = await DB.getAllAsync(`
+      SELECT * FROM events
+      WHERE startTime >= datetime(?) AND startTime < datetime(?)
+      ORDER BY startTime;
+    `, [startStr, endStr]);
+    
+    console.log(result);
+    const events = result as Event[];
+    return events;
+  } catch (error) {
+    console.error('error getting weekly events', error);
+  }
+  return [];
+};
+
+/**
+ * Formats a Date object as YYYY-MM-DD HH:MM:SS string for SQLite
+ * Use local time zone to avoid ISO string issues
+ */
+function formatDateForSQLite(date: Date): string {
+  const pad = (num: number) => num.toString().padStart(2, '0');
+  
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1); // Months are 0-indexed
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+  
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
 
 export const clearEvents = async():Promise<void>=>{ //just for clearing local storage
   console.log('dropping events table');
@@ -49,28 +97,7 @@ export const clearEvents = async():Promise<void>=>{ //just for clearing local st
   return Promise.resolve();
 };
 
-export const getWeeklyEvents = async(date:Date):Promise<Event[]>=>{
-  console.log('getting weekly events for ', date);
-  const startDate= new Date(date);
-  const endDate = new Date(date);
-  endDate.setDate(endDate.getDate()+7);
-  console.log('searching for events between ', startDate.toISOString(), endDate.toISOString());
-  try{
-    const DB = await SQLite.openDatabaseAsync(DB_NAME);
-    const result = await DB.getAllAsync(` SELECT * FROM events 
-    WHERE startTime >= datetime(?) AND startTime < datetime(?) 
-    ORDER BY startTime;
-`, [startDate.toISOString(),endDate.toISOString()]);
-        //const result = await DB.getAllAsync("SELECT * FROM events");
-        console.log(result);
-        const events = result as Event[];
-        return events;
-  }
-  catch(error){
-    console.error('error getting weekly evenets', error);
-  }
-  return [];
-};
+
 
 export const addEvent = async (e: Event): Promise<void> => {
   try {

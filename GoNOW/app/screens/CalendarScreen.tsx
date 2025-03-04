@@ -10,7 +10,7 @@ import {Event} from '../models/Event';
 import { Workflow } from '../models/Workflow';
 import { TabParamList } from './Navigator';
 import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
-import { DEFAULT_COLOR } from '../styles/Event.style';
+import { Colors } from '../styles/Common.styles'
 
 const HOUR_HEIGHT = 20;
 const START_HOUR = 0;
@@ -281,7 +281,7 @@ const CalendarScreen = (): JSX.Element => {
                                                 left: `${String(width * column)}%` as DimensionValue,
                                                 backgroundColor: event.workflow ? 
                                                     tryFilterWfId(workflows, event.workflow)?.color : 
-                                                    DEFAULT_COLOR
+                                                    Colors.LIGHT_BLUE
                                             }
                                         ]}
                                         onPress={() => {

@@ -1,90 +1,87 @@
 import { StyleSheet } from 'react-native';
+import { Colors, Borders, Spacing, FontSizes } from './Common.styles';
 
 const HOUR_HEIGHT = 20; // Height for each hour in pixels
 const START_HOUR = 0; // 12 AM
 const END_HOUR = 24; // 12 AM next day
 
 export const CalendarStyles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: 'white',
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        padding: 16,
-    },
-    headerText: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#1f2937',
-    },
-    calendarContainer: {
-        flex: 1,
-    },
-    headerRow: {
-        flexDirection: 'row',
-        borderBottomWidth: 1,
-        borderBottomColor: '#e5e7eb',
-        backgroundColor: 'white',
-    },
-    timeColumn: {
-        width: 50,
-        borderRightWidth: 1,
-        borderRightColor: '#e5e7eb',
-    },
-    timeHeaderText: {
-        fontSize: 12,
-        textAlign: 'center',
-        padding: 8,
-        color: '#4b5563',
-    },
-    dayHeader: {
-        flex: 1,
-        alignItems: 'center',
-        padding: 8,
-    },
-    dayText: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#4b5563',
-    },
-    gridContainer: {
-        flexDirection: 'row',
-        height: HOUR_HEIGHT * (END_HOUR - START_HOUR),
-    },
-    timeSlot: {
-        height: HOUR_HEIGHT,
-        justifyContent: 'flex-start',
-        paddingTop: 4,
-    },
-    timeText: {
-        fontSize: 12,
-        color: '#6b7280',
-        textAlign: 'center',
-    },
-    dayColumn: {
-        flex: 1,
-        borderRightWidth: 1,
-        borderRightColor: '#e5e7eb',
-    },
-    gridLine: {
-        height: HOUR_HEIGHT,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f3f4f6',
-    },
-    event: {
-        position: 'absolute',
-        left: 2,
-        right: 2,
-        borderRadius: 4,
-        padding: 4,
-        overflow: 'hidden',
-        minHeight: 20, 
-    },
-    eventText: {
-        fontSize: 11,
-        color: '#1f2937',
-    },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.BACKGROUND,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    padding: Spacing.PADDING_LARGE,
+  },
+  headerText: {
+    fontSize: FontSizes.HEADER,
+    fontWeight: 'bold',
+    color: Colors.TEXT,
+  },
+  calendarContainer: {
+    flex: 1,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    borderBottomWidth: Borders.WIDTH,
+    borderBottomColor: Colors.BORDER,
+    backgroundColor: Colors.BACKGROUND,
+  },
+  timeColumn: {
+    width: 50,
+    borderRightWidth: Borders.WIDTH,
+    borderRightColor: Colors.BORDER,
+  },
+  timeHeaderText: {
+    fontSize: FontSizes.SMALL,
+    textAlign: 'center',
+    padding: Spacing.PADDING_SMALL,
+  },
+  dayHeader: {
+    flex: 1,
+    alignItems: 'center',
+    padding: Spacing.PADDING_SMALL,
+  },
+  dayText: {
+    fontSize: FontSizes.SMALL,
+    fontWeight: '500',
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    height: HOUR_HEIGHT * (END_HOUR - START_HOUR),
+  },
+  timeSlot: {
+    height: HOUR_HEIGHT,
+    justifyContent: 'flex-start',
+    paddingTop: 4,
+  },
+  timeText: {
+    fontSize: FontSizes.SMALL,
+    textAlign: 'center',
+  },
+  dayColumn: {
+    flex: 1,
+    borderRightWidth: Borders.WIDTH,
+    borderRightColor: Colors.BORDER,
+  },
+  gridLine: {
+    height: HOUR_HEIGHT,
+    borderBottomWidth: Borders.WIDTH,
+    borderBottomColor: Colors.BORDER
+  },
+  event: {
+    position: 'absolute',
+    left: 2,
+    right: 2,
+    borderRadius: Borders.RADIUS_SMALL,
+    padding: 4,
+    overflow: 'hidden',
+    minHeight: 20,
+  },
+  eventText: {
+    fontSize: 11, // Keeping this size as it's smaller than FontSizes.SMALL
+    color: Colors.TEXT,
+  },
 });
-

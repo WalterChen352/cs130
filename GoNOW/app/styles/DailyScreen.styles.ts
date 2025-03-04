@@ -1,68 +1,69 @@
 import { StyleSheet } from 'react-native';
+import { Colors, Borders, Spacing, FontSizes } from './Common.styles';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16, // Match ProfileScreen padding
+    padding: Spacing.PADDING_LARGE,
   },
   title: {
-    fontSize: 23,
+    fontSize: FontSizes.HEADER,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: Spacing.PADDING_LARGE,
   },
   listContainer: {
-    paddingBottom: 20, // Add some padding at the bottom of the list
+    paddingBottom: Spacing.BUTTON_SPACING,
   },
   eventCard: {
-    padding: 20,
-    marginVertical: 8,
-    borderRadius: 10,
+    padding: Spacing.BUTTON_SPACING,
+    marginVertical: Spacing.PADDING_SMALL,
+    borderRadius: Borders.RADIUS_MEDIUM,
   },
   eventTitle: {
-    fontSize: 16,
+    fontSize: FontSizes.REGULAR,
     fontWeight: 'bold',
   },
   eventDescription: {
-    marginTop: 5,
+    marginTop: Spacing.PADDING_SMALL,
   },
   eventTime: {
-    marginTop: 5,
-    color: '#666',
+    marginTop: Spacing.PADDING_SMALL,
+    color: Colors.DARK_GRAY,
   },
   noEvents: {
-    padding: 20,
+    padding: Spacing.BUTTON_SPACING,
     textAlign: 'center',
-    fontSize: 16,
-    color: '#999', // Match ProfileScreen's empty text color
+    fontSize: FontSizes.REGULAR,
+    color: Colors.DARK_GRAY,
   },
   loading: {
-    padding: 40,
+    padding: 40, 
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: FontSizes.SUBHEADER,
   },
   highlightedEventCard: {
-    borderWidth: 2,
-    borderColor: '#007AFF',
+    borderWidth: Borders.WIDTH_THICK / 2, 
+    borderColor: Colors.DEFAULT_BLUE,
   },
   eventActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 10,
-    gap: 10,
+    marginTop: Spacing.PADDING_MEDIUM,
+    gap: Spacing.PADDING_MEDIUM,
   },
   editButton: {
-    backgroundColor: '#007AFF',
-    padding: 8,
-    borderRadius: 5,
+    backgroundColor: Colors.DEFAULT_BLUE,
+    padding: Spacing.PADDING_SMALL,
+    borderRadius: Borders.RADIUS_SMALL,
   },
   deleteButton: {
-    backgroundColor: '#FF3B30',
-    padding: 8,
-    borderRadius: 5,
+    backgroundColor: Colors.RED,
+    padding: Spacing.PADDING_SMALL,
+    borderRadius: Borders.RADIUS_SMALL,
   },
   buttonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
+    color: Colors.WHITE,
+    fontSize: FontSizes.SMALL,
   }
 });

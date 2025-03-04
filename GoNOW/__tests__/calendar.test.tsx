@@ -7,7 +7,7 @@ import { SchedulingStyle } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import { Event } from '../app/models/Event';
 import { Workflow } from '../app/models/Workflow';
-import { DEFAULT_COLOR } from '../app/styles/Event.style';
+import { Colors } from '../app/styles/Common.styles'
 
 jest.mock('react-native-vector-icons/Ionicons', () => {
   return function MockIonicons(props: IoniconsProps) {
@@ -149,7 +149,7 @@ describe('CalendarScreen', () => {
     const { getByTestId } = render(<CalendarScreen />);
     await waitFor(() => {
       const event2 = getByTestId('Event2');
-      expect(event2).toHaveStyle({ backgroundColor: DEFAULT_COLOR });
+      expect(event2).toHaveStyle({ backgroundColor: Colors.DEFAULT_BLUE });
     });
   });
 
