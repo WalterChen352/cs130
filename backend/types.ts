@@ -1,9 +1,9 @@
-export type SchedulingStyle={
+export interface SchedulingStyle {
     id: number
     name: string
 }
 
-export type Event={
+export interface Event {
     id: number;
     name: string;
     description: string;
@@ -14,7 +14,7 @@ export type Event={
     workflow?: number
 }
 
-export type Workflow={
+export interface Workflow {
     id: number,
     name: string
     color: string;
@@ -25,12 +25,12 @@ export type Workflow={
     schedulingStyle: SchedulingStyle|null
 }
 
-export type Location={
+export interface Location {
     longitude: number,
     latitude: number
 }
 
-export type Time={
+export interface Time {
     Hours: number,
     Minutes: number
 }
