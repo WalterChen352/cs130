@@ -1,4 +1,4 @@
-import { autoschedule } from '../scheudle'; // Update with your actual module path
+import { autoschedule } from '../schedule'; // Update with your actual module path
 import type { Workflow, Time, Location, Event} from '../types'
 // Mock the current date to ensure consistent test results
 const mockDate = new Date('2025-03-03T12:00:00Z'); // Using the current date from your session

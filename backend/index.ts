@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import fetch, { Headers } from 'node-fetch';
-import { autoschedule } from './scheudle';
+import { autoschedule } from './schedule';
 import type {Workflow,Location, Event, SchedulingStyle} from './types'
 import { computeTravelTime } from './mapsQueries';
 import bodyParser from 'body-parser';
