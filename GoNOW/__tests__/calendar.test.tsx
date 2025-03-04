@@ -70,7 +70,7 @@ const mockWorkflows = [
 
 jest.mock('../app/scripts/Workflow', () => ({
   getWorkflows: jest.fn(() => Promise.resolve(mockWorkflows)),
-  filterWfId: jest.fn((workflows: Workflow[], id: number) => {
+  tryFilterWfId: jest.fn((workflows: Workflow[], id: number) => {
     return workflows.find((wf) => wf.id === id);
   })
 }));

@@ -32,21 +32,25 @@ const WorkflowPicker: React.FC<WorkflowPickerProps> = ({
   return (
     <View style={WorkflowPickerStyles.container}>
       <Picker
-        style={{color: 'black', opacity:100}}
-        testID='picker'
-        selectedValue={selectedWorkflowID}
-        onValueChange={(itemValue) => {
-          setSelectedWorkflowID(Number(itemValue));
-          if (itemValue) {
-            onSelect(Number(itemValue));
-          }
-        }}
-      >
-        <Picker.Item key="None Selected" label="Select workflow"  />
-        {workflows.map((workflow) => (
-          <Picker.Item key={workflow.name} label={workflow.name} value={workflow.id.toString()} style={WorkflowPickerStyles.resultItem} />
-        ))}
-      </Picker>
+      style={{color: 'black', opacity:100}}
+      testID='picker'
+      selectedValue={selectedWorkflowID}
+      onValueChange={(itemValue) => {
+        const numValue = Number(itemValue);
+        setSelectedWorkflowID(numValue);
+        onSelect(numValue === 0 ? -1 : numValue);
+      }}
+    >
+      <Picker.Item key="None Selected" label="Select workflow" value="-1" />
+      {workflows.map((workflow) => (
+        <Picker.Item 
+          key={workflow.name} 
+          label={workflow.name} 
+          value={workflow.id.toString()} 
+          style={WorkflowPickerStyles.resultItem}
+        />
+      ))}
+    </Picker>
     </View>
   );
 };

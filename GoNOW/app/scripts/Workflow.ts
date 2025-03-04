@@ -301,7 +301,7 @@ export const tryFilterWfId=(workflows: Workflow[], id:number): Workflow|null=>{
     if (w.id===id)
       return w
   }
-  console.error('workflow not found. May have been called with improper arguments:', workflows, id);
+  console.log('workflow not found. May have been called with improper arguments:', workflows, id);
   return null;
 }
 

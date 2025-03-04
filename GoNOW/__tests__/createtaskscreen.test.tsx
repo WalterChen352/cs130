@@ -87,7 +87,7 @@ describe('CreateTaskScreen', () => {
       expect(screen.getByText('Select start time')).toBeOnTheScreen();
       expect(screen.getByText('Select end time')).toBeOnTheScreen();
       expect(screen.getByText('Select transportation mode')).toBeOnTheScreen();
-      expect(screen.getByText('Select workflow')).toBeOnTheScreen();
+      expect(screen.getByText('Select workflow (optional)')).toBeOnTheScreen();
       expect(screen.getByText("Create Task")).toBeOnTheScreen();
     });
   });

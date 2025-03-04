@@ -1,11 +1,11 @@
-import React, { useState, useCallback, JSX, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, JSX, useMemo, useEffect, useRef } from 'react';
 import { Text, View, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { getDailyEvents, deleteEvent } from '../scripts/Event';
 import { styles } from '../styles/DailyScreen.styles';
 import { Event } from '../models/Event';
 import { TabParamList } from './Navigator';
 import { RouteProp, useFocusEffect, useNavigation, NavigationProp } from '@react-navigation/native';
-import { filterWfId, getWorkflows } from '../scripts/Workflow';
+import { tryFilterWfId, getWorkflows } from '../scripts/Workflow';
 import { DEFAULT_COLOR } from '../styles/Event.style';
 import { Workflow } from '../models/Workflow';
 
@@ -19,6 +19,7 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
   const [loading, setLoading] = useState(true);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  const prevRouteEventIdRef = useRef<number | null>(null);
 
   const eventDate = useMemo(() => {
     return new Date(route.params?.eventDate ?? Date.now()); // eslint-disable-line @typescript-eslint/no-unnecessary-condition
@@ -35,9 +36,12 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
 
   const routeHighlightedEventId = route.params?.eventId; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
 
-  // Update selection whenever route params change
+  // Update selection when directly navigating to an event
   useEffect(() => {
-    setSelectedEventId(routeHighlightedEventId ?? null);
+    if (routeHighlightedEventId !== undefined) {
+      setSelectedEventId(routeHighlightedEventId);
+      prevRouteEventIdRef.current = routeHighlightedEventId;
+    }
   }, [routeHighlightedEventId]);
 
   const loadEvents = useCallback(async (): Promise<void> => {
@@ -56,8 +60,14 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
+      if (routeHighlightedEventId === undefined || routeHighlightedEventId !== prevRouteEventIdRef.current) {
+        if (routeHighlightedEventId === undefined) {
+          setSelectedEventId(null);
+        }
+      }
+      
       void loadEvents();
-    }, [loadEvents])
+    }, [loadEvents, routeHighlightedEventId])
   );
 
   const LocalTimeStringOptions: Intl.DateTimeFormatOptions = {
@@ -85,7 +95,7 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
             void (async () => {
               try {
                 setEvents(currentEvents => currentEvents.filter(event => event.id !== eventId));
-                setSelectedEventId(null); // Clear selection when deleting
+                setSelectedEventId(null);
                 await deleteEvent(eventId);
               } catch (error) {
                 console.error('Failed to delete event', error);
@@ -113,7 +123,7 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
         style={[
           styles.eventCard,
           isHighlighted && styles.highlightedEventCard,
-          {backgroundColor: item.workflow? filterWfId(workflows, item.workflow).color: DEFAULT_COLOR}
+          {backgroundColor: item.workflow ? tryFilterWfId(workflows, item.workflow)?.color : DEFAULT_COLOR}
         ]}
         
       >

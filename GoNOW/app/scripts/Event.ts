@@ -46,7 +46,7 @@ export const clearEvents = async():Promise<void>=>{ //just for clearing local st
   catch (error) {
     console.error(' error dropping table', error);
   }
-  return new Promise(()=>{return;});
+  return Promise.resolve();
 };
 
 export const getWeeklyEvents = async(date:Date):Promise<Event[]>=>{
@@ -97,7 +97,7 @@ export const addEvent = async (e: Event): Promise<void> => {
   } catch (error) {
     console.error('Error in addEvent function:', error);
   }
-  return new Promise(() => { return; });
+  return Promise.resolve();
 };
 
 export const updateEvent = async (e: Event): Promise<void> => {
@@ -133,7 +133,7 @@ export const updateEvent = async (e: Event): Promise<void> => {
   } catch (error) {
     console.error('Error in updateEvent function:', error);
   }
-  return new Promise(() => { return; });
+  return Promise.resolve();
 };
 
 export const deleteEvent = async (eventId: number): Promise<void> => {
@@ -146,48 +146,57 @@ export const deleteEvent = async (eventId: number): Promise<void> => {
   } catch (error) {
     console.error('Error in deleteEvent function:', error);
   }
-  return new Promise(() => { return; });
+  return Promise.resolve();
 };
 
 /**
  * Checks if the values of new or changed event's parameters are valid.
  * Ensures that the event has either name + autoschedule + workflow or name + time
  * This method does not return any value.
- * Based on validateWorkflow function in Workflow.ts
  *
- * @async
- * @param {Event} event - The `Workflow` object
+ * @param {Event} event - The `Event` object
  * @param {boolean} auto_schedule - A boolean value to check if the event is to be auto scheduled.
  */
-export const validateEvent = (event : Event, auto_schedule : boolean): void => {
+export const validateEvent = (event: Event, auto_schedule: boolean): void => {
   const errors = [];
-
-  //check if event name empty
+  
+  // Check if event name empty
   if (!event.name) {
     errors.push('The Event Name field is required.');
   }
-
-  //check if event has start time but no end time
-  if(event.startTime !== "" && event.endTime === "") {
+  
+  // Check time consistency
+  if (event.startTime && !event.endTime) {
     errors.push('The event has a start time but no end time.');
   }
-
-  //check if event has end time but no start time
-  if(event.endTime !== "" && event.startTime === "") {
+  
+  if (event.endTime && !event.startTime) {
     errors.push('The event has an end time but no start time.');
   }
-
- 
-  if(event.endTime === "" && event.startTime === ""){
-     //check if event ends before it starts
-    if (Number(event.startTime) > Number(event.endTime)) {
-      errors.push('The end time of the event must not be later than the start time. Overnight events are not supported.');
-    }
-    if(!auto_schedule || event.workflow === null){
-      errors.push('The event must be auto-scheduled to a workflow if you do not set a time.');
+  
+  // Check if event end time is after start time
+  if (event.startTime && event.endTime) {
+    const startTimeDate = new Date(event.startTime);
+    const endTimeDate = new Date(event.endTime);
+    if (startTimeDate > endTimeDate) {
+      errors.push('The end time of the event must be later than the start time. Overnight events are not supported.');
     }
   }
-
+  
+  // Check the core requirement: Either set time OR (autoschedule AND workflow)
+  const hasTimeSet = Boolean(event.startTime) && Boolean(event.endTime);
+  const hasWorkflow = event.workflow !== -1;
+  
+  // Core validation: Either time is set OR (autoschedule is enabled AND workflow is selected)
+  if (!hasTimeSet && !(auto_schedule && hasWorkflow)) {
+    errors.push('You must either set a time for the event OR enable autoschedule and select a workflow.');
+  }
+  
+  // Additional check: If autoschedule is enabled, a workflow must be selected (for clarity)
+  if (auto_schedule && !hasWorkflow) {
+    errors.push('Please select a workflow when autoschedule is enabled.');
+  }
+  
   if (errors.length > 0) {
     throw new Error(errors.join('\n'));
   }
