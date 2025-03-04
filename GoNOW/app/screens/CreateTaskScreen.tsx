@@ -51,8 +51,8 @@ interface CreateTaskScreenProps {
 const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element => {
 
   const navigation = useNavigation<NavigationProp<TabParamList>>();
-  const isEditMode = route.params.mode === 'edit' && route.params.eventData;
-  const eventData = route.params.eventData as EventData | undefined;
+  const isEditMode = route.params?.mode === 'edit' && route.params?.eventData; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+  const eventData = route.params?.eventData as EventData | undefined; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
 
   const [title, setTitle] = useState<string>('');
   const [startDate, setStartDate] = useState<Date>(new Date());
