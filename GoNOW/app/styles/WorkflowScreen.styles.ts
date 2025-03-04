@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 /**
- * Updated styles for the Workflow Screen components with a simpler notifications section.
+ * Styles for the Workflow Screen components
  */
 export const WorkflowScreenStyles = StyleSheet.create({
   container: {

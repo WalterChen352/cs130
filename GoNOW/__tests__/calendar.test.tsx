@@ -7,7 +7,7 @@ import { SchedulingStyle } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import { Event } from '../app/models/Event';
 import { Workflow } from '../app/models/Workflow';
-import { DEFAULT_COLOR } from '../app/styles/Event.style';
+import { Colors } from '../app/styles/Common.styles'
 
 jest.mock('react-native-vector-icons/Ionicons', () => {
   return function MockIonicons(props: IoniconsProps) {
@@ -59,7 +59,7 @@ const mockWorkflows = [
   new Workflow(
     1,
     'Test Workflow',
-    '#388dff',
+    Colors.DARK_GRAY,
     true,
     new Time(8, 30),
     new Time(17, 0),
@@ -70,7 +70,7 @@ const mockWorkflows = [
 
 jest.mock('../app/scripts/Workflow', () => ({
   getWorkflows: jest.fn(() => Promise.resolve(mockWorkflows)),
-  filterWfId: jest.fn((workflows: Workflow[], id: number) => {
+  tryFilterWfId: jest.fn((workflows: Workflow[], id: number) => {
     return workflows.find((wf) => wf.id === id);
   })
 }));
@@ -149,7 +149,7 @@ describe('CalendarScreen', () => {
     const { getByTestId } = render(<CalendarScreen />);
     await waitFor(() => {
       const event2 = getByTestId('Event2');
-      expect(event2).toHaveStyle({ backgroundColor: DEFAULT_COLOR });
+      expect(event2).toHaveStyle({ backgroundColor: Colors.LIGHT_BLUE });
     });
   });
 

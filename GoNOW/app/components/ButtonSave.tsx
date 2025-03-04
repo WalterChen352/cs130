@@ -1,41 +1,31 @@
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native';
-import { ButtonSaveStyles } from '../styles/ButtonSave.styles';
+import { ButtonSaveStyles, BUTTON_SAVE_DEFAULTS } from '../styles/ButtonSave.styles';
 
 interface ButtonSaveProps {
   /**
    * Function triggered when the button is pressed.
    */
   onPress?: () => void | Promise<void>;
-
   /**
    * Icon name from Ionicons.
-   * @default "checkmark"
    */
   icon?: string;
-
   /**
    * Icon size (also affects button size).
-   * @default 30
    */
   size?: number;
-
   /**
    * Button background color.
-   * @default "#388dff"
    */
   bgColor?: string;
-
   /**
    * Icon color.
-   * @default "white"
    */
   color?: string;
-
   /**
    * testID param.
-   * @default "btn-save"
    */
   testID?: string;
 }
@@ -47,14 +37,13 @@ interface ButtonSaveProps {
  * @returns {JSX.Element} - The rendered save button element.
  */
 const ButtonSave: React.FC<ButtonSaveProps> = ({
-  onPress = null,
-  icon = "checkmark",
-  size = 30,
-  color = "white",
-  bgColor = "#388dff",
+  onPress,
+  icon = BUTTON_SAVE_DEFAULTS.ICON_NAME,
+  size = BUTTON_SAVE_DEFAULTS.ICON_SIZE,
+  color = BUTTON_SAVE_DEFAULTS.ICON_COLOR,
+  bgColor = BUTTON_SAVE_DEFAULTS.BG_COLOR,
   testID = "btn-save",
 }) => {
-
   /**
    * Handles button press and triggers `onPress` if provided.
    * This method does not return any value.
@@ -89,7 +78,6 @@ const ButtonSave: React.FC<ButtonSaveProps> = ({
       />
     </TouchableOpacity>
   );
-
 };
 
 export default ButtonSave;
