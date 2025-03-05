@@ -4,7 +4,7 @@ import { Time } from './Time';
 /**
  * Represents a workflow with scheduling details, notifications, and style.
  */
-export class Workflow {
+export type Workflow= {
 
     /** Unique id for the workflow. */
     id: number;
@@ -45,18 +45,5 @@ export class Workflow {
      * @param daysOfWeekMask - The bitmask array representing the days of the week the workflow is active.
      * @param schedulingStyle - The scheduling style for the workflow.
      */
-    constructor(id: number, name: string, color: string,
-                pushNotifications: boolean,
-                timeStart: Time, timeEnd: Time, daysOfWeekMask: boolean[],
-                schedulingStyle: SchedulingStyle) {
-        
-        this.id = id;
-        this.name = name;
-        this.color = color;
-        this.pushNotifications = pushNotifications;
-        this.timeStart = timeStart;
-        this.timeEnd = timeEnd;
-        this.daysOfWeek = daysOfWeekMask;
-        this.schedulingStyle = schedulingStyle;
-    }
+    
 }

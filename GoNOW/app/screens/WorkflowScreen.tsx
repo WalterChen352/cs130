@@ -114,16 +114,16 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
      * @returns {Promise<void>} - A promise that resolves when the workflow is saved in DB.
      */
     const handleSaveForm = async (): Promise<void> => {
-        const workflowNew = new Workflow(
-            workflow.id,
-            name,
-            color,
-            pushNotifications,
-            new Time(timeStart.getHours(), timeStart.getMinutes()),
-            new Time(timeEnd.getHours(), timeEnd.getMinutes()),
-            daysOfWeek,
-            APP_SCHEDLING_STYLES[Number(schedulingStyle)]  // Convert string back to number
-        );
+        const workflowNew:Workflow={
+            id:workflow.id,
+            name:name,
+            color:color,
+            pushNotifications:pushNotifications,
+            timeStart:new Time(timeStart.getHours(), timeStart.getMinutes()),
+            timeEnd:new Time(timeEnd.getHours(), timeEnd.getMinutes()),
+            daysOfWeek:daysOfWeek,
+            schedulingStyle:APP_SCHEDLING_STYLES[Number(schedulingStyle)]  // Convert string back to number
+        };
         
         try {
             await validateWorkflow(workflowNew);

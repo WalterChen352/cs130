@@ -41,17 +41,17 @@ const mockEvents = [
   )
 ];
 
-const mockWorkflows = [
-  new Workflow(
-    1,
-    'Test Workflow',
-    '#388dff',
-    true,
-    new Time(8, 30),
-    new Time(17, 0),
-    [true, false, true, false, true, false, true],
-    SS_ASAP
-  )
+const mockWorkflows:Workflow[] = [
+  {
+    id:1,
+    name:'Test Workflow',
+    color:'#388dff',
+    pushNotifications:true,
+    timeStart:new Time(8, 30),
+    timeEnd:new Time(17, 0),
+    daysOfWeek:[true, false, true, false, true, false, true],
+   schedulingStyle: SS_ASAP
+  }
 ];
 
 // Mock the Event and Workflow scripts

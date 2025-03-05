@@ -51,27 +51,27 @@ jest.mock('../app/scripts/Profile', () => {
   };
 });
 
-const mockWorkflows = [
-  new Workflow(
-    1,
-    'School',
-    '#d5f9cf',
-    false,
-    new Time(9, 0),
-    new Time(10, 0),
-    [false, true, true, false, true, false, false],
-    SS_ASAP
-  ),
-  new Workflow(
-    2,
-    'Errand',
-    '#d3eef9',
-    true,
-    new Time(11, 0),
-    new Time(17, 0),
-    [true, false, false, false, false, false, true],
-    SS_MAX_ONE
-  ),
+const mockWorkflows:Workflow[] = [
+  {
+    id:1,
+    name:'School',
+    color:'#d5f9cf',
+    pushNotifications:false,
+    timeStart:new Time(9, 0),
+    timeEnd:new Time(10, 0),
+    daysOfWeek:[false, true, true, false, true, false, false],
+    schedulingStyle:SS_ASAP
+  },
+  {
+    id:2,
+    name:'Errand',
+    color:'#d3eef9',
+    pushNotifications:true,
+    timeStart:new Time(11, 0),
+    timeEnd:new Time(17, 0),
+    daysOfWeek:[true, false, false, false, false, false, true],
+    schedulingStyle:SS_MAX_ONE
+  }
 ];
 
 describe('Profile Screen', () => {

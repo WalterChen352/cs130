@@ -94,16 +94,16 @@ const ProfileScreen = (): JSX.Element => {
      */
     const handleAdd = (): void => {
         const schedulingStyleDefault = APP_SCHEDLING_STYLES[0];
-        const workflowDefault = new Workflow(
-            0,
-            '',
-            '#d5f9cf',
-            false,
-            new Time(9, 0),
-            new Time(10, 0),
-            new Array<boolean>(7).fill(false),
-            schedulingStyleDefault
-        );
+        const workflowDefault :Workflow= {
+            id:0,
+            name:'',
+            color:'#d5f9cf',
+            pushNotifications:false,
+            timeStart:new Time(9, 0),
+            timeEnd:new Time(10, 0),
+            daysOfWeek:new Array<boolean>(7).fill(false),
+            schedulingStyle:schedulingStyleDefault
+        };
         navigation.navigate('Workflow', { workflow: workflowDefault });
     };
 
