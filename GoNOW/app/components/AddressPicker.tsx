@@ -150,7 +150,7 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     setCoordinates({latitude: lat, longitude:lng});
     setResults([]);
     if (onSelect) {
-      onSelect(new Location({latitude: lat, longitude:lng}, item.display_name));
+      onSelect({coordinates:{latitude: lat, longitude:lng}, address:item.display_name});
     }
   };
 
@@ -185,7 +185,7 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     setAddress(mapAddress);
     setMapOpened(false);
     if (onSelect && mapCoordinates) {
-      onSelect(new Location(mapCoordinates, mapAddress));
+      onSelect( {coordinates:mapCoordinates, address:mapAddress});
     }
   }
 

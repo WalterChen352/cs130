@@ -13,10 +13,10 @@ const locationToDb = (location: Location) => ({
   lon: location.coordinates.longitude,
 });
 
-const mockLocation = new Location(
-  {latitude:33.033, longitude:-44.044},
-  '7400 Boelter Hall, Los Angeles, CA 90095'
-);
+const mockLocation =
+  {coordinates: {latitude:33.033, longitude:-44.044},
+  address:'7400 Boelter Hall, Los Angeles, CA 90095'
+  };
 const mockLocationDb = locationToDb(mockLocation);
 
 describe('Profile Database', () => {

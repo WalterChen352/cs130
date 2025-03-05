@@ -20,10 +20,7 @@ export const getMyLocation = async (): Promise<Location | null> => {
       const { coords } = await ExpoLocation.getCurrentPositionAsync({});
       const { latitude, longitude } = coords;
       const coordinates = {latitude: latitude, longitude:longitude}
-      const location = new Location(
-        coordinates,
-        await getAddressByCoordinates(coordinates)
-      );
+      const location = {coordinates:coordinates, address: await getAddressByCoordinates(coordinates)};
       return location;
     } else {
       console.log('Permission to access location was denied');

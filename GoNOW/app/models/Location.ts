@@ -20,7 +20,7 @@ export type Coordinates ={
 /**
  * Represents a location with geographic coordinates and an address.
  */
-export class Location {
+export type Location = {
   
   /** The geographic coordinates (latitude and longitude) of the location. */
   coordinates: Coordinates;
@@ -33,18 +33,6 @@ export class Location {
    * @param coords - The geographic coordinates (latitude and longitude) of the location.
    * @param address - The address associated with the location.
    */
-  constructor(coords: Coordinates, address: string) {
-    this.coordinates = coords;
-    this.address = address;
-  }
-
-  /**
-   * Converts the location to a string in the format `[Latitude;Longitude] Address`.
-   * @returns - The location as a string combining the coordinates and address.
-   */
-  toString(): string {
-    return `[${String(this.coordinates.latitude)};${String(this.coordinates.longitude)}] ${String(this.address)}`;
-  }
 }
 
 export default Coordinates;

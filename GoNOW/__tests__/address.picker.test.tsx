@@ -69,7 +69,7 @@ describe('AddressPicker', () => {
     fireEvent.press(locationItem);
 
     expect(onSelectMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Location({latitude:34.0689604, longitude:-118.4449446}, '7400 Boelter Hall, Los Angeles, CA 90095'))
+      expect.objectContaining({coordinates:{latitude:34.0689604, longitude:-118.4449446}, address:'7400 Boelter Hall, Los Angeles, CA 90095'})
     );
   });
 
@@ -99,7 +99,7 @@ describe('AddressPicker', () => {
     act(() => { fireEvent.press(getByTestId('map-btn-save')); });
     await waitFor(() => {
       expect(onSelectMock).toHaveBeenCalledWith(
-        new Location({latitude: 34.0689604,longitude:  -118.4463165}, 'Kerckhoff Hall')
+        {coordinates:{latitude: 34.0689604,longitude:  -118.4463165}, address:'Kerckhoff Hall'}
       );
     });
   });
