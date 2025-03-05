@@ -1,8 +1,8 @@
 import { openDatabase } from '../scripts/Database';
-import { getSchedulingStyle } from '../scripts/SchedulingStyle';
 import { Time, DaysOfWeekNames } from '../models/Time';
 import { Workflow } from '../models/Workflow';
-import SchedulingStyle from '../models/SchedulingStyle';
+import SchedulingStyle, { SS_ASAP } from '../models/SchedulingStyle';
+import APP_SCHEDLING_STYLES from '../models/SchedulingStyle';
 
 /**
  * DB record representing a workflow.
@@ -92,7 +92,7 @@ export const getWorkflows = async (): Promise<Workflow[]> => {
       for (let d=0; d<7; d++) {
         daysOfWeek[d] = ((row.daysOfWeek & (1 << d)) !==0);
       }
-      const schedulingStyle = getSchedulingStyle(Number(row.schedulingStyleId));
+      const schedulingStyle = APP_SCHEDLING_STYLES[Number(row.schedulingStyleId)];
       const timeStart = Number(row.timeStart);
       const timeEnd = Number(row.timeEnd);
       const workflowTemp = new Workflow(
@@ -290,7 +290,7 @@ export const filterWfId=(workflows: Workflow[], id:number): Workflow=>{
       return w
   }
   console.error('workflow not found. May have been called with improper arguments:', workflows, id);
-  return new Workflow(0, 'ERROR', '', false, new Time(0,0), new Time(0,0), [], new SchedulingStyle(0, ''));
+  return new Workflow(0, 'ERROR', '', false, new Time(0,0), new Time(0,0), [], SS_ASAP);
 }
 
 //IMPORTANT DISTINCTION FROM filterWfId: NULL RETURN VALUE IF NOTHING IS FOUND
@@ -345,7 +345,7 @@ export const getWorkflowById = async (id:number):Promise<Workflow | null> => {
     for (let d=0; d<7; d++) {
       daysOfWeek[d] = ((row.daysOfWeek & (1 << d)) !==0);
     }
-    const schedulingStyle = getSchedulingStyle(Number(row.schedulingStyleId));
+    const schedulingStyle = APP_SCHEDLING_STYLES[Number(row.schedulingStyleId)];
     const timeStart = Number(row.timeStart);
     const timeEnd = Number(row.timeEnd);
     

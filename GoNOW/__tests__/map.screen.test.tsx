@@ -3,7 +3,7 @@ import { act, render, waitFor, fireEvent } from '@testing-library/react-native';
 
 import Route from '../app/models/Geo';
 import { Coordinates, Location } from '../app/models/Location';
-import { SchedulingStyle } from '../app/models/SchedulingStyle';
+import { SchedulingStyle, SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import { TransportationMode } from '../app/models/TransportationMode';
 import { Workflow } from '../app/models/Workflow';
@@ -36,10 +36,6 @@ jest.mock('@react-navigation/native', () => ({
   useFocusEffect: jest.fn(),
 }));
 
-const mockSchedulingStyles = [
-  new SchedulingStyle(0, 'Schedule close together'),
-  new SchedulingStyle(1, 'Schedule with max buffer'),
-];
 const mockWorkflows = [
   new Workflow(
     1,
@@ -49,7 +45,7 @@ const mockWorkflows = [
     new Time(9, 0),
     new Time(10, 0),
     [false, true, true, false, true, false, false],
-    mockSchedulingStyles[0]
+    SS_ASAP
   ),
   new Workflow(
     2,
@@ -59,7 +55,7 @@ const mockWorkflows = [
     new Time(11, 0),
     new Time(17, 0),
     [true, false, false, false, false, false, true],
-    mockSchedulingStyles[1]
+    SS_MAX_ONE
   ),
 ];
 

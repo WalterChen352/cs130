@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { getWorkflows} from '../app/scripts/Workflow';
 import { Workflow } from '../app/models/Workflow';
 import { Time } from '../app/models/Time';
-import { SchedulingStyle } from '../app/models/SchedulingStyle';
+import APP_SCHEDLING_STYLES,{ SchedulingStyle, SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
 
 import ProfileScreen from '../app/screens/ProfileScreen';
 import { View } from 'react-native';
@@ -51,12 +51,6 @@ jest.mock('../app/scripts/Profile', () => {
   };
 });
 
-const mockSchedulingStyles = [
-  new SchedulingStyle(0, 'Schedule close together'),
-  new SchedulingStyle(1, 'Schedule with max buffer'),
-  new SchedulingStyle(2, 'Schedule with mmiddle buffer'),
-  new SchedulingStyle(3, 'Schedule with random buffer')
-];
 const mockWorkflows = [
   new Workflow(
     1,
@@ -66,7 +60,7 @@ const mockWorkflows = [
     new Time(9, 0),
     new Time(10, 0),
     [false, true, true, false, true, false, false],
-    mockSchedulingStyles[0]
+    SS_ASAP
   ),
   new Workflow(
     2,
@@ -76,7 +70,7 @@ const mockWorkflows = [
     new Time(11, 0),
     new Time(17, 0),
     [true, false, false, false, false, false, true],
-    mockSchedulingStyles[1]
+    SS_MAX_ONE
   ),
 ];
 

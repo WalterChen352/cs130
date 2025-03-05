@@ -3,7 +3,7 @@ import { render, waitFor, cleanup, fireEvent,  act } from '@testing-library/reac
 import CalendarScreen from '../app/screens/CalendarScreen';
 import { ReactTestInstance } from 'react-test-renderer';
 import { IoniconsProps } from '../__mocks__/ionicons';
-import { SchedulingStyle } from '../app/models/SchedulingStyle';
+import { SchedulingStyle, SS_ASAP } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import { Event } from '../app/models/Event';
 import { Workflow } from '../app/models/Workflow';
@@ -15,12 +15,6 @@ jest.mock('react-native-vector-icons/Ionicons', () => {
   };
 });
 
-const mockSchedulingStyles = [
-  new SchedulingStyle(0, 'Schedule close together'),
-  new SchedulingStyle(1, 'Schedule with max buffer'),
-  new SchedulingStyle(2, 'Schedule with middle buffer'),
-  new SchedulingStyle(3, 'Schedule with random buffer')
-];
 
 const now = new Date();
 const startTime1 = new Date(now);
@@ -62,7 +56,7 @@ const mockWorkflows = [
     new Time(8, 30),
     new Time(17, 0),
     [true, false, true, false, true, false, true],
-    mockSchedulingStyles[3]
+    SS_ASAP
   )
 ];
 

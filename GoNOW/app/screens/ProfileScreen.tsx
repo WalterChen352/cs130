@@ -12,10 +12,10 @@ import { Workflow } from '../models/Workflow';
 import { resetDatabase } from '../scripts/Database';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation, updateLocation } from '../scripts/Profile';
-import { getSchedulingStyle } from '../scripts/SchedulingStyle';
 import { getWorkflows } from '../scripts/Workflow';
 import { ProfileScreenStyles } from '../styles/ProfileScreen.styles';
 import { TabParamList } from './Navigator';
+import APP_SCHEDLING_STYLES from '../models/SchedulingStyle';
 
 /**
  * `ProfileScreen` component that displays a profile of the user.
@@ -93,7 +93,7 @@ const ProfileScreen = (): JSX.Element => {
      * This method does not return any value.
      */
     const handleAdd = (): void => {
-        const schedulingStyleDefault = getSchedulingStyle(0);
+        const schedulingStyleDefault = APP_SCHEDLING_STYLES[0];
         const workflowDefault = new Workflow(
             0,
             '',

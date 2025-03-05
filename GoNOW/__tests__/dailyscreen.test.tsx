@@ -2,19 +2,13 @@ import { cleanup, render, waitFor } from "@testing-library/react-native";
 import DailyScreen from "../app/screens/DailyScreen";
 import { RouteProp } from "@react-navigation/native";
 import { TabParamList } from "../app/screens/Navigator";
-import { SchedulingStyle } from '../app/models/SchedulingStyle';
+import { SchedulingStyle, SS_ASAP } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import { Event } from '../app/models/Event';
 import { Workflow } from '../app/models/Workflow';
 import { Colors } from '../app/styles/Common.styles';
 import { NavigationContainer } from '@react-navigation/native';
 
-const mockSchedulingStyles = [
-  new SchedulingStyle(0, 'Schedule close together'),
-  new SchedulingStyle(1, 'Schedule with max buffer'),
-  new SchedulingStyle(2, 'Schedule with middle buffer'),
-  new SchedulingStyle(3, 'Schedule with random buffer')
-];
 
 const now = new Date();
 const startTime1 = new Date(now);
@@ -56,7 +50,7 @@ const mockWorkflows = [
     new Time(8, 30),
     new Time(17, 0),
     [true, false, true, false, true, false, true],
-    mockSchedulingStyles[3]
+    SS_ASAP
   )
 ];
 
