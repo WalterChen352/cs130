@@ -2,19 +2,13 @@ import * as wfDB from '../app/scripts/Workflow';
 import { getWorkflows, clearWorkflows, addWorkflow, validateWorkflow } from '../app/scripts/Workflow';
 import { openDatabase } from '../app/scripts/Database';
 import { Workflow } from '../app/models/Workflow';
-import { Time } from '../app/models/Time';
-import { SchedulingStyle } from '../app/models/SchedulingStyle';
+import {  Time } from '../app/models/Time';
+import {  SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
 
 jest.mock('../app/scripts/Database', () => ({
   openDatabase: jest.fn(() => Promise.resolve({ getAllAsync: jest.fn(), runAsync: jest.fn(), execAsync: jest.fn() })),
 }));
 
-const mockSchedulingStyles: SchedulingStyle[] = [
-  new SchedulingStyle(0, 'Schedule close together'),
-  new SchedulingStyle(1, 'Schedule with max buffer'),
-  new SchedulingStyle(2, 'Schedule with middle buffer'),
-  new SchedulingStyle(3, 'Schedule with random buffer')
-];
 
 interface WorkflowDbFormat {
   id: number;
@@ -45,27 +39,27 @@ const toDbFormat = (workflow: Workflow): WorkflowDbFormat => {
   };
 };
 
-const mockWorkflows: Workflow[] = [
-  new Workflow(
-    1,
-    'School',
-    '#d3eef9',
-    false,
-    new Time(9, 0),
-    new Time(10, 0),
-    [false, true, true, false, true, false, false],
-    mockSchedulingStyles[0]
-  ),
-  new Workflow(
-    2,
-    'Errand',
-    '#d3eef9',
-    true,
-    new Time(11, 0),
-    new Time(17, 0),
-    [true, false, false, false, false, false, true],
-    mockSchedulingStyles[1]
-  ),
+const mockWorkflows:Workflow[] = [
+  {
+    id:1,
+    name:'School',
+    color:'#d5f9cf',
+    pushNotifications:false,
+    timeStart:new Time(9, 0),
+    timeEnd:new Time(10, 0),
+    daysOfWeek:[false, true, true, false, true, false, false],
+    schedulingStyle:SS_ASAP
+  },
+  {
+    id:2,
+    name:'Errand',
+    color:'#d3eef9',
+    pushNotifications:true,
+    timeStart:new Time(11, 0),
+    timeEnd:new Time(17, 0),
+    daysOfWeek:[true, false, false, false, false, false, true],
+    schedulingStyle:SS_MAX_ONE
+  }
 ];
 
 const mockWorkflowsDb = mockWorkflows.map(toDbFormat);
@@ -124,8 +118,16 @@ describe('Workflow Database', () => {
 
   test('method validateWorkflow should throw an error [Start > End]', async () => {
     const workflow: Workflow = Object.assign(
-      new Workflow(0, '', '', false, new Time(0, 0), new Time(0, 0), [], mockSchedulingStyles[0]),
-      mockWorkflows[0]
+      {id: 0,
+        name: '',
+        color: '',
+        pushNotifications: false,
+        timeStart: new Time(0,0),
+        timeEnd: new Time(0,0),
+        daysOfWeek: [], 
+        schedulingStyle: SS_MAX_ONE
+      },
+      SS_ASAP
     );
     workflow.timeStart = new Time(11, 0);
     workflow.timeEnd = new Time(10, 0);

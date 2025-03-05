@@ -1,7 +1,7 @@
-import type{ Event, Workflow, Location } from "./types";
+import type{ Event, Workflow, Coordinates } from "./types";
 import { computeTravelTime } from "./mapsQueries";
 
-export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], location: Location, duration: number, timeZone: string, name: string, description: string, onePerDay:boolean, transportation='DRIVE'): Promise<Event | null> => {
+export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], coordinates: Coordinates, duration: number, timeZone: string, name: string, description: string, onePerDay:boolean, transportation='DRIVE'): Promise<Event | null> => {
     // Get the current date in the specified timezone
     const now = new Date();
     
@@ -79,7 +79,7 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], l
             dayStart,
             dayEnd,
             duration,
-            location,
+            coordinates,
             timeZone,
             transportation
         );
@@ -98,9 +98,9 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], l
                 description:description,
                 startTime: startISO,
                 endTime: endISO,
-                location:{
-                    longitude:location.longitude,
-                    latitude: location.latitude
+                coordinates:{
+                    longitude:coordinates.longitude,
+                    latitude: coordinates.latitude
                 },
                 transportationMode: "driving", // Default transportation mode
                 workflow: w.id
@@ -119,7 +119,7 @@ const findAvailableTime=async(
     dayStart: Date,
     dayEnd: Date, 
     duration: number,
-    location: Location,
+    coordinates: Coordinates,
     timeZone: string,
     transportationMode: string
 
@@ -136,16 +136,16 @@ const findAvailableTime=async(
         // Estimate travel time from event location to our target location
         const travelTimeAfter = await computeTravelTime(
             apiKey,
-            {latitude: event.location.latitude, longitude: event.location.longitude},
-            location,
+            {latitude: event.coordinates.latitude, longitude: event.coordinates.longitude},
+            coordinates,
             transportationMode, null, String(eventStart.getTime())
         );
         
         // Estimate travel time from our location to event location
         const travelTimeBefore = await computeTravelTime(
             apiKey,
-            location,
-            {latitude: event.location.latitude, longitude: event.location.longitude},
+            coordinates,
+            {latitude: event.coordinates.latitude, longitude: event.coordinates.longitude},
             transportationMode, String(eventEnd.getTime()), null
         );
         

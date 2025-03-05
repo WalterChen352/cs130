@@ -1,20 +1,19 @@
 import { Alert, Platform, ScrollView, Switch, Text, TextInput, View, TouchableOpacity } from 'react-native';
-import { useFocusEffect, useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {  useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
+import {  useEffect, useRef, useState } from 'react';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import WheelPicker from 'react-native-wheel-color-picker';
 
 import ButtonSave from '../components/ButtonSave';
 import ButtonDelete from '../components/ButtonDelete';
-import { getSchedulingStyles, getSchedulingStyle } from '../scripts/SchedulingStyle';
 import { DaysOfWeekNames, Time} from '../models/Time';
 import { Workflow } from '../models/Workflow';
 import { addWorkflow, updateWorkflow, deleteWorkflow, validateWorkflow } from '../scripts/Workflow';
 import { WorkflowScreenStyles } from '../styles/WorkflowScreen.styles';
-import SchedulingStyle from '../models/SchedulingStyle';
 import { TabParamList } from './Navigator';
 import DropdownPicker from '../components/DropdownPicker';
 import TimeSelector from '../components/TimeSelector';
+import APP_SCHEDLING_STYLES from '../models/SchedulingStyle';
 
 /**
  * Properties for screen `WorkflowScreen`.
@@ -56,8 +55,7 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
     const [timeEnd, setTimeEnd] = useState<Date>(new Date(0, 0, 0, workflow.timeEnd.hours, workflow.timeEnd.minutes));
     const [daysOfWeek, setDaysOfWeek] = useState<boolean[]>(workflow.daysOfWeek);
     const [schedulingStyle, setSchedulingStyle] = useState<string>(workflow.schedulingStyle.id.toString());
-
-    const [schedulingStyles, setSchedulingStyles] = useState<SchedulingStyle[]>([]);
+    const schedulingStyles= APP_SCHEDLING_STYLES
 
     const [showTimeStart, setShowTimeStart] = useState(false);
     const [showTimeEnd, setShowTimeEnd] = useState(false);
@@ -115,16 +113,16 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
      * @returns {Promise<void>} - A promise that resolves when the workflow is saved in DB.
      */
     const handleSaveForm = async (): Promise<void> => {
-        const workflowNew = new Workflow(
-            workflow.id,
-            name,
-            color,
-            pushNotifications,
-            new Time(timeStart.getHours(), timeStart.getMinutes()),
-            new Time(timeEnd.getHours(), timeEnd.getMinutes()),
-            daysOfWeek,
-            getSchedulingStyle(parseInt(schedulingStyle, 10))  // Convert string back to number
-        );
+        const workflowNew:Workflow={
+            id:workflow.id,
+            name:name,
+            color:color,
+            pushNotifications:pushNotifications,
+            timeStart:new Time(timeStart.getHours(), timeStart.getMinutes()),
+            timeEnd:new Time(timeEnd.getHours(), timeEnd.getMinutes()),
+            daysOfWeek:daysOfWeek,
+            schedulingStyle:APP_SCHEDLING_STYLES[Number(schedulingStyle)]  // Convert string back to number
+        };
         
         try {
             await validateWorkflow(workflowNew);
@@ -166,9 +164,6 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
      * Loads list of scheduling styles to `schedulingStyles` state.
      * This method does not return any value.
      */
-    const loadSchedulingStyle = useCallback((): void => {
-        setSchedulingStyles(getSchedulingStyles());
-    }, []);
 
     const handleTimeStartChange = (newTime: Date) => {
         setTimeStart(new Date(0, 0, 0, newTime.getHours(), newTime.getMinutes()));
@@ -179,7 +174,6 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
     };
 
     useEffect(() => {
-        loadSchedulingStyle();
         setName(workflow.name);
         setColor(workflow.color);
         setPushNotifications(workflow.pushNotifications);
@@ -187,14 +181,8 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         setTimeEnd(new Date(0, 0, 0, workflow.timeEnd.hours, workflow.timeEnd.minutes));
         setDaysOfWeek(workflow.daysOfWeek);
         setSchedulingStyle(workflow.schedulingStyle.id.toString());
-    }, [workflow, loadSchedulingStyle]);
+    }, [workflow]);
 
-    useFocusEffect(
-        useCallback(() => {
-            loadSchedulingStyle();
-            scrollRef.current?.scrollTo({ y: 0, animated: true });
-        }, [loadSchedulingStyle])
-    );
 
     return (
         <View style={WorkflowScreenStyles.container}>
@@ -274,7 +262,7 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
                 <View style={WorkflowScreenStyles.pickerContainer}>
                     <DropdownPicker
                         selectedValue={schedulingStyle}
-                        onValueChange={(value) => { setSchedulingStyle(value); }}
+                        onValueChange={(value) => { setSchedulingStyle(String(value)); }}
                         items={schedulingStyles.map((s) => ({
                             label: s.name,
                             value: s.id.toString()

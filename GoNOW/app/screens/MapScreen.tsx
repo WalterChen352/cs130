@@ -45,7 +45,7 @@ const MapScreen = (): JSX.Element => {
    */
   const loadDeviceLocation = async (): Promise<void> => {
     const loc = await getMyLocation();
-    setDeviceLocation(loc !== null ? loc.coordinates : new Coordinates(0, 0));
+    setDeviceLocation(loc !== null ? loc.coordinates : {latitude:0, longitude:0});
 
   }
 
@@ -57,7 +57,7 @@ const MapScreen = (): JSX.Element => {
    */
   const loadHomeLocation = async (): Promise<void> => {
     const loc = await getLocation();
-    setHomeLocation(loc !== null ? loc.coordinates : new Coordinates(0, 0));
+    setHomeLocation(loc !== null ? loc.coordinates : {latitude:0, longitude:0});
   }
 
   /**
@@ -286,11 +286,12 @@ const MapScreen = (): JSX.Element => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
           const decodedPoints = polyline.decode(step.polyline.points) as number[][];
           decodedPoints.forEach((dp:number[]) => {
-            tmpPoints.push(new Coordinates(dp[0], dp[1]));
+            tmpPoints.push({latitude:dp[0], longitude:dp[1]});
           });
           const tmpStep: MapStep = {
-            startPoint: new Coordinates(step.start_location.lat, step.start_location.lng),
-            endPoint: new Coordinates(step.end_location.lat, step.end_location.lng),
+            
+            startPoint: {latitude:step.start_location.lat, longitude:step.start_location.lng},
+            endPoint:  {latitude:step.end_location.lat, longitude:step.end_location.lng},
             travelMode: getTransportationModeByGisName(step.travel_mode ?? ""),
             title: `${step.distance.text}, ${step.duration.text}`,
             description: step.html_instructions.replace(/<[^>]*>/g, ''), // cut all html tags

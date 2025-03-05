@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { getWorkflows} from '../app/scripts/Workflow';
 import { Workflow } from '../app/models/Workflow';
 import { Time } from '../app/models/Time';
-import { SchedulingStyle } from '../app/models/SchedulingStyle';
+import {  SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
 
 import ProfileScreen from '../app/screens/ProfileScreen';
 import { View } from 'react-native';
@@ -51,33 +51,27 @@ jest.mock('../app/scripts/Profile', () => {
   };
 });
 
-const mockSchedulingStyles = [
-  new SchedulingStyle(0, 'Schedule close together'),
-  new SchedulingStyle(1, 'Schedule with max buffer'),
-  new SchedulingStyle(2, 'Schedule with mmiddle buffer'),
-  new SchedulingStyle(3, 'Schedule with random buffer')
-];
-const mockWorkflows = [
-  new Workflow(
-    1,
-    'School',
-    '#d5f9cf',
-    false,
-    new Time(9, 0),
-    new Time(10, 0),
-    [false, true, true, false, true, false, false],
-    mockSchedulingStyles[0]
-  ),
-  new Workflow(
-    2,
-    'Errand',
-    '#d3eef9',
-    true,
-    new Time(11, 0),
-    new Time(17, 0),
-    [true, false, false, false, false, false, true],
-    mockSchedulingStyles[1]
-  ),
+const mockWorkflows:Workflow[] = [
+  {
+    id:1,
+    name:'School',
+    color:'#d5f9cf',
+    pushNotifications:false,
+    timeStart:new Time(9, 0),
+    timeEnd:new Time(10, 0),
+    daysOfWeek:[false, true, true, false, true, false, false],
+    schedulingStyle:SS_ASAP
+  },
+  {
+    id:2,
+    name:'Errand',
+    color:'#d3eef9',
+    pushNotifications:true,
+    timeStart:new Time(11, 0),
+    timeEnd:new Time(17, 0),
+    daysOfWeek:[true, false, false, false, false, false, true],
+    schedulingStyle:SS_MAX_ONE
+  }
 ];
 
 describe('Profile Screen', () => {

@@ -4,19 +4,13 @@ import { act, render, fireEvent, waitFor } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RouteProp } from '@react-navigation/native';
 
-import { SchedulingStyle } from '../app/models/SchedulingStyle';
+import  { SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import WorkflowScreen from '../app/screens/WorkflowScreen';
 import { addWorkflow, updateWorkflow, deleteWorkflow, validateWorkflow } from '../app/scripts/Workflow';
 import { IoniconsProps } from '../__mocks__/ionicons';
 import { TabParamList } from '../app/screens/Navigator';
 
-const mockSchedulingStyles = [
-  new SchedulingStyle(0, 'Schedule close together'),
-  new SchedulingStyle(1, 'Schedule with max buffer'),
-  new SchedulingStyle(2, 'Schedule with middle buffer'),
-  new SchedulingStyle(3, 'Schedule with random buffer')
-];
 
 // Define proper types for the Picker props
 interface PickerProps extends ViewProps {
@@ -66,10 +60,6 @@ jest.mock('@react-native-picker/picker', () => ({
   __esModule: true,
   Picker: MockPicker,
 }));
-jest.mock('../app/scripts/SchedulingStyle', () => ({
-  getSchedulingStyles: jest.fn(() => mockSchedulingStyles),
-  getSchedulingStyle: jest.fn(),
-}));
 
 jest.mock('../app/scripts/Workflow', () => ({
   addWorkflow: jest.fn(),
@@ -89,7 +79,7 @@ describe('Workflow Screen', () => {
     timeStart: new Time(8, 30),
     timeEnd: new Time(17, 0),
     daysOfWeek: [true, false, true, false, true, false, true],
-    schedulingStyle: mockSchedulingStyles[3],
+    schedulingStyle: SS_ASAP,
   };
 
   const mockNavigation = { navigate: jest.fn() };
@@ -132,7 +122,7 @@ describe('Workflow Screen', () => {
       timeStart: new Time(9, 5),
       timeEnd: new Time(10, 11),
       daysOfWeek: new Array(7).fill(false),
-      schedulingStyle: mockSchedulingStyles[0],
+      schedulingStyle: SS_MAX_ONE
     };
 
     const route = {
@@ -231,7 +221,7 @@ describe('Workflow Screen', () => {
       timeStart: new Time(9, 5),
       timeEnd: new Time(10, 11),
       daysOfWeek: new Array(7).fill(false),
-      schedulingStyle: mockSchedulingStyles[0],
+      schedulingStyle: SS_ASAP,
     };
     
     const route = {

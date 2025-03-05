@@ -11,7 +11,7 @@ import DateSelector from '../components/DateSelector';
 
 // Model imports
 import { Workflow } from '../models/Workflow';
-import { Location } from '../models/Location';
+import Coordinates, { Location } from '../models/Location';
 import { Event } from '../models/Event';
 
 // Script imports
@@ -19,7 +19,8 @@ import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
 import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
-import { getTransportationModes } from '../scripts/TransportationMode';
+import APP_TRANSPORTATION_MODES from '../models/TransportationMode';
+
 import { TabParamList } from './Navigator';
 import { formatDate } from '../scripts/Date';
 
@@ -29,17 +30,6 @@ import { styles } from '../styles/CreateTaskScreen.styles';
 // Navigation imports
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
-interface EventData {
-  id: number;
-  name: string;
-  description: string;
-  startTime: string;
-  endTime: string;
-  latitude: number;
-  longitude: number;
-  transportationMode: string;
-  workflow?: string;
-}
 
 interface CreateTaskScreenProps {
   route: RouteProp<TabParamList, 'CreateTask'>;
@@ -55,7 +45,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
 
   const navigation = useNavigation<NavigationProp<TabParamList>>();
   const isEditMode = route.params?.mode === 'edit' && route.params?.eventData; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
-  const eventData = route.params?.eventData as EventData | undefined; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+  const eventData = route.params?.eventData as Event | undefined; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
 
   const [title, setTitle] = useState<string>('');
   const [startDate, setStartDate] = useState<Date>(new Date());
@@ -64,18 +54,15 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
   const [transportationMode, setTransportationMode] = useState<string>('');
   const [workflow, setWorkflow] = useState<Workflow | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
-  const [longitude, setLongitude] = useState<number>(0.0);
-  const [latitude, setLatitude] = useState<number>(0.0);
+  const [coordinates, setCoordinates] = useState<Coordinates>({latitude: 0, longitude: 0});
   const [description, setDescription] = useState<string>('');
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
 
   /** Dropdown options for transportation modes */
-  const transportModeOptions = useMemo(() =>
-    getTransportationModes().filter(tm => tm.id > 0).map((tm) => ({
-      label: tm.name,
-      value: tm.id.toString()
-    }))
-  , []);
+  const transportModeOptions = APP_TRANSPORTATION_MODES.map(tm=>({
+    label:tm.name,
+    value: tm.googleMapsName
+  }));
 
   /** Dropdown options for workflows */
   const workflowOptions = useMemo(() => 
@@ -91,10 +78,8 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
    * @param {Location} location - The selected location object.
    */
   const setDestCoords = (location: Location): void => {
-    setLatitude(location.coordinates.latitude);
-    setLongitude(location.coordinates.longitude);
+    setCoordinates(location.coordinates);
   };
-
   /**
    * Handles the change of the start date
    * 
@@ -140,12 +125,11 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
       setDescription(eventData.description);
       setStartDate(new Date(eventData.startTime));
       setEndDate(new Date(eventData.endTime));
-      setLatitude(eventData.latitude);
-      setLongitude(eventData.longitude);
+      setCoordinates(eventData.coordinates)
       setTransportationMode(eventData.transportationMode);
       
       if (eventData.workflow) {
-        const workflowObj = tryFilterWfId(workflows, parseInt(eventData.workflow));
+        const workflowObj = tryFilterWfId(workflows, eventData.workflow);
         if (workflowObj) {
           setWorkflow(workflowObj);
         }
@@ -193,16 +177,16 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
    */
   const saveEvent = async (): Promise<void> => {
     try {
-      const e = new Event(
-        title,
-        description,
-        formatDate(startDate),
-        formatDate(endDate),
-        latitude,
-        longitude,
-        transportationMode,
-        workflow?.id ?? null,
-      );
+      const e:Event = {
+        id:0,
+        name: title,
+        description: description,
+        startTime:formatDate(startDate),
+        endTime: formatDate(endDate),
+        coordinates:coordinates,
+        transportationMode:transportationMode,
+        workflow: workflow?.id ?? null,
+      };
 
       validateEvent(e, autoSchedule);
       
@@ -233,8 +217,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
     setEndDate(new Date());
     setTransportationMode('');
     setWorkflow(null);
-    setLatitude(0.0);
-    setLongitude(0.0);
+    setCoordinates({longitude:0, latitude:0})
     setAutoSchedule(false);
   };
 

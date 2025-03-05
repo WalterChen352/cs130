@@ -1,5 +1,5 @@
 import { openDatabase } from './Database';
-import { Location, Coordinates } from '../models/Location';
+import { Location} from '../models/Location';
 
 /**
  * Returns home geolocation of the user from DB.
@@ -20,8 +20,10 @@ export const getLocation = async (): Promise<Location | null> => {
     `);
     if (rows.length > 0) {
       const row = rows[0] as {lat: number, lon: number, address: string};
-      return new Location(
-        new Coordinates( Number(row.lat), Number(row.lon)), row.address);
+      return {
+        coordinates:
+        {latitude:Number(row.lat), longitude:Number(row.lon)} ,
+        address: row.address};
     }
     return null;
   }

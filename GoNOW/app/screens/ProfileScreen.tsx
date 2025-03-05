@@ -12,10 +12,10 @@ import { Workflow } from '../models/Workflow';
 import { resetDatabase } from '../scripts/Database';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation, updateLocation } from '../scripts/Profile';
-import { getSchedulingStyle } from '../scripts/SchedulingStyle';
 import { getWorkflows } from '../scripts/Workflow';
 import { ProfileScreenStyles } from '../styles/ProfileScreen.styles';
 import { TabParamList } from './Navigator';
+import APP_SCHEDLING_STYLES from '../models/SchedulingStyle';
 
 /**
  * `ProfileScreen` component that displays a profile of the user.
@@ -93,17 +93,17 @@ const ProfileScreen = (): JSX.Element => {
      * This method does not return any value.
      */
     const handleAdd = (): void => {
-        const schedulingStyleDefault = getSchedulingStyle(0);
-        const workflowDefault = new Workflow(
-            0,
-            '',
-            '#d5f9cf',
-            false,
-            new Time(9, 0),
-            new Time(10, 0),
-            new Array<boolean>(7).fill(false),
-            schedulingStyleDefault
-        );
+        const schedulingStyleDefault = APP_SCHEDLING_STYLES[0];
+        const workflowDefault :Workflow= {
+            id:0,
+            name:'',
+            color:'#d5f9cf',
+            pushNotifications:false,
+            timeStart:new Time(9, 0),
+            timeEnd:new Time(10, 0),
+            daysOfWeek:new Array<boolean>(7).fill(false),
+            schedulingStyle:schedulingStyleDefault
+        };
         navigation.navigate('Workflow', { workflow: workflowDefault });
     };
 
