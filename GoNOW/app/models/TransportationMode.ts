@@ -7,7 +7,7 @@
  * @class TransportationMode
  * @typedef {TransportationMode}
  */
-export class TransportationMode {
+export type TransportationMode= {
   
   /**
    * Unique id of the transportation mode.
@@ -53,13 +53,45 @@ export class TransportationMode {
    * @param {string} apiName - The GIS API prameter name for the Transportation mode.
    * @param {string} [color='#0089FF'] - The color of the Transportation mode.
    */
-  constructor(id: number, name: string, apiName: string, color = '#0089FF', googleMapsName: string) {
-    this.id = id;
-    this.name = name;
-    this.apiName = apiName;
-    this.color = color;
-    this.googleMapsName=googleMapsName;
-  }
 }
 
-export default TransportationMode;
+const APP_TRANSPORTATION_MODES: TransportationMode[] = [
+  // Google Map Names are outlined here https://developers.google.com/maps/documentation/routes/reference/rest/v2/RouteTravelMode
+  {
+    id: 0,
+    name:'' ,
+    apiName: '',
+    color: '#666666',
+    googleMapsName: ''
+  } ,     // no need Transportation
+  {
+    id: 1,
+    name: 'Walk',
+    apiName: 'walking',
+    color: '#9034c9',
+    googleMapsName: 'WALK'
+  } ,
+  {
+    id: 2,
+    name: 'Transit',
+    apiName: 'transit',
+    color: '#ed7d31' ,
+    googleMapsName: 'TRANSIT'
+  } ,
+  {
+    id: 3,
+    name: 'Bike',
+    apiName: 'bicycling',
+    color: '#88c934',
+    googleMapsName: 'BICYCLE'
+  } ,
+  {
+    id: 4 ,
+    name: 'Car',
+    apiName: 'driving',
+    color: '#0089FF',
+    googleMapsName: 'DRIVE'
+  } 
+];
+
+export default APP_TRANSPORTATION_MODES;

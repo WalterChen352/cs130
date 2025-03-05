@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 import Route from '../models/Geo';
 import { Coordinates, Location } from '../models/Location';
 import { GOOGLE_API_KEY } from '../scripts/Config';
-import TransportationMode from '../models/TransportationMode';
+import {TransportationMode} from '../models/TransportationMode';
 
 /**
  * Returns current geolocation of the user.

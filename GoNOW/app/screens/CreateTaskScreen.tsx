@@ -19,7 +19,7 @@ import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
 import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
-import { getTransportationModes } from '../scripts/TransportationMode';
+import APP_TRANSPORTATION_MODES from '../models/TransportationMode';
 import { styles } from '../styles/CreateTaskScreen.styles';
 import { TabParamList } from './Navigator';
 
@@ -67,12 +67,10 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
 
   /** Dropdown options for transportation modes */
-  const transportModeOptions = useMemo(() =>
-    getTransportationModes().filter(tm => tm.id > 0).map((tm) => ({
-      label: tm.name,
-      value: tm.googleMapsName
-    }))
-  , []);
+  const transportModeOptions = APP_TRANSPORTATION_MODES.map(tm=>({
+    label:tm.name,
+    value: tm.googleMapsName
+  }));
 
   /** Dropdown options for workflows */
   const workflowOptions = useMemo(() => 
