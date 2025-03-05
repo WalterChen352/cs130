@@ -1,29 +1,34 @@
-import React, { useState, useEffect, useMemo, JSX } from 'react';
-import { ScrollView, View, Text, TextInput, Button, Switch, Pressable, Alert } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, TextInput, Switch, Alert, ScrollView } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
-//component imports
+// Component imports
 import AddressPicker from '../components/AddressPicker';
-import WorkflowPicker from '../components/WorkflowPicker';
+import DropdownPicker from '../components/DropdownPicker';
+import TimeSelector from '../components/TimeSelector';
+import ButtonSave from '../components/ButtonSave';
+import DateSelector from '../components/DateSelector';
 
-//model imports
+// Model imports
 import { Workflow } from '../models/Workflow';
 import { Location } from '../models/Location';
 import { Event } from '../models/Event';
-import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
 
-//script imports
+// Script imports
+import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
 import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
 import { getTransportationModes } from '../scripts/TransportationMode';
+import { styles } from '../styles/CreateTaskScreen.styles';
 import { TabParamList } from './Navigator';
 import { formatDate } from '../scripts/Date';
 
 //styles imports
 import { styles } from '../styles/CreateTaskScreen.styles';
+
+// Navigation imports
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 interface EventData {
   id: number;
@@ -41,16 +46,17 @@ interface CreateTaskScreenProps {
   route: RouteProp<TabParamList, 'CreateTask'>;
 }
 
-
 /**
  * React component for creating a new task.
  * Allows users to input task details such as title, time, location, transportation mode, and description.
  * 
  * @returns {JSX.Element} The CreateTaskScreen component.
  */
-const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
-  const isEditMode = route.params?.mode === 'edit' && route.params?.eventData;// eslint-disable-line @typescript-eslint/no-unnecessary-condition
-  const eventData = route.params?.eventData as EventData | undefined;// eslint-disable-line @typescript-eslint/no-unnecessary-condition
+const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element => {
+
+  const navigation = useNavigation<NavigationProp<TabParamList>>();
+  const isEditMode = route.params?.mode === 'edit' && route.params?.eventData; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+  const eventData = route.params?.eventData as EventData | undefined; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
 
   const [title, setTitle] = useState<string>('');
   const [startDate, setStartDate] = useState<Date>(new Date());
@@ -62,25 +68,23 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
   const [longitude, setLongitude] = useState<number>(0.0);
   const [latitude, setLatitude] = useState<number>(0.0);
   const [description, setDescription] = useState<string>('');
-  const [showStartDatePicker, setShowStartDatePicker] = useState<boolean>(false);
-  const [showStartTimePicker, setShowStartTimePicker] = useState<boolean>(false);
-  const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
-  const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
 
   /** Dropdown options for transportation modes */
-  //const dropdownOptions = [
-  //  { label: 'Walk', value: 'walk' },
-  //  { label: 'Public Transit', value: 'transit' },
-  //  { label: 'Bike', value: 'bike' },
-  //  { label: 'Car', value: 'car' },
-  //];
-  const dropdownOptions = useMemo(() =>
+  const transportModeOptions = useMemo(() =>
     getTransportationModes().filter(tm => tm.id > 0).map((tm) => ({
       label: tm.name,
       value: tm.id.toString()
     }))
   , []);
+
+  /** Dropdown options for workflows */
+  const workflowOptions = useMemo(() => 
+    workflows.map((wf) => ({
+      label: wf.name,
+      value: wf.id.toString()
+    }))
+  , [workflows]);
 
   /**
    * Sets the destination coordinates based on the selected location.
@@ -90,6 +94,44 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
   const setDestCoords = (location: Location): void => {
     setLatitude(location.coordinates.latitude);
     setLongitude(location.coordinates.longitude);
+  };
+
+  /**
+   * Handles the change of the start date
+   * 
+   * @param {Date} newDate - The new date selected
+   */
+  const handleStartDateChange = (newDate: Date) => {
+    const updatedStartDate = new Date(newDate);
+    updatedStartDate.setHours(startDate.getHours(), startDate.getMinutes());
+    setStartDate(updatedStartDate);
+    
+    // Update end date to match start date (keep end time)
+    const updatedEndDate = new Date(newDate);
+    updatedEndDate.setHours(endDate.getHours(), endDate.getMinutes());
+    setEndDate(updatedEndDate);
+  };
+
+  /**
+   * Handles the change of the start time
+   * 
+   * @param {Date} newTime - The new time selected
+   */
+  const handleStartTimeChange = (newTime: Date) => {
+    const newStartDate = new Date(startDate);
+    newStartDate.setHours(newTime.getHours(), newTime.getMinutes());
+    setStartDate(newStartDate);
+  };
+
+  /**
+   * Handles the change of the end time
+   * 
+   * @param {Date} newTime - The new time selected
+   */
+  const handleEndTimeChange = (newTime: Date) => {
+    const newEndDate = new Date(endDate);
+    newEndDate.setHours(newTime.getHours(), newTime.getMinutes());
+    setEndDate(newEndDate);
   };
 
   // Populate form with event data if in edit mode
@@ -102,12 +144,17 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       setLatitude(eventData.latitude);
       setLongitude(eventData.longitude);
       setTransportationMode(eventData.transportationMode);
-      setWorkflow(tryFilterWfId(workflows, eventData.id))
+      
+      if (eventData.workflow) {
+        const workflowObj = tryFilterWfId(workflows, parseInt(eventData.workflow));
+        if (workflowObj) {
+          setWorkflow(workflowObj);
+        }
+      }
     }
-  }, [isEditMode, eventData]);
+  }, [isEditMode, eventData, workflows]);
 
   // Fetch location if not in edit mode
-  /** Fetches the user's location on component mount */
   useEffect(() => {
     const fetchLocation = async (): Promise<void> => {
       if (!isEditMode) {
@@ -135,194 +182,158 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
     void fetchWorkflows();
   }, [isEditMode]);
 
-  /** Updates destination coordinates when location changes */
+  // Update destination coordinates when location changes
   useEffect(() => {
     if (location) {
       setDestCoords(location);
     }
-    if(location){
-      setDestCoords(location)
-    }
   }, [location]);
 
-  /*TODO:: replace scrollview with flatlist, or modify addresspicker to not use virtualizedlist*/
+  /**
+   * Creates or updates the event based on form data
+   */
+  const saveEvent = async (): Promise<void> => {
+    try {
+      const e = new Event(
+        title,
+        description,
+        formatDate(startDate),
+        formatDate(endDate),
+        latitude,
+        longitude,
+        transportationMode,
+        workflow?.id ?? null,
+      );
+
+      validateEvent(e, autoSchedule);
+      
+      if (isEditMode && eventData) {
+        e.id = eventData.id;
+        await updateEvent(e);
+        Alert.alert('Success', 'Task updated successfully');
+      } else {
+        await addEvent(e);
+        Alert.alert('Success', 'Task created successfully');
+      }
+      
+      resetForm();
+      navigation.navigate('Daily', { date: e.startTime });
+      
+    } catch (error) {
+      Alert.alert('Validation Error', error instanceof Error ? error.message : 'Unknown error');
+    }
+  };
+
+  /**
+   * Resets the form to its initial state
+   */
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setStartDate(new Date());
+    setEndDate(new Date());
+    setTransportationMode('');
+    setWorkflow(null);
+    setLatitude(0.0);
+    setLongitude(0.0);
+    setAutoSchedule(false);
+  };
+
   return (
-    <ScrollView> 
-      <Text style={styles.title}>{isEditMode ? 'Edit task' : 'Add a task'}</Text>
-
-      <TextInput
-        style={styles.input}
-        testID="Title"
-        placeholder="Title"
-        value={title}
-        onChangeText={setTitle}
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollContainer}>
+        <Text style={styles.title}>{isEditMode ? 'Edit Task' : 'Add a Task'}</Text>
+    
+        <TextInput
+          style={styles.input}
+          testID="Title"
+          placeholder="Title"
+          value={title}
+          onChangeText={setTitle}
+        />
+    
+        <View style={styles.dateContainer}>
+          <DateSelector
+            value={startDate}
+            onChange={handleStartDateChange}
+            testID="Date-Selector"
+          />
+        </View>
+    
+        <View style={styles.timeRow}>
+          <TimeSelector
+            value={startDate}
+            onChange={handleStartTimeChange}
+            label="Start"
+            testID="Start-Time-Selector"
+          />
+          
+          <TimeSelector
+            value={endDate}
+            onChange={handleEndTimeChange}
+            label="End"
+            testID="End-Time-Selector"
+          />
+        </View>
+    
+        <View style={styles.dropdownSection1}>
+          <DropdownPicker
+            selectedValue={transportationMode}
+            onValueChange={(value) => { setTransportationMode(value.toString()); }}
+            items={transportModeOptions}
+            testID="Transportation-Mode"
+            placeholder="Select Transportation Mode"
+          />
+        </View>
+    
+        <View style={styles.switchRow}>
+          <Switch 
+            value={autoSchedule} 
+            onValueChange={setAutoSchedule}
+            testID="Autoschedule"
+          />
+          <Text style={styles.switchLabel}>Autoschedule</Text>
+        </View>
+    
+        <View style={styles.dropdownSection2}>
+          <DropdownPicker
+            selectedValue={workflow?.id.toString()}
+            onValueChange={(value) => {
+              const selectedWorkflow = tryFilterWfId(workflows, parseInt(value.toString()));
+              setWorkflow(selectedWorkflow);
+            }}
+            items={workflowOptions}
+            testID="Workflow-Picker"
+            placeholder="Select Workflow"
+          />
+        </View>
+    
+        <View style={styles.locationSection}>
+          <AddressPicker
+            initialAddress={location?.address}
+            initialCoordinates={location?.coordinates}
+            onSelect={setDestCoords}
+            placeHolder="Enter address"
+          />
+        </View>
+    
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          placeholder="Description"
+          testID="Description"
+          value={description}
+          onChangeText={setDescription}
+          multiline
+        />
+  
+        <View style={styles.footer} />
+      </ScrollView>
+  
+      <ButtonSave
+        onPress={() => { void saveEvent(); }}
+        testID="Save-Task"
       />
-
-      <Text style={styles.label}>Select start time</Text>
-      <View style={styles.row}>
-        <Button
-          title={startDate.toDateString()}
-          testID="Start Date"
-          onPress={() => {
-            setShowStartDatePicker(true);
-          }}
-        />
-        <Button
-          title={startDate.toLocaleTimeString()}
-          onPress={() => {
-            setShowStartTimePicker(true);
-          }}
-        />
-      </View>
-
-      {showStartDatePicker && (
-        <DateTimePicker
-          value={startDate}
-          mode="date"
-          display="default"
-          onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
-            setShowStartDatePicker(false);
-            if (selectedDate) setStartDate(selectedDate);
-          }}
-        />
-      )}
-
-      {showStartTimePicker && (
-        <DateTimePicker
-          value={startDate}
-          mode="time"
-          display="default"
-          onChange={(event: DateTimePickerEvent, selectedTime?: Date) => {
-            setShowStartTimePicker(false);
-            if (selectedTime) setStartDate(selectedTime);
-          }}
-        />
-      )}
-
-      <Text style={styles.label}>Select end time</Text>
-      <View style={styles.row}>
-        <Button
-          title={endDate.toDateString()}
-          onPress={() => {
-            setShowEndDatePicker(true);
-          }}
-        />
-        <Button
-          title={endDate.toLocaleTimeString()}
-          onPress={() => {
-            setShowEndTimePicker(true);
-          }}
-        />
-      </View>
-
-      {showEndDatePicker && (
-        <DateTimePicker
-          value={endDate}
-          mode="date"
-          display="default"
-          onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
-            setShowEndDatePicker(false);
-            if (selectedDate) setEndDate(selectedDate);
-          }}
-        />
-      )}
-
-      {showEndTimePicker && (
-        <DateTimePicker
-          value={endDate}
-          mode="time"
-          display="default"
-          onChange={(event: DateTimePickerEvent, selectedTime?: Date) => {
-            setShowEndTimePicker(false);
-            if (selectedTime) setEndDate(selectedTime);
-          }}
-        />
-      )}
-
-      <Text style={styles.label}>Select transportation mode</Text>
-      <Dropdown
-        style={styles.dropdown}
-        data={dropdownOptions}
-        search
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        testID="Transportation Mode"
-        placeholder="Select Transportation Mode"
-        searchPlaceholder="Search..."
-        value={transportationMode}
-        onChange={(item: { value: string }) => {
-          setTransportationMode(item.value);
-        }}
-      />
-
-      <View style={styles.row}>
-        <Switch value={autoSchedule} onValueChange={setAutoSchedule} testID='Autoschedule' />
-        <Text style={styles.label}>Autoschedule</Text>
-      </View>
-
-      <Text style={styles.label}>Select workflow</Text>
-      <WorkflowPicker
-        workflows={workflows}
-        onSelect={(id) => {setWorkflow(tryFilterWfId(workflows, id))}}  
-      />
-
-      <Text style={styles.label}>Enter address</Text>
-      <View style={[styles.locationPicker, {}]}>
-        <AddressPicker
-          initialAddress={location?.address}
-          initialCoordinates={location?.coordinates}
-          onSelect={setDestCoords}
-          placeHolder="Address"
-        />
-      </View>
-
-      <Text style={styles.label}>Description</Text>
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Description"
-        testID="Description"
-        value={description}
-        onChangeText={setDescription}
-        multiline
-      />
-
-      <Pressable
-        style={styles.container}
-        testID="Save Task"
-        onPress={() => {
-          void (async () => {
-            const e = new Event(
-              title,
-              description,
-              formatDate(startDate),
-              formatDate(endDate),
-              latitude,
-              longitude,
-              transportationMode,
-              workflow?.id ?? -1, //set workflow.id to -1 if workflow is null
-            );
-
-            //validate event input
-            try {
-              validateEvent(e, autoSchedule);
-            } catch (error) {
-              Alert.alert('Validation Error', error instanceof Error ? error.message : 'Unknown error');
-              return;
-            }
-
-            if (isEditMode && eventData) {
-              e.id = eventData.id;
-              await updateEvent(e);
-            } else {
-              await addEvent(e);
-            }
-          })();
-        }}
-      >
-        <Text>{isEditMode ? 'Update Task' : 'Create Task'}</Text>
-      </Pressable>
-    </ScrollView>
+    </View>
   );
 };
 

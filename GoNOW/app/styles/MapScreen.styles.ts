@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-
+import { Colors, Borders, Spacing, FontSizes, Shadows } from './Common.styles';
 
 /**
  * Styles for the Map Screen components.
@@ -13,34 +13,30 @@ export const MapScreenStyles = StyleSheet.create({
   },
   routePanel: {
     position: 'absolute',
-    top: 70,
+    top: 70, 
     left: '5%',
     right: '5%',
-    padding: 10,
-    backgroundColor: 'rgba(255, 255, 255, 1)',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-    elevation: 5,
-    opacity: .8,
+    padding: Spacing.PADDING_MEDIUM,
+    backgroundColor: Colors.WHITE,
+    borderRadius: Borders.RADIUS_MEDIUM,
+    ...Shadows.BUTTON,
+    opacity: 0.8,
   },
   routeText: {
-    fontSize: 16,
+    fontSize: FontSizes.REGULAR,
     textAlign: 'left',
   },
   routeClose: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: Spacing.PADDING_MEDIUM,
+    right: Spacing.PADDING_MEDIUM,
     width: 30,
     height: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 30,
-    borderWidth: 2,
-    borderColor: '#bbb',
+    borderRadius: Borders.RADIUS_ROUND,
+    borderWidth: Borders.WIDTH_THICK / 2,
+    borderColor: Colors.BORDER,
     padding: 0,
     zIndex: 2
   },

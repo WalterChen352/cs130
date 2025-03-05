@@ -5,7 +5,7 @@ import globals from 'globals';
 
 export default tseslint.config(
   {
-    ignores: ['*.mjs']
+    ignores: ['*.mjs', 'jest.config.js']
   },
   eslint.configs.recommended,
   tseslint.configs.strictTypeChecked,
@@ -17,13 +17,18 @@ export default tseslint.config(
     //   'tsdoc/syntax': 'warn',
     // },
     languageOptions: {
+      parser: tseslint.parser, 
       parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        project: './tsconfig.json', // Specify the path to your TypeScript config file
+        tsconfigRootDir: process.cwd(), // Ensure correct resolution of `tsconfig.json`
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
       globals: {
         ...globals.node,
-      }
+        ...jestPlugin.environments.globals.globals,
+      },
     },
   },
   {

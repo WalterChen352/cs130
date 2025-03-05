@@ -1,41 +1,31 @@
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native';
-import { ButtonDeleteStyles } from '../styles/ButtonDelete.styles';
+import { ButtonDeleteStyles, BUTTON_DELETE_DEFAULTS } from '../styles/ButtonDelete.styles';
 
 interface ButtonDeleteProps {
   /**
    * Function triggered when the button is pressed.
    */
   onPress?: () => void | Promise<void>;
-
   /**
    * Icon name from Ionicons.
-   * @default "close"
    */
   icon?: string;
-
   /**
    * Icon size (also affects button size).
-   * @default 30
    */
   size?: number;
-
   /**
    * Button background color.
-   * @default "#ffa5a5"
    */
   bgColor?: string;
-
   /**
    * Icon color.
-   * @default "white"
    */
   color?: string;
-
   /**
    * testID param.
-   * @default "btn-delete"
    */
   testID?: string;
 }
@@ -48,10 +38,10 @@ interface ButtonDeleteProps {
  */
 const ButtonDelete: React.FC<ButtonDeleteProps> = ({
   onPress,
-  icon = "close",
-  size = 30,
-  color = "white",
-  bgColor = "#ffa5a5",
+  icon = BUTTON_DELETE_DEFAULTS.ICON_NAME,
+  size = BUTTON_DELETE_DEFAULTS.ICON_SIZE,
+  color = BUTTON_DELETE_DEFAULTS.ICON_COLOR,
+  bgColor = BUTTON_DELETE_DEFAULTS.BG_COLOR,
   testID = "btn-delete",
 }) => {
   /**
@@ -88,7 +78,6 @@ const ButtonDelete: React.FC<ButtonDeleteProps> = ({
       />
     </TouchableOpacity>
   );
-
 };
 
 export default ButtonDelete;

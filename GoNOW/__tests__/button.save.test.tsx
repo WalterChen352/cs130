@@ -2,6 +2,7 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import ButtonSave from '../app/components/ButtonSave';
 import { IoniconsProps } from '../__mocks__/ionicons';
+import { Colors } from '../app/styles/Common.styles';
 
 jest.mock('react-native-vector-icons/Ionicons', () => {
   return function MockIonicons(props: IoniconsProps) {
@@ -25,7 +26,7 @@ describe('ButtonSave Component', () => {
     expect(icon).toBeTruthy();
     expect(icon.props.name).toBe('checkmark');
     expect(icon.props.size).toBe(34);
-    expect((button.props as ButtonProps).style?.backgroundColor).toBe('#388dff');
+    expect((button.props as ButtonProps).style?.backgroundColor).toBe(Colors.DEFAULT_BLUE);
   });
 
   test('calls onPress when the button is pressed', () => {

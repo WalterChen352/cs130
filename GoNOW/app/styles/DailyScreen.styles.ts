@@ -1,59 +1,69 @@
 import { StyleSheet } from 'react-native';
+import { Colors, Borders, Spacing, FontSizes } from './Common.styles';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: Spacing.PADDING_LARGE,
+  },
+  title: {
+    fontSize: FontSizes.HEADER,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: Spacing.PADDING_LARGE,
+  },
+  listContainer: {
+    paddingBottom: Spacing.BUTTON_SPACING,
   },
   eventCard: {
-    padding: 20,
-    marginTop: 10,
-    marginHorizontal: 10,
-    marginVertical: 10,
-    borderRadius: 10
+    padding: Spacing.BUTTON_SPACING,
+    marginVertical: Spacing.PADDING_SMALL,
+    borderRadius: Borders.RADIUS_MEDIUM,
   },
   eventTitle: {
-    fontSize: 16,
+    fontSize: FontSizes.REGULAR,
     fontWeight: 'bold',
   },
   eventDescription: {
-    marginTop: 5,
+    marginTop: Spacing.PADDING_SMALL,
   },
   eventTime: {
-    marginTop: 5,
-    color: '#666',
+    marginTop: Spacing.PADDING_SMALL,
+    color: Colors.DARK_GRAY,
   },
   noEvents: {
-    padding: 20,
+    padding: Spacing.BUTTON_SPACING,
     textAlign: 'center',
+    fontSize: FontSizes.REGULAR,
+    color: Colors.DARK_GRAY,
   },
   loading: {
-    padding: 40,
+    padding: 40, 
     textAlign: 'center',
-    fontSize: 20
+    fontSize: FontSizes.SUBHEADER,
   },
   highlightedEventCard: {
-    backgroundColor: '#f0f0f0', // or your preferred highlight color
-    borderWidth: 2,
-    borderColor: '#007AFF', // or your preferred border color
+    borderWidth: Borders.WIDTH_THICK / 2, 
+    borderColor: Colors.DEFAULT_BLUE,
   },
   eventActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 10,
-    gap: 10,
+    marginTop: Spacing.PADDING_MEDIUM,
+    gap: Spacing.PADDING_MEDIUM,
   },
   editButton: {
-    backgroundColor: '#007AFF',
-    padding: 8,
-    borderRadius: 5,
+    backgroundColor: Colors.DEFAULT_BLUE,
+    padding: Spacing.PADDING_SMALL,
+    borderRadius: Borders.RADIUS_SMALL,
   },
   deleteButton: {
-    backgroundColor: '#FF3B30',
-    padding: 8,
-    borderRadius: 5,
+    backgroundColor: Colors.RED,
+    padding: Spacing.PADDING_SMALL,
+    borderRadius: Borders.RADIUS_SMALL,
   },
   buttonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
+    color: Colors.WHITE,
+    fontSize: FontSizes.SMALL,
   }
 });

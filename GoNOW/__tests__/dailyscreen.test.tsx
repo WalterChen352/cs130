@@ -6,21 +6,8 @@ import { SchedulingStyle } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import { Event } from '../app/models/Event';
 import { Workflow } from '../app/models/Workflow';
-import { DEFAULT_COLOR } from '../app/styles/Event.style';
+import { Colors } from '../app/styles/Common.styles';
 import { NavigationContainer } from '@react-navigation/native';
-import * as EventScripts from '../app/scripts/Event';
-import * as WorkflowScripts from '../app/scripts/Workflow';
-
-// Mock the Event and Workflow scripts
-jest.mock('../app/scripts/Event', () => ({
-  getDailyEvents: jest.fn(),
-  deleteEvent: jest.fn(),
-}));
-
-jest.mock('../app/scripts/Workflow', () => ({
-  getWorkflows: jest.fn(),
-  filterWfId: jest.fn(),
-}));
 
 const mockSchedulingStyles = [
   new SchedulingStyle(0, 'Schedule close together'),
@@ -75,21 +62,30 @@ const mockWorkflows = [
   )
 ];
 
+// Mock the Event and Workflow scripts
+jest.mock('../app/scripts/Event', () => ({
+  getDailyEvents: jest.fn(() => Promise.resolve(mockEvents)),
+  deleteEvent: jest.fn(),
+}));
+
+jest.mock('../app/scripts/Workflow', () => ({
+  getWorkflows: jest.fn(() => Promise.resolve(mockWorkflows)),
+  tryFilterWfId: jest.fn((workflows: Workflow[], id: number) => {
+    return workflows.find(wf => wf.id === id);
+  }),
+}));
+
 describe('DailyScreen', () => {
   const route = {
     key: 'daily-screen',
     name: 'Daily',
-    params: { eventDate: new Date(Date.now()).toLocaleString() }
+    params: {
+      eventDate: new Date(Date.now()).toLocaleString()
+    }
   } as RouteProp<TabParamList, 'Daily'>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Setup mock return values
-    (EventScripts.getDailyEvents as jest.Mock).mockResolvedValue(mockEvents);
-    (WorkflowScripts.getWorkflows as jest.Mock).mockResolvedValue(mockWorkflows);
-    (WorkflowScripts.filterWfId as jest.Mock).mockImplementation((workflows:Workflow[], id:number) => {
-      return workflows.find(w => w.id === id);
-    });
   });
 
   afterEach(() => {
@@ -107,7 +103,7 @@ describe('DailyScreen', () => {
   test('it renders the default color correctly', async () => {
     const { getByTestId } = renderWithNavigation(<DailyScreen route={route} />);
     await waitFor(() => {
-      expect(getByTestId(mockEvents[1].name)).toHaveStyle({ backgroundColor: DEFAULT_COLOR });
+      expect(getByTestId(mockEvents[1].name)).toHaveStyle({ backgroundColor: Colors.LIGHT_BLUE });
     });
   });
 

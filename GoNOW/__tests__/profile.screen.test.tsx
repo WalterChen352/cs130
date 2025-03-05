@@ -96,6 +96,7 @@ describe('Profile Screen', () => {
       expect(getByTestId('home-location-title')).toHaveTextContent('Home Location');
     });
   });
+  
   test('should load and render workloads list on profile screen', async () => {
     (getWorkflows as jest.Mock).mockResolvedValue(mockWorkflows);
     const { findByTestId } = render(<ProfileScreen />);
@@ -104,16 +105,15 @@ describe('Profile Screen', () => {
       for (const w of mockWorkflows) {
         const workflowElement = await findByTestId(`workflow-${String(w.id)}`);
         const headerElement = await findByTestId(`workflow-header-${String(w.id)}`);
-        const textElement = await findByTestId(`workflow-text-${String(w.id)}`);
-        const timeStartElement = await findByTestId(`workflow-text-${String(w.id)}`);
-        const timeEndElement = await findByTestId(`workflow-text-${String(w.id)}`);
+        const timeElement = await findByTestId(`workflow-text-${String(w.id)}`);
         const styleElement = await findByTestId(`workflow-scheduling-style-${String(w.id)}`);
 
         expect(workflowElement).toBeTruthy();
         expect(headerElement).toHaveTextContent(new RegExp(w.name, 'i'));
-        expect(textElement).toHaveTextContent(/Schedule/);
-        expect(timeStartElement).toHaveTextContent(new RegExp(w.timeStart.toString(), 'i'));
-        expect(timeEndElement).toHaveTextContent(new RegExp(w.timeEnd.toString(), 'i'));
+        // Update test to check for time values instead of "Schedule" text
+        const startTimeStr = w.timeStart.toString();
+        const endTimeStr = w.timeEnd.toString();
+        expect(timeElement).toHaveTextContent(new RegExp(`${startTimeStr}.*${endTimeStr}`, 'i'));
         expect(styleElement).toHaveTextContent(new RegExp(w.schedulingStyle.name, 'i'));
       }
     });

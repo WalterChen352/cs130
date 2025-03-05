@@ -224,8 +224,7 @@ export const updateWorkflow = async (workflow: Workflow): Promise<void> => {
 };
 
 /**
- * Deletes a workflows from the table `workflows` in DB.
- * This method does not return any value.
+ * Deletes a workflow from the table `workflows` in DB.
  *
  * @async
  * @param {Workflow} workflow - The `Workflow` object
@@ -234,16 +233,15 @@ export const updateWorkflow = async (workflow: Workflow): Promise<void> => {
 export const deleteWorkflow = async (workflow: Workflow): Promise<void> => {
   try {
     const DB = await openDatabase();
-    await DB.runAsync(`
-      PRAGMA journal_mode = WAL;
-      DELETE FROM workflows
-      WHERE id = ?;
-      `, [ workflow.id ]
-    );
-  }
-  catch (error) {
+    console.log('DB opened for workflow deletion', DB);
+    
+    await DB.runAsync('DELETE FROM workflows WHERE id = ?;', [workflow.id]);
+    console.log('Deleted workflow with id:', workflow.id);
+  } catch (error) {
     console.error('Error deleting workflow: ', error);
   }
+  // Adding the explicit Promise.resolve() like in the working function
+  return Promise.resolve();
 };
 
 /**
@@ -301,7 +299,7 @@ export const tryFilterWfId=(workflows: Workflow[], id:number): Workflow|null=>{
     if (w.id===id)
       return w
   }
-  console.error('workflow not found. May have been called with improper arguments:', workflows, id);
+  console.log('workflow not found. May have been called with improper arguments:', workflows, id);
   return null;
 }
 
