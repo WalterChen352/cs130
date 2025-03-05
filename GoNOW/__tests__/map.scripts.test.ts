@@ -1,11 +1,7 @@
-import { Coordinates } from '../app/models/Location';
-import SchedulingStyle from '../app/models/SchedulingStyle';
-import { Time } from '../app/models/Time';
-import TransportationMode from '../app/models/TransportationMode';
+
 import { Workflow } from '../app/models/Workflow';
 import { getDailyEvents } from '../app/scripts/Event';
 import { MapEventAdapter } from '../app/scripts/Map';
-import { getTransportationMode, getTransportationModeByName } from '../app/scripts/TransportationMode';
 import { getWorkflowById } from '../app/scripts/Workflow';
 import { Event } from '../app/models/Event';
 
@@ -84,10 +80,8 @@ describe('MapEventAdapter', () => {
        transportationMode:'WALK',
         workflow:null}
     ];
-    const mockTransportationMode = getTransportationMode(3);
 
     (getDailyEvents as jest.Mock).mockResolvedValue(mockEvents);
-    //(getTransportationMode as jest.Mock).mockReturnValue(mockTransportationMode); // by id only
     (getWorkflowById as jest.Mock).mockResolvedValue(null);
 
     const result = await MapEventAdapter();

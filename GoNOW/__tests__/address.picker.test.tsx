@@ -1,7 +1,6 @@
 import React from 'react';
 import { act, render, fireEvent, waitFor } from '@testing-library/react-native';
 import AddressPicker from '../app/components/AddressPicker';
-import { Coordinates, Location } from '../app/models/Location';
 import { IoniconsProps } from '../__mocks__/ionicons'
 
 jest.mock('lodash/debounce', () => {

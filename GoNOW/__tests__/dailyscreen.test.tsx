@@ -2,7 +2,7 @@ import { cleanup, render, waitFor } from "@testing-library/react-native";
 import DailyScreen from "../app/screens/DailyScreen";
 import { RouteProp } from "@react-navigation/native";
 import { TabParamList } from "../app/screens/Navigator";
-import { SchedulingStyle, SS_ASAP } from '../app/models/SchedulingStyle';
+import {  SS_ASAP } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import { Event } from '../app/models/Event';
 import { Workflow } from '../app/models/Workflow';

@@ -1,7 +1,7 @@
 import Coordinates from "./Location";
 
 
-export type Event ={
+export interface Event {
     id: number;
     name: string;
     description: string;
@@ -10,4 +10,4 @@ export type Event ={
     coordinates: Coordinates
     transportationMode: string;
     workflow: number|null;
-};
+}

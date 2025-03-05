@@ -1,5 +1,5 @@
 import { openDatabase } from './Database';
-import { Location, Coordinates } from '../models/Location';
+import { Location} from '../models/Location';
 
 /**
  * Returns home geolocation of the user from DB.

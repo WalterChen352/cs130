@@ -7,7 +7,7 @@
  * @class TransportationMode
  * @typedef {TransportationMode}
  */
-export type TransportationMode= {
+export interface TransportationMode {
   
   /**
    * Unique id of the transportation mode.

@@ -4,7 +4,7 @@ import { act, render, fireEvent, waitFor } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RouteProp } from '@react-navigation/native';
 
-import APP_SCHEDLING_STYLES, { SchedulingStyle, SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
+import  { SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import WorkflowScreen from '../app/screens/WorkflowScreen';
 import { addWorkflow, updateWorkflow, deleteWorkflow, validateWorkflow } from '../app/scripts/Workflow';

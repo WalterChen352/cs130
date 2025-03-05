@@ -1,7 +1,7 @@
 import { openDatabase } from '../scripts/Database';
 import { Time, DaysOfWeekNames } from '../models/Time';
 import { Workflow } from '../models/Workflow';
-import SchedulingStyle, { SS_ASAP } from '../models/SchedulingStyle';
+import  { SS_ASAP } from '../models/SchedulingStyle';
 import APP_SCHEDLING_STYLES from '../models/SchedulingStyle';
 
 /**

@@ -4,7 +4,7 @@ import { Time } from './Time';
 /**
  * Represents a workflow with scheduling details, notifications, and style.
  */
-export type Workflow= {
+export interface Workflow {
 
     /** Unique id for the workflow. */
     id: number;

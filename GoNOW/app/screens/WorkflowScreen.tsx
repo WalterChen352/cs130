@@ -1,6 +1,6 @@
 import { Alert, Platform, ScrollView, Switch, Text, TextInput, View, TouchableOpacity } from 'react-native';
-import { useFocusEffect, useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {  useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
+import {  useEffect, useRef, useState } from 'react';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import WheelPicker from 'react-native-wheel-color-picker';
 
@@ -10,7 +10,6 @@ import { DaysOfWeekNames, Time} from '../models/Time';
 import { Workflow } from '../models/Workflow';
 import { addWorkflow, updateWorkflow, deleteWorkflow, validateWorkflow } from '../scripts/Workflow';
 import { WorkflowScreenStyles } from '../styles/WorkflowScreen.styles';
-import SchedulingStyle from '../models/SchedulingStyle';
 import { TabParamList } from './Navigator';
 import DropdownPicker from '../components/DropdownPicker';
 import TimeSelector from '../components/TimeSelector';

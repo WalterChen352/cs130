@@ -1,7 +1,7 @@
 /**
  * Represents the scheduling style with an identifier and a name.
  */
-export type SchedulingStyle ={
+export interface SchedulingStyle {
 
   /** The unique id of the scheduling style. */
   id: number;

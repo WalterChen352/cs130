@@ -1,5 +1,5 @@
 import { getLocation, updateLocation } from '../app/scripts/Profile';
-import { Location, Coordinates } from '../app/models/Location';
+import { Location } from '../app/models/Location';
 import { openDatabase } from '../app/scripts/Database';
 
 jest.mock('../app/scripts/Database', () => ({

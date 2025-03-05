@@ -3,7 +3,7 @@ import { render, waitFor, cleanup, fireEvent,  act } from '@testing-library/reac
 import CalendarScreen from '../app/screens/CalendarScreen';
 import { ReactTestInstance } from 'react-test-renderer';
 import { IoniconsProps } from '../__mocks__/ionicons';
-import { SchedulingStyle, SS_ASAP } from '../app/models/SchedulingStyle';
+import { SS_ASAP } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import { Event } from '../app/models/Event';
 import { Workflow } from '../app/models/Workflow';

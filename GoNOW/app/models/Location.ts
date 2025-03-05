@@ -1,7 +1,7 @@
 /**
  * Represents geographic coordinates with latitude and longitude.
  */
-export type Coordinates ={
+export interface Coordinates {
 
   /** The latitude component of the coordinates. */
   latitude: number;
@@ -20,7 +20,7 @@ export type Coordinates ={
 /**
  * Represents a location with geographic coordinates and an address.
  */
-export type Location = {
+export interface Location {
   
   /** The geographic coordinates (latitude and longitude) of the location. */
   coordinates: Coordinates;

@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { getWorkflows} from '../app/scripts/Workflow';
 import { Workflow } from '../app/models/Workflow';
 import { Time } from '../app/models/Time';
-import APP_SCHEDLING_STYLES,{ SchedulingStyle, SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
+import {  SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
 
 import ProfileScreen from '../app/screens/ProfileScreen';
 import { View } from 'react-native';

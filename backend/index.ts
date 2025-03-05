@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import fetch, { Headers } from 'node-fetch';
 import { autoschedule } from './schedule';
-import type {Workflow,Location, Event, SchedulingStyle} from './types'
+import type {Workflow,Coordinates, Event, SchedulingStyle} from './types'
 import { computeTravelTime } from './mapsQueries';
 import bodyParser from 'body-parser';
 
@@ -15,15 +15,15 @@ app.use(bodyParser.json())
 const apiKey = process.env.API_KEY??'';   
 
 interface RouteRequestBody {
-    origin:Location;
-    destination:Location;
+    origin:Coordinates;
+    destination:Coordinates;
     travelMode: string;
 }
 
 interface AutoscheduleRequestBody {
     events:Event[],
     workflow: Workflow,
-    location: Location,
+    coordinates: Coordinates,
     duration:number,
     timeZone:string,
     name:string,
@@ -38,16 +38,16 @@ interface AutoscheduleRequestBody {
 app.get('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleRequestBody>, res: Response) => {
     //parse incoming parameters
     const {style } =req.body;
-    const {events, workflow, location, duration, timeZone, name, description, transportation}=req.body
+    const {events, workflow, coordinates, duration, timeZone, name, description, transportation}=req.body
     let result:null|Event = null;
     //get event
     switch(style.id){
         case (0):
             //one per day
-            result= await autoschedule(apiKey,workflow, events, location, duration, timeZone, name, description, true, transportation)
+            result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, true, transportation)
             break;
         case(1):
-            result= await autoschedule(apiKey,workflow, events, location, duration, timeZone, name, description, false, transportation)
+            result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, false, transportation)
     }
     if(result===null){
         //failed to autoschedule
@@ -59,8 +59,8 @@ app.get('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleR
     }   
 });
 
-app.get('/api/poll', async (req: Request<unknown, unknown, {event:Event, location:Location}>, res: Response) => {
-    const result =await computeTravelTime(apiKey, req.body.location, req.body.event.location, req.body.event.transportationMode, null, req.body.event.startTime)
+app.get('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordinates:Coordinates}>, res: Response) => {
+    const result =await computeTravelTime(apiKey, req.body.coordinates, req.body.event.coordinates, req.body.event.transportationMode, null, req.body.event.startTime)
     //send send back to user
     console.log('result')
     res.status(200).json({travelTime: result});

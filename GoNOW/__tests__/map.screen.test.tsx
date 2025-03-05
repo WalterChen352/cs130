@@ -2,10 +2,9 @@ import * as polyline from 'polyline';
 import { act, render, waitFor, fireEvent } from '@testing-library/react-native';
 
 import Route from '../app/models/Geo';
-import { Coordinates, Location } from '../app/models/Location';
-import { SchedulingStyle, SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
+import { Location } from '../app/models/Location';
+import { SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
-import { TransportationMode } from '../app/models/TransportationMode';
 import { Workflow } from '../app/models/Workflow';
 import MapScreen from '../app/screens/MapScreen';
 import { getMyLocation, getRoute } from '../app/scripts/Geo';

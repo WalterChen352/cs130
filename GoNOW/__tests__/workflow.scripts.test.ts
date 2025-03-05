@@ -2,8 +2,8 @@ import * as wfDB from '../app/scripts/Workflow';
 import { getWorkflows, clearWorkflows, addWorkflow, validateWorkflow } from '../app/scripts/Workflow';
 import { openDatabase } from '../app/scripts/Database';
 import { Workflow } from '../app/models/Workflow';
-import { DaysOfWeekNames, Time } from '../app/models/Time';
-import { SchedulingStyle, SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
+import {  Time } from '../app/models/Time';
+import {  SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
 
 jest.mock('../app/scripts/Database', () => ({
   openDatabase: jest.fn(() => Promise.resolve({ getAllAsync: jest.fn(), runAsync: jest.fn(), execAsync: jest.fn() })),

@@ -1,5 +1,5 @@
 
-import { Location } from './types';
+import { Coordinates } from './types';
 
 
 const url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
@@ -8,7 +8,7 @@ const url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
 
 
 
-export const computeTravelTime= async(apiKey:string,origin: Location, destination: Location, travelMode: string, departureTime:string|null, arrivalTime:string|null ):Promise<number>=>{
+export const computeTravelTime= async(apiKey:string,origin: Coordinates, destination: Coordinates, travelMode: string, departureTime:string|null, arrivalTime:string|null ):Promise<number>=>{
     if((arrivalTime===null && departureTime===null)|| (arrivalTime !== null && departureTime !==null)){
         //request must take one, but not both of these
         throw new Error('cannot call getTime with both arrival and departure time or provided neither')

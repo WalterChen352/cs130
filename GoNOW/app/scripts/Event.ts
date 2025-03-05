@@ -1,9 +1,10 @@
 import * as SQLite from 'expo-sqlite';
 import { Event } from '../models/Event';
 import { DB_NAME } from './Database';
+import Coordinates from '../models/Location';
 
 
-type rowData ={
+interface rowData {
     id: number;
     name: string;
     description: string;
@@ -12,7 +13,7 @@ type rowData ={
     coordinates: string
     transportationMode: string;
     workflow: number|null;
-};
+}
 
 export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
   console.log('getting events for date:', eventDate);
@@ -46,7 +47,7 @@ export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
       description:row.description,
       startTime:row.startTime,
       endTime:row.endTime,
-      coordinates: JSON.parse(row.coordinates),
+      coordinates: JSON.parse(row.coordinates) as Coordinates,
       transportationMode:row.transportationMode,
       workflow:row.workflow
     }));
@@ -84,7 +85,7 @@ export const getWeeklyEvents = async(date: Date): Promise<Event[]> => {
       description:row.description,
       startTime:row.startTime,
       endTime:row.endTime,
-      coordinates: JSON.parse(row.coordinates),
+      coordinates: JSON.parse(row.coordinates) as Coordinates,
       transportationMode:row.transportationMode,
       workflow:row.workflow
     }));

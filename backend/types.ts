@@ -7,11 +7,11 @@ export interface Event {
     id: number;
     name: string;
     description: string;
-    startTime: string
-    endTime: string
-    location: Location
+    startTime: string;
+    endTime: string;
+    coordinates: Coordinates
     transportationMode: string;
-    workflow?: number
+    workflow: number|null;
 }
 
 export interface Workflow {
@@ -25,7 +25,7 @@ export interface Workflow {
     schedulingStyle: SchedulingStyle|null
 }
 
-export interface Location {
+export interface Coordinates {
     longitude: number,
     latitude: number
 }
