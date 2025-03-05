@@ -20,8 +20,11 @@ import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
 import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
 import { getTransportationModes } from '../scripts/TransportationMode';
-import { styles } from '../styles/CreateTaskScreen.styles';
 import { TabParamList } from './Navigator';
+import { formatDate } from '../scripts/Date';
+
+//styles imports
+import { styles } from '../styles/CreateTaskScreen.styles';
 
 // Navigation imports
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -331,18 +334,6 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
       />
     </View>
   );
-};
-
-/**
- * Formats a date object into a string with date and time.
- * 
- * @param {Date} date - The date to format.
- * @returns {string} The formatted date string.
- */
-const formatDate = (date: Date): string => {
-  const datePart = date.toLocaleDateString('en-CA');
-  const timePart = date.toLocaleTimeString('en-GB');
-  return `${datePart} ${timePart}`;
 };
 
 export default CreateTaskScreen;
