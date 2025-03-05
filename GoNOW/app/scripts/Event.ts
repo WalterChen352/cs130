@@ -156,7 +156,8 @@ export const getNextEvent = async() : Promise<Event|null> => {
     console.log('time', new Date().toLocaleTimeString())
     const result = await DB.getAllAsync(`SELECT * FROM events
     WHERE datetime(startTime) >= datetime(?)
-    ORDER BY startTime;`, [formatDate(new Date())]);
+    ORDER BY startTime
+    LIMIT 1;`, [formatDate(new Date())]);
     console.log('result', result);
     if (result.length === 0) {
       console.log('no events found');
