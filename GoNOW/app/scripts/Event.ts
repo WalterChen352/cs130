@@ -1,6 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 import { Event } from '../models/Event';
 import { DB_NAME } from './Database';
+import { formatDate } from './Date';
 
 export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
   console.log('getting events for date:', eventDate);
@@ -147,6 +148,29 @@ export const deleteEvent = async (eventId: number): Promise<void> => {
     console.error('Error in deleteEvent function:', error);
   }
   return new Promise(() => { return; });
+};
+
+export const getNextEvent = async() : Promise<Event|null> => {
+  try{
+    const DB = await SQLite.openDatabaseAsync(DB_NAME);
+    console.log('time', new Date().toLocaleTimeString())
+    const result = await DB.getAllAsync(`SELECT * FROM events
+    WHERE datetime(startTime) >= datetime(?)
+    ORDER BY startTime;`, [formatDate(new Date())]);
+    console.log('result', result);
+    if (result.length === 0) {
+      console.log('no events found');
+      return null;
+    }
+    else{
+      console.log('next event:', result[0]);
+      return result[0] as Event;
+    }
+  }
+  catch(error){
+    console.error('error getting next event', error);
+  }
+  return null; 
 };
 
 /**

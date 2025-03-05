@@ -18,9 +18,12 @@ import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
 import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
-import { styles } from '../styles/CreateTaskScreen.styles';
 import { getTransportationModes } from '../scripts/TransportationMode';
 import { TabParamList } from './Navigator';
+import { formatDate } from '../scripts/Date';
+
+//styles imports
+import { styles } from '../styles/CreateTaskScreen.styles';
 
 interface EventData {
   id: number;
@@ -321,19 +324,6 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): JSX.Element => {
       </Pressable>
     </ScrollView>
   );
-};
-
-
-/**
-   * Formats a date object into a string with date and time.
-   * 
-   * @param {Date} date - The date to format.
-   * @returns {string} The formatted date string.
-   */
-const formatDate = (date: Date): string => {
-  const datePart = date.toLocaleDateString('en-CA');
-  const timePart = date.toLocaleTimeString('en-GB');
-  return `${datePart} ${timePart}`;
 };
 
 export default CreateTaskScreen;
