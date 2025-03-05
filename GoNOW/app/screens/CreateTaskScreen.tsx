@@ -20,7 +20,6 @@ import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
 import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
 import APP_TRANSPORTATION_MODES from '../models/TransportationMode';
-import { styles } from '../styles/CreateTaskScreen.styles';
 
 import { TabParamList } from './Navigator';
 import { formatDate } from '../scripts/Date';
