@@ -70,7 +70,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
   const transportModeOptions = useMemo(() =>
     getTransportationModes().filter(tm => tm.id > 0).map((tm) => ({
       label: tm.name,
-      value: tm.id.toString()
+      value: tm.googleMapsName
     }))
   , []);
 
@@ -195,8 +195,10 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
         description,
         formatDate(startDate),
         formatDate(endDate),
-        latitude,
-        longitude,
+        {
+          latitude: latitude,
+          longitude: longitude
+        },
         transportationMode,
         workflow?.id ?? null,
       );

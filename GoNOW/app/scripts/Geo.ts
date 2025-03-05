@@ -19,7 +19,7 @@ export const getMyLocation = async (): Promise<Location | null> => {
     if (status === ExpoLocation.PermissionStatus.GRANTED) {
       const { coords } = await ExpoLocation.getCurrentPositionAsync({});
       const { latitude, longitude } = coords;
-      const coordinates = new Coordinates(latitude, longitude)
+      const coordinates = {latitude: latitude, longitude:longitude}
       const location = new Location(
         coordinates,
         await getAddressByCoordinates(coordinates)

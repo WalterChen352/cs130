@@ -69,7 +69,7 @@ describe('AddressPicker', () => {
     fireEvent.press(locationItem);
 
     expect(onSelectMock).toHaveBeenCalledWith(
-      expect.objectContaining(new Location(new Coordinates(34.0689604, -118.4449446), '7400 Boelter Hall, Los Angeles, CA 90095'))
+      expect.objectContaining(new Location({latitude:34.0689604, longitude:-118.4449446}, '7400 Boelter Hall, Los Angeles, CA 90095'))
     );
   });
 
@@ -84,7 +84,7 @@ describe('AddressPicker', () => {
 
   test('shold handle dradNdrop marker on map and save its coordinates', async () => {
     const onSelectMock = jest.fn();
-    const initialCoordinates = new Coordinates(34.0522, -118.2437);
+    const initialCoordinates = {latitude:34.0522 ,longitude:-118.2437}
     const { getByTestId } = render(
       <AddressPicker initialCoordinates={initialCoordinates} onSelect={onSelectMock} />
     );
@@ -99,7 +99,7 @@ describe('AddressPicker', () => {
     act(() => { fireEvent.press(getByTestId('map-btn-save')); });
     await waitFor(() => {
       expect(onSelectMock).toHaveBeenCalledWith(
-        new Location(new Coordinates(34.0689604, -118.4463165), 'Kerckhoff Hall')
+        new Location({latitude: 34.0689604,longitude:  -118.4463165}, 'Kerckhoff Hall')
       );
     });
   });

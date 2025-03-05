@@ -36,6 +36,13 @@ export class TransportationMode {
    * @type {string}
    */
   color: string;
+
+   /**
+   * Google maps transportation mode defined https://developers.google.com/maps/documentation/routes/reference/rest/v2/RouteTravelMode.
+   *
+   * @type {string}
+   */
+   googleMapsName: string;
   
   /**
    * Creates an instance of TransportationMode class.
@@ -46,11 +53,12 @@ export class TransportationMode {
    * @param {string} apiName - The GIS API prameter name for the Transportation mode.
    * @param {string} [color='#0089FF'] - The color of the Transportation mode.
    */
-  constructor(id: number, name: string, apiName: string, color = '#0089FF') {
+  constructor(id: number, name: string, apiName: string, color = '#0089FF', googleMapsName: string) {
     this.id = id;
     this.name = name;
     this.apiName = apiName;
     this.color = color;
+    this.googleMapsName=googleMapsName;
   }
 }
 

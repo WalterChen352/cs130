@@ -38,8 +38,7 @@ const mockEvents = [
     'description1',
     startTime1.toLocaleString(),
     endTime1.toLocaleString(),
-    0,
-    0,
+    {latitude:0, longitude:0},
     'Driving',
     1
   ),
@@ -48,8 +47,7 @@ const mockEvents = [
     'desc2',
     startTime2.toLocaleString(),
     endTime2.toLocaleString(),
-    0,
-    0,
+    {latitude:0, longitude:0},
     'Driving',
     null
   )

@@ -14,7 +14,7 @@ const locationToDb = (location: Location) => ({
 });
 
 const mockLocation = new Location(
-  new Coordinates(33.033, -44.044),
+  {latitude:33.033, longitude:-44.044},
   '7400 Boelter Hall, Los Angeles, CA 90095'
 );
 const mockLocationDb = locationToDb(mockLocation);

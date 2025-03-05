@@ -147,10 +147,10 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     const lat = parseFloat(item.lat);
     const lng = parseFloat(item.lon);
     setAddress(item.display_name);
-    setCoordinates(new Coordinates(lat, lng));
+    setCoordinates({latitude: lat, longitude:lng});
     setResults([]);
     if (onSelect) {
-      onSelect(new Location(new Coordinates(lat, lng), item.display_name));
+      onSelect(new Location({latitude: lat, longitude:lng}, item.display_name));
     }
   };
 
@@ -171,10 +171,9 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
    * complete successfully.
    */
   const handleMarkerDragEnd = async (event: MarkerDragStartEndEvent): Promise<void> => {
-    const coords = new Coordinates(
-      event.nativeEvent.coordinate.latitude,
-      event.nativeEvent.coordinate.longitude
-    );
+    const coords =  
+      {latitude: event.nativeEvent.coordinate.latitude, 
+      longitude:event.nativeEvent.coordinate.longitude};
     setMapCoordinates(coords);
     const tmpAddress = await getAddressByCoordinates(coords);
     setMapAddress(tmpAddress);

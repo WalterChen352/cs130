@@ -21,7 +21,7 @@ export const getLocation = async (): Promise<Location | null> => {
     if (rows.length > 0) {
       const row = rows[0] as {lat: number, lon: number, address: string};
       return new Location(
-        new Coordinates( Number(row.lat), Number(row.lon)), row.address);
+        {latitude:Number(row.lat), longitude:Number(row.lon)} , row.address);
     }
     return null;
   }

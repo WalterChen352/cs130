@@ -1,7 +1,7 @@
 /**
  * Represents geographic coordinates with latitude and longitude.
  */
-export class Coordinates {
+export type Coordinates ={
 
   /** The latitude component of the coordinates. */
   latitude: number;
@@ -14,18 +14,7 @@ export class Coordinates {
    * @param lat - The latitude component of the coordinates.
    * @param log - The longitude component of the coordinates.
    */
-  constructor(lat: number, log: number) {
-    this.latitude = lat;
-    this.longitude = log;
-  }
 
-  /**
-   * Converts the coordinates to a string in the format `Latitude;Longitude`.
-   * @returns The coordinates as a string in `Latitude;Longitude` format.
-   */
-  toString(): string {
-    return `${String(this.latitude)};${String(this.longitude)}`;
-  }
 }
 
 /**

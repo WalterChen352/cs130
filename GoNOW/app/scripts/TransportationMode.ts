@@ -6,11 +6,12 @@ import { TransportationMode } from '../models/TransportationMode';
  * @type {TransportationMode[]}
  */
 export const listTransportationModes: TransportationMode[] = [
-  new TransportationMode(0, '', '', '#666666'),           // no need Transportation
-  new TransportationMode(1, 'Walk', "walking", '#9034c9'),
-  new TransportationMode(2, 'Bus',  "transit",'#ed7d31'),
-  new TransportationMode(3, 'Bike', "bicycling", '#88c934'),
-  new TransportationMode(4, 'Car',  "driving", '#0089FF'),
+  // Google Map Names are outlined here https://developers.google.com/maps/documentation/routes/reference/rest/v2/RouteTravelMode
+  new TransportationMode(0, '', '', '#666666', ''),           // no need Transportation
+  new TransportationMode(1, 'Walk', "walking", '#9034c9', 'WALK'),
+  new TransportationMode(2, 'Transit',  "transit",'#ed7d31', 'TRANSIT'),
+  new TransportationMode(3, 'Bike', "bicycling", '#88c934', 'BICYCLE'),
+  new TransportationMode(4, 'Car',  "driving", '#0089FF', 'DRIVE'),
 ];
 
 /**

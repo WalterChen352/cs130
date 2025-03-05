@@ -11,6 +11,7 @@ import MapScreen from '../app/screens/MapScreen';
 import { getMyLocation, getRoute } from '../app/scripts/Geo';
 import { MapEventAdapter, IMapEvent } from '../app/scripts/Map';
 import { getLocation } from '../app/scripts/Profile';
+import { getTransportationMode } from '../app/scripts/TransportationMode';
 
 // Mocking external dependencies
 jest.mock('../app/components/ButtonSave');
@@ -69,8 +70,8 @@ const mockIMapEvents: IMapEvent[] = [
     description: 'Business meeting',
     startTime: new Date(new Date().getTime() + 1 * 60 * 60 * 1000),
     endTime: new Date(new Date().getTime() + 2 * 60 * 60 * 1000),
-    coordinates: new Coordinates(34.0522, -118.2437),
-    transportationMode: new TransportationMode(0, '', '', '#000'),
+    coordinates: {latitude: 34.0522, longitude:-118.2437},
+    transportationMode: getTransportationMode(0),
     workflow: mockWorkflows[0]
   },
   {
@@ -79,8 +80,8 @@ const mockIMapEvents: IMapEvent[] = [
     description: 'Birthday party',
     startTime: new Date(new Date().getTime() + 3 * 60 * 60 * 1000),
     endTime: new Date(new Date().getTime() + 4 * 60 * 60 * 1000),
-    coordinates: new Coordinates(34.0522, -118.2437),
-    transportationMode: new TransportationMode(0, '', '', '#000'),
+    coordinates: {latitude:34.0522, longitude:-118.2437},
+    transportationMode: getTransportationMode(0),
     workflow: mockWorkflows[1]
   }
 ];
@@ -88,8 +89,9 @@ const mockIMapEvents: IMapEvent[] = [
 describe('Map Screen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (getMyLocation as jest.Mock).mockResolvedValue(new Location(new Coordinates(34.0689027, -118.4456223), "Kerckhoff Hall"));
-    (getLocation as jest.Mock).mockResolvedValue(new Location(new Coordinates(34.0689027, -118.4456223), "Kerckhoff Hall"));
+    //{coordinates:{ latitude: xxx: longitud: xxx}, address: "Kerckhoff"}
+    (getMyLocation as jest.Mock).mockResolvedValue(new Location({latitude:34.0689027, longitude:-118.4456223}, "Kerckhoff Hall"));
+    (getLocation as jest.Mock).mockResolvedValue(new Location({latitude:34.0689027, longitude:-118.4456223}, "Kerckhoff Hall"));
     (MapEventAdapter as jest.Mock).mockResolvedValue(mockIMapEvents);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     (polyline.decode as jest.Mock).mockReturnValue([[34.0709027, -118.4466223], [34.0719027, -118.4476223]]);
