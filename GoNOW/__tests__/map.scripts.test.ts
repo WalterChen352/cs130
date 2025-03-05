@@ -71,17 +71,18 @@ describe('MapEventAdapter', () => {
 
   it('should handle events without workflow', async () => {
     const mockEvents:Event[] = [
-      new Event(
-         'Gym',
-        'Workout session',
-        '2025-02-23T07:00:00Z',
-        '2025-02-23T08:00:00Z',
-        {
+      {
+        id:0,
+         name:'Gym',
+        description:'Workout session',
+        startTime:'2025-02-23T07:00:00Z',
+        endTime:'2025-02-23T08:00:00Z',
+        coordinates:{
         latitude: 34.0522,
         longitude: -118.2437,
         },
-       'WALK',
-        null)
+       transportationMode:'WALK',
+        workflow:null}
     ];
     const mockTransportationMode = getTransportationMode(3);
 

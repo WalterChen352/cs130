@@ -2,6 +2,18 @@ import * as SQLite from 'expo-sqlite';
 import { Event } from '../models/Event';
 import { DB_NAME } from './Database';
 
+
+type rowData ={
+    id: number;
+    name: string;
+    description: string;
+    startTime: string;
+    endTime: string;
+    coordinates: string
+    transportationMode: string;
+    workflow: number|null;
+};
+
 export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
   console.log('getting events for date:', eventDate);
   try {
@@ -18,7 +30,7 @@ export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
     endOfDay.setHours(23, 59, 59, 999);
     const endStr = formatDateForSQLite(endOfDay);
     
-    const result = await DB.getAllAsync(`
+    const result: rowData[] = await DB.getAllAsync(`
       SELECT * FROM events
       WHERE datetime(startTime) >= datetime(?)
       AND datetime(startTime) < datetime(?)
@@ -28,7 +40,16 @@ export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
     console.log('Query result:', result);
     console.log('done txn');
     
-    const events = result as Event[];
+    const events:Event[] = result.map((row:rowData)=>({
+      id:row.id,
+      name:row.name,
+      description:row.description,
+      startTime:row.startTime,
+      endTime:row.endTime,
+      coordinates: JSON.parse(row.coordinates),
+      transportationMode:row.transportationMode,
+      workflow:row.workflow
+    }));
     return events;
   } catch (error) {
     console.error('error getting daily events', error);
@@ -50,14 +71,23 @@ export const getWeeklyEvents = async(date: Date): Promise<Event[]> => {
   
   try {
     const DB = await SQLite.openDatabaseAsync(DB_NAME);
-    const result = await DB.getAllAsync(`
+    const result:rowData[] = await DB.getAllAsync(`
       SELECT * FROM events
       WHERE startTime >= datetime(?) AND startTime < datetime(?)
       ORDER BY startTime;
     `, [startStr, endStr]);
     
     console.log(result);
-    const events = result as Event[];
+    const events:Event[] = result.map((row:rowData)=>({
+      id:row.id,
+      name:row.name,
+      description:row.description,
+      startTime:row.startTime,
+      endTime:row.endTime,
+      coordinates: JSON.parse(row.coordinates),
+      transportationMode:row.transportationMode,
+      workflow:row.workflow
+    }));
     return events;
   } catch (error) {
     console.error('error getting weekly events', error);
@@ -106,16 +136,15 @@ export const addEvent = async (e: Event): Promise<void> => {
     
     // Since workflow is number|null, we don't need to check for undefined
     const query = `INSERT INTO events
-      (name, description, startTime, endTime, latitude, longitude, transportationMode, workflow)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?);`;
+      (name, description, startTime, endTime, coordinates, transportationMode, workflow)
+      VALUES ( ?, ?, ?, ?, ?, ?, ?);`;
     
     const params = [
       e.name, 
       e.description, 
       e.startTime, 
       e.endTime, 
-      e.latitude, 
-      e.longitude, 
+      JSON.stringify(e.coordinates), 
       e.transportationMode,
       e.workflow // workflow is already either number or null
     ];
@@ -148,8 +177,7 @@ export const updateEvent = async (e: Event): Promise<void> => {
       e.description, 
       e.startTime, 
       e.endTime, 
-      e.latitude, 
-      e.longitude, 
+      JSON.stringify(e.coordinates), 
       e.transportationMode,
       e.workflow, // workflow is already either string or null
       e.id

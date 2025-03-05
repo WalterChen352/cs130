@@ -86,7 +86,7 @@ export const getWorkflows = async (): Promise<Workflow[]> => {
     `); 
     const rows = query as row[];
     const workflows = [];
-    
+    console.log('workflow results', rows)
     for (const row of rows) {
       const daysOfWeek = new Array<boolean>(7).fill(false);
       for (let d=0; d<7; d++) {

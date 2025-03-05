@@ -40,8 +40,7 @@ export const initDatabase = async (): Promise<void> => {
                 description TEXT,
                 startTime TEXT,
                 endTime TEXT,
-                latitude REAL,
-                longitude REAL,
+                coordinates TEXT,
                 transportationMode TEXT,
                 workflow INTEGER
             );

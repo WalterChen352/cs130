@@ -20,25 +20,27 @@ startTime2.setHours(11, 0, 0);
 const endTime2 = new Date(now);
 endTime2.setHours(12, 0, 0);
 
-const mockEvents = [
-  new Event(
-    'Event1',
-    'description1',
-    startTime1.toLocaleString(),
-    endTime1.toLocaleString(),
-    {latitude:0, longitude:0},
-    'Driving',
-    1
-  ),
-  new Event(
-    'Event2',
-    'desc2',
-    startTime2.toLocaleString(),
-    endTime2.toLocaleString(),
-    {latitude:0, longitude:0},
-    'Driving',
-    null
-  )
+const mockEvents:Event[] = [
+  {
+    id:0,
+    name:'Event1',
+    description:'description1',
+    startTime:startTime1.toLocaleString(),
+    endTime:endTime1.toLocaleString(),
+    coordinates:{latitude:0, longitude:0},
+    transportationMode: 'DRIVE',
+    workflow:1
+  },
+  {
+    id:1,
+    name:'Event2',
+    description:'desc2',
+    startTime:startTime2.toLocaleString(),
+    endTime:endTime2.toLocaleString(),
+    coordinates:{latitude:0, longitude:0},
+    transportationMode:'DRIVE',
+    workflow:null
+  }
 ];
 
 const mockWorkflows:Workflow[] = [
