@@ -35,7 +35,8 @@ interface AutoscheduleRequestBody {
 
 app.use((req:Request, res:Response, next) => {
     //authenticate all incoming things
-    console.log(req.headers)
+    // console.log(req)
+    // console.log(req.headers)
     console.log(req.headers['access-token'])
     if(req.headers['access-token']===undefined || req.headers['access-token']!== accessToken){
         res.status(500).send('unable to authenticate request')
@@ -44,7 +45,7 @@ app.use((req:Request, res:Response, next) => {
     next();
 })
 
-app.get('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleRequestBody>, res: Response) => {
+app.post('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleRequestBody>, res: Response) => {
     //parse incoming parameters
     const {style } =req.body;
     const {events, workflow, coordinates, duration, timeZone, name, description, transportation}=req.body
@@ -68,14 +69,14 @@ app.get('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleR
     }   
 });
 
-app.get('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordinates:Coordinates}>, res: Response) => {
+app.post('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordinates:Coordinates}>, res: Response) => {
     const result =await computeTravelTime(apiKey, req.body.coordinates, req.body.event.coordinates, req.body.event.transportationMode, null, req.body.event.startTime)
     //send send back to user
     console.log('result')
     res.status(200).json({travelTime: result});
 });
 
-app.get('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, res: Response) => {
+app.post('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, res: Response) => {
     //TODO
     //parse incoming task for location
     console.log(req.body)
