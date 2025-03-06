@@ -88,7 +88,7 @@ app.post('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, 
     const headers = new Headers({
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,
-        'X-Goog-FieldMask': 'routes.polyline.encodedPolyline'
+        'X-Goog-FieldMask': '*'
     });
 
     const body = JSON.stringify({
@@ -111,9 +111,9 @@ app.post('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, 
         if (!response.ok) throw new Error(`HTTP Error: ${String(response.status)}`);
         //const responseText = await response.text();
         //console.log('Raw response:', responseText);
-        const responseData = await response.json() as {routes:[{polyline:{encodedPolyline:string}}]};
+        const responseData = await response.json();
         console.log('response data', responseData);
-        res.status(200).send({encodedPolyline: responseData.routes[0].polyline.encodedPolyline}); 
+        res.status(200).send(responseData); 
 
     } catch (error) {
         console.error('Error fetching route:', error);
