@@ -19,12 +19,17 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () : Promise<BackgroundFetch
 // 2. Register the task at some point in your app by providing the same name,
 // and some configuration options for how the background fetch should behave
 // Note: This does NOT need to be in the global scope and CAN be used in your React components!
-export async function registerBackgroundFetchAsync() : Promise<void> {
-  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-    minimumInterval: 60 * 1, // 15 minutes
-    stopOnTerminate: false, // android only,
-    startOnBoot: true, // android only
-  });
+export async function registerBackgroundFetchAsync(): Promise<void> {
+  try {
+    await BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+      minimumInterval: 60 * 15, // 15 minutes, minimum recommended interval is 15 minutes
+      stopOnTerminate: false, // android only
+      startOnBoot: true, // android only
+    });
+    console.log("Background fetch registered successfully");
+  } catch (error) {
+    console.error("Failed to register background fetch:", error);
+  }
 }
 
 // 3. (Optional) Unregister tasks by specifying the task name
