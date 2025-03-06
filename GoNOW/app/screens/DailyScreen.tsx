@@ -8,7 +8,7 @@ import { RouteProp, useFocusEffect, useNavigation, NavigationProp } from '@react
 import { tryFilterWfId, getWorkflows } from '../scripts/Workflow';
 import { Colors } from '../styles/Common.styles';
 import { Workflow } from '../models/Workflow';
-
+import * as Haptics from 'expo-haptics';
 interface DailyScreenProps {
   route: RouteProp<TabParamList, 'Daily'>;
 }
@@ -75,11 +75,13 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
     minute: '2-digit'
   };
 
-  const handleEdit = (event: Event) => {
+  const handleEdit = async (event: Event) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('CreateTask', { mode: 'edit', eventData: event });
   };
 
-  const handleDelete = (eventId: number) => {
+  const handleDelete =async (eventId: number) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Alert.alert(
       'Delete Event',
       'Are you sure you want to delete this event?',
@@ -97,9 +99,15 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
                 setEvents(currentEvents => currentEvents.filter(event => event.id !== eventId));
                 setSelectedEventId(null);
                 await deleteEvent(eventId);
+                Haptics.notificationAsync(
+                  Haptics.NotificationFeedbackType.Success
+                )
               } catch (error) {
                 console.error('Failed to delete event', error);
                 Alert.alert('Error', 'Failed to delete event. Please try again.');
+                Haptics.notificationAsync(
+                  Haptics.NotificationFeedbackType.Error
+                )
                 void loadEvents();
               }
             })();
@@ -109,7 +117,8 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
     );
   };
 
-  const handleEventPress = (eventId: number) => {
+  const handleEventPress = async (eventId: number) :Promise<void>=> {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedEventId(currentId => currentId === eventId ? null : eventId);
   };
 

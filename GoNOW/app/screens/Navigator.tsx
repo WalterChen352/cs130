@@ -12,6 +12,7 @@ import WorkflowScreen from './WorkflowScreen';
 import { NavigatorStyles } from '../styles/Navigator.styles';
 import { Workflow } from '../models/Workflow';
 import { ParamListBase } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
 
 
 export type TabParamList = ParamListBase & {
@@ -41,7 +42,8 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) => {
           return null;
         }
 
-        const onPress = () => {
+        const onPress = async() => {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,
@@ -78,7 +80,9 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) => {
       {/* Create Task Button */}
       <TouchableOpacity
         style={NavigatorStyles.createButton}
-        onPress={() => { navigation.navigate('CreateTask'); }}
+        onPress={async () => {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+          navigation.navigate('CreateTask'); }}
       >
         <Ionicons name="add" size={30} color="white" />
       </TouchableOpacity>

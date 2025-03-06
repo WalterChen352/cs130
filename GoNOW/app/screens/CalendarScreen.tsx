@@ -11,6 +11,7 @@ import { Workflow } from '../models/Workflow';
 import { TabParamList } from './Navigator';
 import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
 import { Colors } from '../styles/Common.styles'
+import * as Haptics from 'expo-haptics';
 
 const HOUR_HEIGHT = 20;
 const START_HOUR = 0;
@@ -75,7 +76,8 @@ const CalendarScreen = (): JSX.Element => {
 
     const days = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
 
-    const nextWeek = Gesture.Fling().direction(Directions.LEFT).onEnd(() => {
+    const nextWeek = Gesture.Fling().direction(Directions.LEFT).onEnd(async () => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setStartDate(prev => {
             const newDate = new Date(prev);
             newDate.setDate(prev.getDate() + 7);
@@ -83,7 +85,8 @@ const CalendarScreen = (): JSX.Element => {
         });
     }).runOnJS(true);
     
-    const nextWeekPress = (): void => {
+    const nextWeekPress =async (): Promise<void> => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setStartDate(prev => {
             const newDate = new Date(prev);
             newDate.setDate(prev.getDate() + 7);
@@ -91,7 +94,8 @@ const CalendarScreen = (): JSX.Element => {
         });
     };
 
-    const prevWeekPress = (): void => {
+    const prevWeekPress = async(): Promise<void> => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setStartDate(prev => {
             const newDate = new Date(prev);
             newDate.setDate(prev.getDate() - 7);
@@ -99,7 +103,8 @@ const CalendarScreen = (): JSX.Element => {
         });
     };
 
-    const prevWeek = Gesture.Fling().direction(Directions.RIGHT).onEnd(() => {
+    const prevWeek = Gesture.Fling().direction(Directions.RIGHT).onEnd(async () => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setStartDate(prev => {
             const newDate = new Date(prev);
             newDate.setDate(prev.getDate() - 7);
@@ -284,7 +289,8 @@ const CalendarScreen = (): JSX.Element => {
                                                     Colors.LIGHT_BLUE
                                             }
                                         ]}
-                                        onPress={() => {
+                                        onPress={async () => {
+                                            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                             const eventDate = new Date(event.startTime);
                                             navigateToDaily(eventDate, event.id);
                                         }}

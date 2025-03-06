@@ -15,7 +15,7 @@ import SchedulingStyle from '../models/SchedulingStyle';
 import { TabParamList } from './Navigator';
 import DropdownPicker from '../components/DropdownPicker';
 import TimeSelector from '../components/TimeSelector';
-
+import * as Haptics from 'expo-haptics';
 /**
  * Properties for screen `WorkflowScreen`.
  *
@@ -99,7 +99,8 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
      * @param {number} indexDay - The index of the day of week that is included to or excluded from `daysOfWeek`.
      * @returns {void} - This component does not return any value.
      */
-    const toggleDay = (indexDay: number): void => {
+    const toggleDay = async (indexDay: number): Promise<void> => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setDaysOfWeek((prev) => {
             const next = [...prev];
             next[indexDay] = !next[indexDay];
@@ -129,9 +130,15 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         try {
             await validateWorkflow(workflowNew);
         } catch (error) {
+            await Haptics.notificationAsync(
+                Haptics.NotificationFeedbackType.Error
+              )
             Alert.alert('Validation Error', error instanceof Error ? error.message : 'Unknown error');
             return;
         }
+        await Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Success
+          )
 
         if (workflow.id > 0) {
             await updateWorkflow(workflowNew);
