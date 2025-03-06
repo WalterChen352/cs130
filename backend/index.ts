@@ -13,6 +13,7 @@ const PORT = process.env.PORT??8080;
 app.use(bodyParser.json())
 
 const apiKey = process.env.API_KEY??'';   
+const accessToken = process.env.ACCESS_TOKEN??'';
 
 interface RouteRequestBody {
     origin:Coordinates;
@@ -32,9 +33,17 @@ interface AutoscheduleRequestBody {
     style:SchedulingStyle
 }
 
-// TODO: Adding a lint ignore to make it go through for now, but
-// we should eventually remove this disable when we have implemented
-// more features with api key.
+app.use((req:Request, res:Response, next) => {
+    //authenticate all incoming things
+    console.log(req.headers)
+    console.log(req.headers['access-token'])
+    if(req.headers['access-token']===undefined || req.headers['access-token']!== accessToken){
+        res.status(500).send('unable to authenticate request')
+        return;
+    }
+    next();
+})
+
 app.get('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleRequestBody>, res: Response) => {
     //parse incoming parameters
     const {style } =req.body;
