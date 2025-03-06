@@ -96,7 +96,7 @@ app.post('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, 
             location: { latLng: { latitude: origin.latitude, longitude: origin.longitude } }
         },
         destination: {
-            location: { latLng: { latitude: destination.latitude, longitude: destination.latitude } }
+            location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } }
         },
         travelMode: travelMode
     });
@@ -109,9 +109,11 @@ app.post('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, 
         });
 
         if (!response.ok) throw new Error(`HTTP Error: ${String(response.status)}`);
-
-        const responseData = await response.json() as Record<string, unknown>;
-        res.send(responseData);
+        //const responseText = await response.text();
+        //console.log('Raw response:', responseText);
+        const responseData = await response.json() as {routes:[{polyline:{encodedPolyline:string}}]};
+        console.log('response data', responseData);
+        res.status(200).send({encodedPolyline: responseData.routes[0].polyline.encodedPolyline}); 
 
     } catch (error) {
         console.error('Error fetching route:', error);
