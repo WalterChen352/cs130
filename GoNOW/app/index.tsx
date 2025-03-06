@@ -4,6 +4,7 @@ import { ActivityIndicator, Linking, Text, TouchableOpacity, View } from 'react-
 import { initDatabase } from './scripts/Database';
 import { IndexStyles as styles } from './styles/Index.styles';
 import Navigator from './screens/Navigator';
+import { registerBackgroundFetchAsync } from './scripts/BackgroundTasks';
 
 export default function Index(): JSX.Element {
   const [status, setStatus] = useState<number>(0); // 0 - loading; 1 - ready; 2 - error
@@ -19,6 +20,7 @@ export default function Index(): JSX.Element {
       }
     };
     void appInit();
+    void registerBackgroundFetchAsync();
   }, []);
 
   return status === 1 // 0 - loading; 1 - ready; 2 - error
