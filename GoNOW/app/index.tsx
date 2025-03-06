@@ -1,5 +1,6 @@
 import { JSX, useEffect, useState } from 'react';
 import { ActivityIndicator, Linking, Text, TouchableOpacity, View } from 'react-native';
+import * as TaskManager from 'expo-task-manager';
 
 import { initDatabase } from './scripts/Database';
 import { IndexStyles as styles } from './styles/Index.styles';
@@ -13,6 +14,9 @@ export default function Index(): JSX.Element {
     const appInit = async (): Promise<void> => {
       try {
         await initDatabase();
+        await registerBackgroundFetchAsync();
+        const tasks:TaskManager.TaskManagerTask[] = await TaskManager.getRegisteredTasksAsync();
+        console.log('Registered tasks:', tasks);
         setStatus(1);
       } catch (error) {
         setStatus(2);
@@ -20,7 +24,6 @@ export default function Index(): JSX.Element {
       }
     };
     void appInit();
-    void registerBackgroundFetchAsync();
   }, []);
 
   return status === 1 // 0 - loading; 1 - ready; 2 - error
