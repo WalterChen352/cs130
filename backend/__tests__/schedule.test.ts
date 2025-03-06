@@ -1,5 +1,5 @@
 import { autoschedule } from '../schedule'; // Update with your actual module path
-import type { Workflow, Time, Location, Event} from '../types'
+import type { Workflow, Time, Coordinates, Event} from '../types'
 // Mock the current date to ensure consistent test results
 const mockDate = new Date('2025-03-03T12:00:00Z'); // Using the current date from your session
 jest.useFakeTimers().setSystemTime(mockDate);
@@ -39,10 +39,10 @@ describe('autoschedule function', () => {
   const evening8pm: Time = { Hours: 20, Minutes: 0 };
 
   // Test locations
-  const homeLocation: Location = { latitude: 37.7749, longitude: -122.4194 }; // San Francisco
-  const gymLocation: Location = { latitude: 37.7833, longitude: -122.4167 }; // Near Union Square
-  const libraryLocation: Location = { latitude: 37.7786, longitude: -122.4159 }; // SF Public Library
-  const parkLocation: Location = { latitude: 37.7694, longitude: -122.4862 }; // Golden Gate Park
+  const homeLocation: Coordinates = { latitude: 37.7749, longitude: -122.4194 }; // San Francisco
+  const gymLocation: Coordinates = { latitude: 37.7833, longitude: -122.4167 }; // Near Union Square
+  const libraryLocation: Coordinates = { latitude: 37.7786, longitude: -122.4159 }; // SF Public Library
+  const parkLocation: Coordinates = { latitude: 37.7694, longitude: -122.4862 }; // Golden Gate Park
 
   // Current date references
   const today = new Date(mockDate);
@@ -112,7 +112,7 @@ describe('autoschedule function', () => {
         description:"Jog around the neighborhood",
         startTime:new Date(freshToday.getFullYear(), freshToday.getMonth(), freshToday.getDate(), 9, 30).toISOString(),
         endTime:new Date(freshToday.getFullYear(), freshToday.getMonth(), freshToday.getDate(), 10, 30).toISOString(),
-        location:{latitude:parkLocation.latitude,
+        coordinates:{latitude:parkLocation.latitude,
         longitude:parkLocation.longitude},
         transportationMode:"walking",
         workflow:1
@@ -123,7 +123,7 @@ describe('autoschedule function', () => {
         description:"Strength training",
         startTime:new Date(freshDayAfterTomorrow.getFullYear(), freshDayAfterTomorrow.getMonth(), freshDayAfterTomorrow.getDate(), 10, 0).toISOString(),
         endTime:new Date(freshDayAfterTomorrow.getFullYear(), freshDayAfterTomorrow.getMonth(), freshDayAfterTomorrow.getDate(), 11, 0).toISOString(),
-        location:{latitude:gymLocation.latitude,
+        coordinates:{latitude:gymLocation.latitude,
         longitude:gymLocation.longitude},
         transportationMode:"driving",
         workflow:1
@@ -136,7 +136,7 @@ describe('autoschedule function', () => {
         description:"Work on project with classmates",
         startTime:new Date(freshTomorrow.getFullYear(), freshTomorrow.getMonth(), freshTomorrow.getDate(), 16, 0).toISOString(),
         endTime:new Date(freshTomorrow.getFullYear(), freshTomorrow.getMonth(), freshTomorrow.getDate(), 18, 0).toISOString(),
-        location:{latitude:libraryLocation.latitude,
+        coordinates:{latitude:libraryLocation.latitude,
         longitude:libraryLocation.longitude},
         transportationMode:"transit",
         workflow:2
@@ -149,7 +149,7 @@ describe('autoschedule function', () => {
         description:"Afternoon picnic with friends",
         startTime:new Date(freshToday.getFullYear(), freshToday.getMonth(), freshToday.getDate(), 13, 0).toISOString(),
         endTime:new Date(freshToday.getFullYear(), freshToday.getMonth(), freshToday.getDate(), 15, 0).toISOString(),
-        location:{latitude:parkLocation.latitude,
+        coordinates:{latitude:parkLocation.latitude,
         longitude:parkLocation.longitude},
         transportationMode:"driving",
         workflow:3
@@ -171,7 +171,7 @@ describe('autoschedule function', () => {
           description:"This event blocks most time slots",
           startTime:new Date(conflictDate.getFullYear(), conflictDate.getMonth(), conflictDate.getDate(), 10, 0).toISOString(),
           endTime:new Date(conflictDate.getFullYear(), conflictDate.getMonth(), conflictDate.getDate(), 19, 0).toISOString(),
-          location:{latitude:homeLocation.latitude,
+          coordinates:{latitude:homeLocation.latitude,
           longitude:homeLocation.longitude},
           transportationMode:"driving",
           workflow:1 // Same workflow to create conflicts
@@ -250,8 +250,8 @@ describe('autoschedule function', () => {
       expect(durationMs).toBe(90 * 60 * 1000); // 90 minutes
       
       // Check that the location is set correctly
-      expect(result.location.latitude).toBe(libraryLocation.latitude);
-      expect(result.location.longitude).toBe(libraryLocation.longitude);
+      expect(result.coordinates.latitude).toBe(libraryLocation.latitude);
+      expect(result.coordinates.longitude).toBe(libraryLocation.longitude);
     }
   });
 
@@ -282,8 +282,8 @@ describe('autoschedule function', () => {
       expect(durationMs).toBe(180 * 60 * 1000); // 3 hours
       
       // Check that the location is set correctly
-      expect(result.location.latitude).toBe(parkLocation.latitude);
-      expect(result.location.longitude).toBe(parkLocation.longitude);
+      expect(result.coordinates.latitude).toBe(parkLocation.latitude);
+      expect(result.coordinates.longitude).toBe(parkLocation.longitude);
     }
   });
 
@@ -349,7 +349,7 @@ describe('autoschedule function', () => {
 
   test('calculates travel time correctly',async  () => {
     // Add an event that requires travel to and from
-    const farLocation: Location = { latitude: 37.8, longitude: -122.5 }; // Distant location
+    const farLocation: Coordinates = { latitude: 37.8, longitude: -122.5 }; // Distant location
     
     // Add an event ending just before our desired time
     const justBeforeDate = new Date(mockDate);
@@ -362,7 +362,7 @@ describe('autoschedule function', () => {
       description:"This event ends just before we'd want to schedule",
       startTime:new Date(justBeforeDate.getFullYear(), justBeforeDate.getMonth(), justBeforeDate.getDate(), 7, 0).toISOString(),
       endTime:new Date(justBeforeDate.getFullYear(), justBeforeDate.getMonth(), justBeforeDate.getDate(), 8, 0).toISOString(),
-      location:{latitude:farLocation.latitude,
+      coordinates:{latitude:farLocation.latitude,
       longitude:farLocation.longitude},
       transportationMode:"driving",
       workflow:1

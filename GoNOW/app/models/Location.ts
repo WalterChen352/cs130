@@ -1,7 +1,7 @@
 /**
  * Represents geographic coordinates with latitude and longitude.
  */
-export class Coordinates {
+export interface Coordinates {
 
   /** The latitude component of the coordinates. */
   latitude: number;
@@ -14,24 +14,13 @@ export class Coordinates {
    * @param lat - The latitude component of the coordinates.
    * @param log - The longitude component of the coordinates.
    */
-  constructor(lat: number, log: number) {
-    this.latitude = lat;
-    this.longitude = log;
-  }
 
-  /**
-   * Converts the coordinates to a string in the format `Latitude;Longitude`.
-   * @returns The coordinates as a string in `Latitude;Longitude` format.
-   */
-  toString(): string {
-    return `${String(this.latitude)};${String(this.longitude)}`;
-  }
 }
 
 /**
  * Represents a location with geographic coordinates and an address.
  */
-export class Location {
+export interface Location {
   
   /** The geographic coordinates (latitude and longitude) of the location. */
   coordinates: Coordinates;
@@ -44,18 +33,6 @@ export class Location {
    * @param coords - The geographic coordinates (latitude and longitude) of the location.
    * @param address - The address associated with the location.
    */
-  constructor(coords: Coordinates, address: string) {
-    this.coordinates = coords;
-    this.address = address;
-  }
-
-  /**
-   * Converts the location to a string in the format `[Latitude;Longitude] Address`.
-   * @returns - The location as a string combining the coordinates and address.
-   */
-  toString(): string {
-    return `[${String(this.coordinates.latitude)};${String(this.coordinates.longitude)}] ${String(this.address)}`;
-  }
 }
 
 export default Coordinates;

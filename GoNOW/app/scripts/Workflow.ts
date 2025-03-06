@@ -1,8 +1,8 @@
 import { openDatabase } from '../scripts/Database';
-import { getSchedulingStyle } from '../scripts/SchedulingStyle';
 import { Time, DaysOfWeekNames } from '../models/Time';
 import { Workflow } from '../models/Workflow';
-import SchedulingStyle from '../models/SchedulingStyle';
+import  { SS_ASAP } from '../models/SchedulingStyle';
+import APP_SCHEDLING_STYLES from '../models/SchedulingStyle';
 
 /**
  * DB record representing a workflow.
@@ -86,25 +86,25 @@ export const getWorkflows = async (): Promise<Workflow[]> => {
     `); 
     const rows = query as row[];
     const workflows = [];
-    
+    console.log('workflow results', rows)
     for (const row of rows) {
       const daysOfWeek = new Array<boolean>(7).fill(false);
       for (let d=0; d<7; d++) {
         daysOfWeek[d] = ((row.daysOfWeek & (1 << d)) !==0);
       }
-      const schedulingStyle = getSchedulingStyle(Number(row.schedulingStyleId));
+      const schedulingStyle = APP_SCHEDLING_STYLES[Number(row.schedulingStyleId)];
       const timeStart = Number(row.timeStart);
       const timeEnd = Number(row.timeEnd);
-      const workflowTemp = new Workflow(
-        row.id,
-        row.name,
-        row.color,
-        (Number(row.pushNotifications) === 1),
-        new Time(Math.floor(timeStart / 60), timeStart % 60),
-        new Time(Math.floor(timeEnd / 60), timeEnd % 60),
-        daysOfWeek,
-        schedulingStyle
-      ); 
+      const workflowTemp:Workflow = {
+        id: row.id,
+        name: row.name,
+        color: row.color,
+        pushNotifications: (Number(row.pushNotifications)===1),
+        timeStart: new Time(Math.floor(timeStart / 60), timeStart % 60),
+        timeEnd: new Time(Math.floor(timeEnd / 60), timeEnd % 60),
+        daysOfWeek:daysOfWeek,
+        schedulingStyle: schedulingStyle
+      }; 
       workflows.push(workflowTemp);
     } 
     return workflows;
@@ -290,9 +290,17 @@ export const filterWfId=(workflows: Workflow[], id:number): Workflow=>{
       return w
   }
   console.error('workflow not found. May have been called with improper arguments:', workflows, id);
-  return new Workflow(0, 'ERROR', '', false, new Time(0,0), new Time(0,0), [], new SchedulingStyle(0, ''));
+  return {
+    id: 0,
+    name: 'ERROR',
+    color: '',
+    pushNotifications: false,
+    timeStart: new Time(0,0),
+    timeEnd: new Time(0,0),
+    daysOfWeek: [],
+    schedulingStyle: SS_ASAP
+  }
 }
-
 //IMPORTANT DISTINCTION FROM filterWfId: NULL RETURN VALUE IF NOTHING IS FOUND
 export const tryFilterWfId=(workflows: Workflow[], id:number): Workflow|null=>{ 
   for (const w of workflows){
@@ -345,20 +353,20 @@ export const getWorkflowById = async (id:number):Promise<Workflow | null> => {
     for (let d=0; d<7; d++) {
       daysOfWeek[d] = ((row.daysOfWeek & (1 << d)) !==0);
     }
-    const schedulingStyle = getSchedulingStyle(Number(row.schedulingStyleId));
+    const schedulingStyle = APP_SCHEDLING_STYLES[Number(row.schedulingStyleId)];
     const timeStart = Number(row.timeStart);
     const timeEnd = Number(row.timeEnd);
     
-    const workflowTemp = new Workflow(
-      id,
-      row.name,
-      row.color,
-      (Number(row.pushNotifications) === 1),
-      new Time(Math.floor(timeStart / 60), timeStart % 60),
-      new Time(Math.floor(timeEnd / 60), timeEnd % 60),
-      daysOfWeek,
-      schedulingStyle
-    );
+    const workflowTemp:Workflow ={
+      id:id,
+      name:row.name,
+      color:row.color,
+      pushNotifications:(Number(row.pushNotifications) === 1),
+      timeStart:new Time(Math.floor(timeStart / 60), timeStart % 60),
+      timeEnd:new Time(Math.floor(timeEnd / 60), timeEnd % 60),
+      daysOfWeek: daysOfWeek,
+      schedulingStyle: schedulingStyle
+    };
     return workflowTemp;
   }
   catch (error) {

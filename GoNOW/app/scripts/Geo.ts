@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 import Route from '../models/Geo';
 import { Coordinates, Location } from '../models/Location';
 import { GOOGLE_API_KEY } from '../scripts/Config';
-import TransportationMode from '../models/TransportationMode';
+import {TransportationMode} from '../models/TransportationMode';
 
 /**
  * Returns current geolocation of the user.
@@ -19,11 +19,8 @@ export const getMyLocation = async (): Promise<Location | null> => {
     if (status === ExpoLocation.PermissionStatus.GRANTED) {
       const { coords } = await ExpoLocation.getCurrentPositionAsync({});
       const { latitude, longitude } = coords;
-      const coordinates = new Coordinates(latitude, longitude)
-      const location = new Location(
-        coordinates,
-        await getAddressByCoordinates(coordinates)
-      );
+      const coordinates = {latitude: latitude, longitude:longitude}
+      const location = {coordinates:coordinates, address: await getAddressByCoordinates(coordinates)};
       return location;
     } else {
       console.log('Permission to access location was denied');

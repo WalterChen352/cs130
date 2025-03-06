@@ -1,5 +1,5 @@
 import { getLocation, updateLocation } from '../app/scripts/Profile';
-import { Location, Coordinates } from '../app/models/Location';
+import { Location } from '../app/models/Location';
 import { openDatabase } from '../app/scripts/Database';
 
 jest.mock('../app/scripts/Database', () => ({
@@ -13,10 +13,10 @@ const locationToDb = (location: Location) => ({
   lon: location.coordinates.longitude,
 });
 
-const mockLocation = new Location(
-  new Coordinates(33.033, -44.044),
-  '7400 Boelter Hall, Los Angeles, CA 90095'
-);
+const mockLocation =
+  {coordinates: {latitude:33.033, longitude:-44.044},
+  address:'7400 Boelter Hall, Los Angeles, CA 90095'
+  };
 const mockLocationDb = locationToDb(mockLocation);
 
 describe('Profile Database', () => {

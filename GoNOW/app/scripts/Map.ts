@@ -80,7 +80,7 @@ export interface IMapEvent {
  * @returns {Promise<IMapEvent>} - A promise that resolves to an `IMapEvent` object.
  */
 const convertToMapEvent = async (event: Event): Promise<IMapEvent> => {
-  const coords: Coordinates = new Coordinates(event.latitude, event.longitude);
+  const coords: Coordinates = event.coordinates;
   const transportationMode: TransportationMode =
     event.transportationMode !== '' && !isNaN(Number(event.transportationMode))
     ? getTransportationMode(parseInt(event.transportationMode))

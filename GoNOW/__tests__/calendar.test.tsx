@@ -3,7 +3,7 @@ import { render, waitFor, cleanup, fireEvent,  act } from '@testing-library/reac
 import CalendarScreen from '../app/screens/CalendarScreen';
 import { ReactTestInstance } from 'react-test-renderer';
 import { IoniconsProps } from '../__mocks__/ionicons';
-import { SchedulingStyle } from '../app/models/SchedulingStyle';
+import { SS_ASAP } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import { Event } from '../app/models/Event';
 import { Workflow } from '../app/models/Workflow';
@@ -15,12 +15,6 @@ jest.mock('react-native-vector-icons/Ionicons', () => {
   };
 });
 
-const mockSchedulingStyles = [
-  new SchedulingStyle(0, 'Schedule close together'),
-  new SchedulingStyle(1, 'Schedule with max buffer'),
-  new SchedulingStyle(2, 'Schedule with middle buffer'),
-  new SchedulingStyle(3, 'Schedule with random buffer')
-];
 
 const now = new Date();
 const startTime1 = new Date(now);
@@ -32,40 +26,40 @@ startTime2.setHours(11, 0, 0);
 const endTime2 = new Date(now);
 endTime2.setHours(12, 0, 0);
 
-const mockEvents = [
-  new Event(
-    'Event1',
-    'description1',
-    startTime1.toLocaleString(),
-    endTime1.toLocaleString(),
-    0,
-    0,
-    'Driving',
-    1
-  ),
-  new Event(
-    'Event2',
-    'desc2',
-    startTime2.toLocaleString(),
-    endTime2.toLocaleString(),
-    0,
-    0,
-    'Driving',
-    null
-  )
+const mockEvents:Event[] = [
+  {
+    id:0,
+    name:'Event1',
+    description:'description1',
+    startTime:startTime1.toLocaleString(),
+    endTime:endTime1.toLocaleString(),
+    coordinates:{latitude:0, longitude:0},
+    transportationMode: 'DRIVE',
+    workflow:1
+  },
+  {
+    id:1,
+    name:'Event2',
+    description:'desc2',
+    startTime:startTime2.toLocaleString(),
+    endTime:endTime2.toLocaleString(),
+    coordinates:{latitude:0, longitude:0},
+    transportationMode:'DRIVE',
+    workflow:null
+  }
 ];
 
-const mockWorkflows = [
-  new Workflow(
-    1,
-    'Test Workflow',
-    Colors.DARK_GRAY,
-    true,
-    new Time(8, 30),
-    new Time(17, 0),
-    [true, false, true, false, true, false, true],
-    mockSchedulingStyles[3]
-  )
+const mockWorkflows:Workflow[] = [
+  {
+    id: 1,
+    name: 'Test Workflow',
+    color: Colors.DARK_GRAY,
+    pushNotifications: true,
+    timeStart: new Time(8,30),
+    timeEnd: new Time(17,0),
+    daysOfWeek: [true, false, true, false, true, false, true],
+    schedulingStyle: SS_ASAP
+  }
 ];
 
 jest.mock('../app/scripts/Workflow', () => ({

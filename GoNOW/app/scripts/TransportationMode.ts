@@ -1,26 +1,16 @@
-import { TransportationMode } from '../models/TransportationMode';
+import APP_TRANSPORTATION_MODES ,{ TransportationMode } from '../models/TransportationMode';
 
 /**
  * List of `TransportationMode` objects: Walk/Bus/Bike/Car
  *
  * @type {TransportationMode[]}
  */
-export const listTransportationModes: TransportationMode[] = [
-  new TransportationMode(0, '', '', '#666666'),           // no need Transportation
-  new TransportationMode(1, 'Walk', "walking", '#9034c9'),
-  new TransportationMode(2, 'Bus',  "transit",'#ed7d31'),
-  new TransportationMode(3, 'Bike', "bicycling", '#88c934'),
-  new TransportationMode(4, 'Car',  "driving", '#0089FF'),
-];
 
 /**
  * Returns the list of Transportation Modes.
  *
  * @returns {TransportationMode[]} - The list of `TransportationMode` objects.
  */
-export const getTransportationModes = ():TransportationMode[] => {
-  return listTransportationModes;
-};
 
 /**
  * Returns a Transportation Mode by given id.
@@ -29,11 +19,11 @@ export const getTransportationModes = ():TransportationMode[] => {
  * @returns {TransportationMode} - The `TransportationMode` object with given id.
  */
 export const getTransportationMode = (id: number):TransportationMode => {
-  for (const transportationMode of listTransportationModes){
+  for (const transportationMode of APP_TRANSPORTATION_MODES){
       if(transportationMode.id === id)
           return transportationMode;
   }
-  return listTransportationModes[0]; // default value
+  return APP_TRANSPORTATION_MODES[0]; // default value
 };
 
 /**
@@ -42,12 +32,12 @@ export const getTransportationMode = (id: number):TransportationMode => {
  * @param {string} name - The display name of `TransportationMode` object.
  * @returns {TransportationMode} - The `TransportationMode` object with given name.
  */
-export const getTransportationModeByName = (name: string):TransportationMode => {
-  for (const transportationMode of listTransportationModes){
+ export const getTransportationModeByName = (name: string):TransportationMode => {
+  for (const transportationMode of APP_TRANSPORTATION_MODES){
     if(transportationMode.name === name)
       return transportationMode;
   }
-  return listTransportationModes[0]; // default value
+  return APP_TRANSPORTATION_MODES[0]; // default value
 };
 
 /**
@@ -58,9 +48,9 @@ export const getTransportationModeByName = (name: string):TransportationMode => 
  */
 export const getTransportationModeByGisName = (apiName: string):TransportationMode => {
   const name = apiName.toLowerCase();
-  for (const transportationMode of listTransportationModes){
+  for (const transportationMode of APP_TRANSPORTATION_MODES){
     if(transportationMode.apiName === name)
       return transportationMode;
   }
-  return listTransportationModes[0]; // default value
+  return APP_TRANSPORTATION_MODES[0]; // default value
 };
