@@ -14,6 +14,7 @@ import { IMapEvent, MapEventAdapter } from '../scripts/Map';
 import { getLocation } from '../scripts/Profile';
 import { getTransportationModeByGisName, getTransportationMode } from '../scripts/TransportationMode';
 import { MapScreenStyles as styles } from '../styles/MapScreen.styles';
+import * as Haptics from 'expo-haptics';
 
 /**
  * `MapScreen` component that displays a with nearest events 
@@ -453,6 +454,7 @@ const MapScreen = (): JSX.Element => {
         icon="locate"
         bgColor="lightblue"
         onPress={() => {
+          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           mapRef.current?.animateToRegion(mapRegionDefault, 1000);
         }}
