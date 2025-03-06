@@ -64,7 +64,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) => {
         return (
           <TouchableOpacity
             key={index}
-            onPress={onPress}
+            onPress={void onPress}
             style={NavigatorStyles.tabButton}
           >
             <Ionicons
@@ -80,8 +80,8 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) => {
       {/* Create Task Button */}
       <TouchableOpacity
         style={NavigatorStyles.createButton}
-        onPress={async () => {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+        onPress={() => {
+          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
           navigation.navigate('CreateTask'); }}
       >
         <Ionicons name="add" size={30} color="white" />

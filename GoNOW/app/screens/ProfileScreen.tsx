@@ -16,7 +16,7 @@ import { getWorkflows } from '../scripts/Workflow';
 import { ProfileScreenStyles } from '../styles/ProfileScreen.styles';
 import { TabParamList } from './Navigator';
 import APP_SCHEDLING_STYLES from '../models/SchedulingStyle';
-
+import * as Haptics from 'expo-haptics';
 /**
  * `ProfileScreen` component that displays a profile of the user.
  *
@@ -92,7 +92,7 @@ const ProfileScreen = (): JSX.Element => {
     /** Calls rendering screen for new workflow.
      * This method does not return any value.
      */
-    const handleAdd = (): void => {
+    const handleAdd =()  => {
         const schedulingStyleDefault = APP_SCHEDLING_STYLES[0];
         const workflowDefault :Workflow= {
             id:0,
@@ -104,6 +104,7 @@ const ProfileScreen = (): JSX.Element => {
             daysOfWeek:new Array<boolean>(7).fill(false),
             schedulingStyle:schedulingStyleDefault
         };
+        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         navigation.navigate('Workflow', { workflow: workflowDefault });
     };
 
@@ -160,7 +161,8 @@ const ProfileScreen = (): JSX.Element => {
                         testID={`workflow-${String(item.id)}`}
                     >
                         <TouchableOpacity
-                            onPress={() => { navigation.navigate('Workflow', { workflow: item }); }}
+                            onPress={ () => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);;
+                                navigation.navigate('Workflow', { workflow: item }); }}
                             activeOpacity={0.9}
                             style={ProfileScreenStyles.workflowTouchable}
                             testID={`workflow-link-${String(item.id)}`}

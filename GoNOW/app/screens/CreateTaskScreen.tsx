@@ -201,14 +201,14 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
         await addEvent(e);
         Alert.alert('Success', 'Task created successfully');
       }
-      Haptics.notificationAsync(
+      void Haptics.notificationAsync(
         Haptics.NotificationFeedbackType.Success
       )
       resetForm();
       navigation.navigate('Daily', { date: e.startTime });
       
     } catch (error) {
-      Haptics.notificationAsync(
+      void Haptics.notificationAsync(
         Haptics.NotificationFeedbackType.Error
       )
       Alert.alert('Validation Error', error instanceof Error ? error.message : 'Unknown error');

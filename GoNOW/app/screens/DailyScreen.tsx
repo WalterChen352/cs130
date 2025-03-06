@@ -75,13 +75,13 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
     minute: '2-digit'
   };
 
-  const handleEdit = async (event: Event) => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  const handleEdit = (event: Event) => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('CreateTask', { mode: 'edit', eventData: event });
   };
 
-  const handleDelete =async (eventId: number) => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  const handleDelete = (eventId: number) => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Alert.alert(
       'Delete Event',
       'Are you sure you want to delete this event?',
@@ -99,13 +99,13 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
                 setEvents(currentEvents => currentEvents.filter(event => event.id !== eventId));
                 setSelectedEventId(null);
                 await deleteEvent(eventId);
-                Haptics.notificationAsync(
+                void Haptics.notificationAsync(
                   Haptics.NotificationFeedbackType.Success
                 )
               } catch (error) {
                 console.error('Failed to delete event', error);
                 Alert.alert('Error', 'Failed to delete event. Please try again.');
-                Haptics.notificationAsync(
+                void Haptics.notificationAsync(
                   Haptics.NotificationFeedbackType.Error
                 )
                 void loadEvents();
@@ -128,7 +128,7 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
     return (
       <TouchableOpacity 
         testID={item.name}
-        onPress={() => { handleEventPress(item.id); }}
+        onPress={() => { void handleEventPress(item.id); }}
         style={[
           styles.eventCard,
           isHighlighted && styles.highlightedEventCard,

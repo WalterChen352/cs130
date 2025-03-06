@@ -97,8 +97,8 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
      * @param {number} indexDay - The index of the day of week that is included to or excluded from `daysOfWeek`.
      * @returns {void} - This component does not return any value.
      */
-    const toggleDay = async (indexDay: number): Promise<void> => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const toggleDay = (indexDay: number): void=> {
+        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setDaysOfWeek((prev) => {
             const next = [...prev];
             next[indexDay] = !next[indexDay];
