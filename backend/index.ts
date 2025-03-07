@@ -13,6 +13,7 @@ const PORT = process.env.PORT??8080;
 app.use(bodyParser.json())
 
 const apiKey = process.env.API_KEY??'';   
+const accessToken = process.env.ACCESS_TOKEN??'';
 
 interface RouteRequestBody {
     origin:Coordinates;
@@ -28,16 +29,24 @@ interface AutoscheduleRequestBody {
     timeZone:string,
     name:string,
     description:string,
-    transportation:string,
-    style:SchedulingStyle
+    transportation:string
 }
 
-// TODO: Adding a lint ignore to make it go through for now, but
-// we should eventually remove this disable when we have implemented
-// more features with api key.
-app.get('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleRequestBody>, res: Response) => {
+app.use((req:Request, res:Response, next) => {
+    //authenticate all incoming things
+    // console.log(req)
+    // console.log(req.headers)
+    console.log(req.headers['access-token'])
+    if(req.headers['access-token']===undefined || req.headers['access-token']!== accessToken){
+        res.status(500).send('unable to authenticate request')
+        return;
+    }
+    next();
+})
+
+app.post('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleRequestBody>, res: Response) => {
     //parse incoming parameters
-    const {style } =req.body;
+    const style =req.body.workflow.schedulingStyle;
     const {events, workflow, coordinates, duration, timeZone, name, description, transportation}=req.body
     let result:null|Event = null;
     //get event
@@ -59,7 +68,7 @@ app.get('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleR
     }   
 });
 
-app.get('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordinates:Coordinates}>, res: Response) => {
+app.post('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordinates:Coordinates}>, res: Response) => {
     const result =await computeTravelTime(apiKey, req.body.coordinates, req.body.event.coordinates, req.body.event.transportationMode, null, req.body.event.startTime)
     //send send back to user
     console.log('result', result);
@@ -67,7 +76,7 @@ app.get('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordin
     console.log()
 });
 
-app.get('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, res: Response) => {
+app.post('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, res: Response) => {
     //TODO
     //parse incoming task for location
     console.log(req.body)
@@ -79,7 +88,7 @@ app.get('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, r
     const headers = new Headers({
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,
-        'X-Goog-FieldMask': 'routes.polyline.encodedPolyline'
+        'X-Goog-FieldMask': '*'
     });
 
     const body = JSON.stringify({
@@ -87,7 +96,7 @@ app.get('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, r
             location: { latLng: { latitude: origin.latitude, longitude: origin.longitude } }
         },
         destination: {
-            location: { latLng: { latitude: destination.latitude, longitude: destination.latitude } }
+            location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } }
         },
         travelMode: travelMode
     });
@@ -100,9 +109,11 @@ app.get('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, r
         });
 
         if (!response.ok) throw new Error(`HTTP Error: ${String(response.status)}`);
-
-        const responseData = await response.json() as Record<string, unknown>;
-        res.send(responseData);
+        //const responseText = await response.text();
+        //console.log('Raw response:', responseText);
+        const responseData = await response.json();
+        console.log('response data', responseData);
+        res.status(200).send(responseData); 
 
     } catch (error) {
         console.error('Error fetching route:', error);

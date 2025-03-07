@@ -22,7 +22,7 @@ export interface Workflow {
     timeStart: Time;
     timeEnd: Time
     daysOfWeek: boolean[],
-    schedulingStyle: SchedulingStyle|null
+    schedulingStyle: SchedulingStyle
 }
 
 export interface Coordinates {
