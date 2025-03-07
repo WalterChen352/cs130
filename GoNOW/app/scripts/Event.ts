@@ -154,14 +154,19 @@ export const addEvent = async (e: Event, auto_schedule:boolean, duration: number
       if(e.workflow!==null){
     //query all events coming up in 14 days and corresponding workflow
         const [wf, events] =await Promise.all([getWorkflowById(e.workflow), getFutureEvents(new Date(Date.now()), 14)] ) ;
-        if(wf!==null &&wf.timeEnd.toInt()-wf.timeStart.toInt()>duration){
+        if(wf!==null &&wf.timeEnd.toInt()-wf.timeStart.toInt()<duration){
           throw new Error('tried to schedule event lasting longer than the workflow bounds')
         }
+        const datedEvents = events.map(e=>{
+          const d= new Date(e.startTime).toISOString()
+          e.startTime=d
+          return e
+        })
         const autoScheduledEvent = await fetch(url, {
           method: 'POST',
           headers: headers,
           body: JSON.stringify({
-            events:events,
+            events:datedEvents,
             workflow: wf,
             coordinates: e.coordinates,
             duration: duration,

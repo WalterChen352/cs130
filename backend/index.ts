@@ -64,6 +64,7 @@ app.get('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordin
     //send send back to user
     console.log('result', result);
     res.status(200).json({travelTime: result});
+    console.log()
 });
 
 app.get('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, res: Response) => {
