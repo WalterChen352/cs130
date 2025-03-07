@@ -102,3 +102,7 @@ export const styles = StyleSheet.create({
     marginBottom: Spacing.PADDING_SMALL,
   },
 });
+
+export const switchColors={
+  trackColor:{false: Colors.BACKGROUND, true: Colors.DEFAULT_BLUE}
+}

@@ -16,6 +16,13 @@ interface rowData {
     workflow: number|null;
 }
 
+const url="https://gonow-5ry2jtelsq-wn.a.run.app/api/autoschedule"
+const headers = {
+  Accept: 'application/json',
+  'Content-Type': 'application/json',
+  'access-token': process.env.ACCESS_TOKEN || ''
+}
+
 
 export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
   console.log('getting events for date:', eventDate);
@@ -132,11 +139,31 @@ export const clearEvents = async():Promise<void>=>{ //just for clearing local st
 
 
 
-export const addEvent = async (e: Event): Promise<void> => {
+export const addEvent = async (e: Event, auto_schedule:boolean, duration: number|null): Promise<void> => {
   try {
+    if (duration===null)
+      throw new Error('tried to call autoschedule without a duration')
+    //autoschedule first
+    
+
     const DB = await SQLite.openDatabaseAsync(DB_NAME);
     console.log('db', DB);
-    
+    //query all events coming up in 14 days
+    //query corresponding workflow
+    if(auto_schedule){
+      const autoScheduledEvent = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+          coordinates: e.coordinates,
+          duration: duration,
+          name: e.name,
+          description: e.description,
+          transporation: e.transportationMode,
+          style: 
+        })
+      })
+    }
     // Since workflow is number|null, we don't need to check for undefined
     const query = `INSERT INTO events
       (name, description, startTime, endTime, coordinates, transportationMode, workflow)
@@ -246,38 +273,35 @@ export const validateEvent = (event: Event, auto_schedule: boolean): void => {
   if (!event.name) {
     errors.push('The Event Name field is required.');
   }
-  
-  // Check time consistency
-  if (event.startTime && !event.endTime) {
-    errors.push('The event has a start time but no end time.');
+  if(auto_schedule){ //if autoschedule we dont care about enforcing any of the time constraints
+    const hasWorkflow = event.workflow !== null;
+    // Core validation: Either time is set OR (autoschedule is enabled AND workflow is selected)
+    if ( !hasWorkflow) {
+      errors.push('An autoscheduled task must be assigned to a workflow.');
+    }
+    
   }
-  
-  if (event.endTime && !event.startTime) {
-    errors.push('The event has an end time but no start time.');
-  }
-  
-  // Check if event end time is after start time
-  if (event.startTime && event.endTime) {
-    const startTimeDate = new Date(event.startTime);
-    const endTimeDate = new Date(event.endTime);
-    if (startTimeDate > endTimeDate) {
-      errors.push('The end time of the event must be later than the start time. Overnight events are not supported.');
+  else{
+    // Check time consistency
+    if (event.startTime && !event.endTime) {
+      errors.push('The event has a start time but no end time.');
+    }
+    
+    if (event.endTime && !event.startTime) {
+      errors.push('The event has an end time but no start time.');
+    }
+    
+    // Check if event end time is after start time
+    if (event.startTime && event.endTime) {
+      const startTimeDate = new Date(event.startTime);
+      const endTimeDate = new Date(event.endTime);
+      if (startTimeDate > endTimeDate) {
+        errors.push('The end time of the event must be later than the start time. Overnight events are not supported.');
+      }
     }
   }
-  
   // Check the core requirement: Either set time OR (autoschedule AND workflow)
-  const hasTimeSet = Boolean(event.startTime) && Boolean(event.endTime);
-  const hasWorkflow = event.workflow !== -1;
   
-  // Core validation: Either time is set OR (autoschedule is enabled AND workflow is selected)
-  if (!hasTimeSet && !(auto_schedule && hasWorkflow)) {
-    errors.push('You must either set a time for the event OR enable autoschedule and select a workflow.');
-  }
-  
-  // Additional check: If autoschedule is enabled, a workflow must be selected (for clarity)
-  if (auto_schedule && !hasWorkflow) {
-    errors.push('Please select a workflow when autoschedule is enabled.');
-  }
   
   if (errors.length > 0) {
     throw new Error(errors.join('\n'));

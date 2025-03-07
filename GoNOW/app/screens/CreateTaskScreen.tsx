@@ -25,10 +25,11 @@ import { TabParamList } from './Navigator';
 import { formatDate } from '../scripts/Date';
 
 //styles imports
-import { styles } from '../styles/CreateTaskScreen.styles';
+import { styles, switchColors } from '../styles/CreateTaskScreen.styles';
 
 // Navigation imports
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 
 
 interface CreateTaskScreenProps {
@@ -118,6 +119,18 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
     setEndDate(newEndDate);
   };
 
+  //**
+  // handles change of autoschedule switch
+  //  */
+
+  const handleAutoschedule=(newVal: boolean)=>{ 
+    if(newVal){//autoschedule so reset the dates and times
+      setEndDate(new Date())
+      setStartDate(new Date())
+    } 
+    setAutoSchedule(newVal)
+  }
+
   // Populate form with event data if in edit mode
   useEffect(() => {
     if (isEditMode && eventData) {
@@ -195,7 +208,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
         await updateEvent(e);
         Alert.alert('Success', 'Task updated successfully');
       } else {
-        await addEvent(e);
+        await addEvent(e, autoSchedule);
         Alert.alert('Success', 'Task created successfully');
       }
       
@@ -234,7 +247,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
           onChangeText={setTitle}
         />
     
-        <View style={styles.dateContainer}>
+        <View style={[styles.dateContainer, {opacity: autoSchedule ? 0.5 : 1 } ]} pointerEvents={autoSchedule ? 'none' : 'auto'}>
           <DateSelector
             value={startDate}
             onChange={handleStartDateChange}
@@ -242,7 +255,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
           />
         </View>
     
-        <View style={styles.timeRow}>
+        <View style={[styles.timeRow, {opacity: autoSchedule ? 0.5 : 1 }]} pointerEvents={autoSchedule ? 'none' : 'auto'}>
           <TimeSelector
             value={startDate}
             onChange={handleStartTimeChange}
@@ -270,6 +283,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
     
         <View style={styles.switchRow}>
           <Switch 
+            trackColor={switchColors.trackColor}
             value={autoSchedule} 
             onValueChange={setAutoSchedule}
             testID="Autoschedule"
