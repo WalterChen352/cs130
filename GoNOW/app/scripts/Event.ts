@@ -224,8 +224,7 @@ export const updateEvent = async (e: Event): Promise<void> => {
           description = ?, 
           startTime = ?,
           endTime = ?,
-          latitude = ?,
-          longitude = ?,
+          coordinates =?,
           transportationMode = ?,
           workflow = ?
       WHERE id = ?;`;
