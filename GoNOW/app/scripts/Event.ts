@@ -17,11 +17,12 @@ interface rowData {
     workflow: number|null;
 }
 
-const url="https://gonow-5ry2jtelsq-wn.a.run.app/api/autoschedule"
+//const url="https://gonow-5ry2jtelsq-wn.a.run.app/api/autoschedule"
+const url="localhost:8080/api/autoschedule"
 const headers = {
   Accept: 'application/json',
   'Content-Type': 'application/json',
-  'access-token': process.env.ACCESS_TOKEN || ''
+  'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN || ''
 }
 
 
@@ -158,10 +159,14 @@ export const addEvent = async (e: Event, auto_schedule:boolean, duration: number
           throw new Error('tried to schedule event lasting longer than the workflow bounds')
         }
         const datedEvents = events.map(e=>{
-          const d= new Date(e.startTime).toISOString()
-          e.startTime=d
+          const newStart= new Date(e.startTime).toISOString()
+          e.startTime=newStart
+          const newEnd = new Date(e.endTime).toISOString()
+          e.endTime=newEnd
+          
           return e
         })
+        console.log('dated events', datedEvents)
         const autoScheduledEvent = await fetch(url, {
           method: 'POST',
           headers: headers,
@@ -170,13 +175,13 @@ export const addEvent = async (e: Event, auto_schedule:boolean, duration: number
             workflow: wf,
             coordinates: e.coordinates,
             duration: duration,
-            timeZone: '', //placeholder
+            timeZone: "America/Los_Angeles", //placeholder
             name: e.name,
             description: e.description,
-            transporation: e.transportationMode,
-            style: wf?.schedulingStyle
+            transporation: e.transportationMode
           })
         })
+        console.log('autoscheduledeventt', autoScheduledEvent)
       }
       else{
         throw new Error('tried to autoschedule event without a workflow')
