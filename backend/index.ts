@@ -62,7 +62,7 @@ app.get('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleR
 app.get('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordinates:Coordinates}>, res: Response) => {
     const result =await computeTravelTime(apiKey, req.body.coordinates, req.body.event.coordinates, req.body.event.transportationMode, null, req.body.event.startTime)
     //send send back to user
-    console.log('result')
+    console.log('result', result);
     res.status(200).json({travelTime: result});
 });
 
