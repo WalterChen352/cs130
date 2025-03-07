@@ -14,10 +14,9 @@ app.use(bodyParser.json())
 
 const apiKey = process.env.API_KEY??'';   
 
-interface RouteRequestBody {
-    origin:Coordinates;
-    destination:Coordinates;
-    travelMode: string;
+export interface RouteRequestBody {
+    event:Event,
+    coordinates:Coordinates;
 }
 
 interface AutoscheduleRequestBody {
