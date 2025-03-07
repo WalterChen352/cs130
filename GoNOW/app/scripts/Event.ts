@@ -3,6 +3,7 @@ import { Event } from '../models/Event';
 import { DB_NAME } from './Database';
 import { formatDate } from './Date';
 import Coordinates from '../models/Location';
+import { getWorkflowById } from './Workflow';
 
 
 interface rowData {
@@ -67,12 +68,16 @@ export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
   }
 };
 
-export const getWeeklyEvents = async(date: Date): Promise<Event[]> => {
+export const getWeeklyEvents= async(date: Date): Promise<Event[]>=>{
   console.log('getting weekly events for ', date);
-  
+  const results = await getFutureEvents(date, 7);
+  return results;
+}
+
+export const getFutureEvents = async(date: Date, daysAhead: number): Promise<Event[]> => {
   const startDate = new Date(date);
   const endDate = new Date(date);
-  endDate.setDate(endDate.getDate() + 7);
+  endDate.setDate(endDate.getDate() + daysAhead);
   
   const startStr = formatDateForSQLite(startDate);
   const endStr = formatDateForSQLite(endDate);
@@ -141,29 +146,39 @@ export const clearEvents = async():Promise<void>=>{ //just for clearing local st
 
 export const addEvent = async (e: Event, auto_schedule:boolean, duration: number|null): Promise<void> => {
   try {
-    if (duration===null)
-      throw new Error('tried to call autoschedule without a duration')
-    //autoschedule first
     
-
+    //autoschedule first
+    if(auto_schedule){
+      if (duration===null)
+        throw new Error('tried to call autoschedule without a duration')
+      if(e.workflow!==null){
+    //query all events coming up in 14 days and corresponding workflow
+        const [wf, events] =await Promise.all([getWorkflowById(e.workflow), getFutureEvents(new Date(Date.now()), 14)] ) ;
+        if(wf!==null &&wf.timeEnd.toInt()-wf.timeStart.toInt()>duration){
+          throw new Error('tried to schedule event lasting longer than the workflow bounds')
+        }
+        const autoScheduledEvent = await fetch(url, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({
+            events:events,
+            workflow: wf,
+            coordinates: e.coordinates,
+            duration: duration,
+            timeZone: '', //placeholder
+            name: e.name,
+            description: e.description,
+            transporation: e.transportationMode,
+            style: wf?.schedulingStyle
+          })
+        })
+      }
+      else{
+        throw new Error('tried to autoschedule event without a workflow')
+      }
+    }
     const DB = await SQLite.openDatabaseAsync(DB_NAME);
     console.log('db', DB);
-    //query all events coming up in 14 days
-    //query corresponding workflow
-    if(auto_schedule){
-      const autoScheduledEvent = await fetch(url, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-          coordinates: e.coordinates,
-          duration: duration,
-          name: e.name,
-          description: e.description,
-          transporation: e.transportationMode,
-          style: 
-        })
-      })
-    }
     // Since workflow is number|null, we don't need to check for undefined
     const query = `INSERT INTO events
       (name, description, startTime, endTime, coordinates, transportationMode, workflow)

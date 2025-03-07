@@ -14,7 +14,7 @@ import { TabParamList } from './Navigator';
 import DropdownPicker from '../components/DropdownPicker';
 import TimeSelector from '../components/TimeSelector';
 import APP_SCHEDLING_STYLES from '../models/SchedulingStyle';
-
+import { switchColors } from '../styles/Common.styles';
 /**
  * Properties for screen `WorkflowScreen`.
  *
@@ -200,6 +200,7 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
 
                 <View style={WorkflowScreenStyles.center}>
                 <Switch
+                    trackColor={switchColors.trackColor}
                     value={pushNotifications}
                     onValueChange={setPushNotifications}
                     testID="workflow-push-notifications"

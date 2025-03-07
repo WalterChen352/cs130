@@ -8,6 +8,7 @@ import DropdownPicker from '../components/DropdownPicker';
 import TimeSelector from '../components/TimeSelector';
 import ButtonSave from '../components/ButtonSave';
 import DateSelector from '../components/DateSelector';
+import DurationPicker from '../components/DurationPicker';
 
 // Model imports
 import { Workflow } from '../models/Workflow';
@@ -25,8 +26,8 @@ import { TabParamList } from './Navigator';
 import { formatDate } from '../scripts/Date';
 
 //styles imports
-import { styles, switchColors } from '../styles/CreateTaskScreen.styles';
-
+import { styles } from '../styles/CreateTaskScreen.styles';
+import { switchColors } from '../styles/Common.styles';
 // Navigation imports
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
@@ -58,6 +59,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
   const [coordinates, setCoordinates] = useState<Coordinates>({latitude: 0, longitude: 0});
   const [description, setDescription] = useState<string>('');
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  const [duration, setDuration] = useState(0);
 
   /** Dropdown options for transportation modes */
   const transportModeOptions = APP_TRANSPORTATION_MODES.map(tm=>({
@@ -122,14 +124,6 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
   //**
   // handles change of autoschedule switch
   //  */
-
-  const handleAutoschedule=(newVal: boolean)=>{ 
-    if(newVal){//autoschedule so reset the dates and times
-      setEndDate(new Date())
-      setStartDate(new Date())
-    } 
-    setAutoSchedule(newVal)
-  }
 
   // Populate form with event data if in edit mode
   useEffect(() => {
@@ -208,7 +202,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
         await updateEvent(e);
         Alert.alert('Success', 'Task updated successfully');
       } else {
-        await addEvent(e, autoSchedule);
+        await addEvent(e, autoSchedule, duration);
         Alert.alert('Success', 'Task created successfully');
       }
       
@@ -269,6 +263,10 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
             label="End"
             testID="End-Time-Selector"
           />
+        </View>
+        <View>
+          {autoSchedule?<DurationPicker setDuration={setDuration}/>
+          :<></>}
         </View>
     
         <View style={styles.dropdownSection1}>

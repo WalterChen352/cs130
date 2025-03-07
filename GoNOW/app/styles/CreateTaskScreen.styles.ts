@@ -103,6 +103,3 @@ export const styles = StyleSheet.create({
   },
 });
 
-export const switchColors={
-  trackColor:{false: Colors.BACKGROUND, true: Colors.DEFAULT_BLUE}
-}
