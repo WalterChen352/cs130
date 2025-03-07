@@ -29,8 +29,7 @@ interface AutoscheduleRequestBody {
     timeZone:string,
     name:string,
     description:string,
-    transportation:string,
-    style:SchedulingStyle
+    transportation:string
 }
 
 app.use((req:Request, res:Response, next) => {
@@ -47,7 +46,7 @@ app.use((req:Request, res:Response, next) => {
 
 app.post('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleRequestBody>, res: Response) => {
     //parse incoming parameters
-    const {style } =req.body;
+    const style =req.body.workflow.schedulingStyle;
     const {events, workflow, coordinates, duration, timeZone, name, description, transportation}=req.body
     let result:null|Event = null;
     //get event
