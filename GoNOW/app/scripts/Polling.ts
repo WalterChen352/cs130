@@ -1,4 +1,3 @@
-import { min } from 'lodash';
 import { RouteRequestBody } from '../../../backend/index';
 import { getNextEvent } from './Event';
 import { getMyLocation } from './Geo';
@@ -7,8 +6,9 @@ interface routeResponse {
     travelTime: number;
 }
 
-const MS_PER_S = 1000;
-const S_PER_MIN = 60;
+export const POLLING_INTERVAL_MIN = 15; // 15 minutes, minimum recommended interval for background fetch is 15 minutes
+export const MS_PER_S = 1000;
+export const S_PER_MIN = 60;
 
 export const poll = async (): Promise<void> => {
     const url = "https://gonow-5ry2jtelsq-wn.a.run.app/api/poll";
@@ -58,12 +58,15 @@ export const poll = async (): Promise<void> => {
         console.log("Response Data:", data);
 
         // Check when we need to leave to arrive on time
-        const travelTime = data.travelTime;
+        const travelTime = data.travelTime; // minutes
         const cur_time = +new Date();
-        const ms_to_event = +new Date(next_event.startTime) - cur_time; // milliseconds
+        const ms_to_event = +new Date(next_event.startTime) - cur_time; // Date - Date = ms difference
         const min_to_event = ms_to_event/(MS_PER_S*S_PER_MIN); // minutes
-        if (min_to_event < travelTime){
-            console.log("GO NOW");
+        const min_to_leave = min_to_event - travelTime;
+        if (min_to_leave < POLLING_INTERVAL_MIN){ // If we need to leave before the next poll, notify the user and schedule notification
+          console.log(`Leave in ${min_to_leave.toString()} minutes to arrive on time`);
+          //TODO:: Add notification now
+          //TODO:: Schedule notification for min_to_leave minutes from now
         }
       } catch (error) {
         console.error("Error making request:", error);

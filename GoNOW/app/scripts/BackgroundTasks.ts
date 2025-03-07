@@ -1,7 +1,7 @@
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
 
-import { poll } from './Polling';
+import { poll, POLLING_INTERVAL_MIN, S_PER_MIN } from './Polling';
 
 const BACKGROUND_FETCH_TASK = 'background-fetch';
 
@@ -24,7 +24,7 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () : Promise<BackgroundFetch
 export async function registerBackgroundFetchAsync(): Promise<void> {
   try {
     await BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-      minimumInterval: 60 * 15, // 15 minutes, minimum recommended interval is 15 minutes
+      minimumInterval: S_PER_MIN * POLLING_INTERVAL_MIN, 
       stopOnTerminate: false, // android only
       startOnBoot: true, // android only
     });
