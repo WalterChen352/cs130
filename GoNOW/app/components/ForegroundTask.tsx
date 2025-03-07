@@ -3,6 +3,7 @@ import { useEffect } from "react";
 
 const ForegroundTask: React.FC = () => {
   useEffect(() => {
+    void poll(); // Initial call
     const interval = setInterval(() => {
         void poll();
         console.log(`Foreground task executed at ${new Date().toISOString()}`);
