@@ -1,3 +1,4 @@
+import { min } from 'lodash';
 import { RouteRequestBody } from '../../../backend/index';
 import { getNextEvent } from './Event';
 import { getMyLocation } from './Geo';
@@ -5,6 +6,9 @@ import { getMyLocation } from './Geo';
 interface routeResponse {
     travelTime: number;
 }
+
+const MS_PER_S = 1000;
+const S_PER_MIN = 60;
 
 export const poll = async (): Promise<void> => {
     const url = "https://gonow-5ry2jtelsq-wn.a.run.app/api/poll";
@@ -53,11 +57,12 @@ export const poll = async (): Promise<void> => {
         const data = await response.json() as routeResponse;
         console.log("Response Data:", data);
 
+        // Check when we need to leave to arrive on time
         const travelTime = data.travelTime;
-        const start = +new Date();
-        const diff = +new Date(next_event.startTime) - start; // milliseconds
-        const diff_min = diff/(1000*60); // minutes
-        if (diff_min < travelTime){
+        const cur_time = +new Date();
+        const ms_to_event = +new Date(next_event.startTime) - cur_time; // milliseconds
+        const min_to_event = ms_to_event/(MS_PER_S*S_PER_MIN); // minutes
+        if (min_to_event < travelTime){
             console.log("GO NOW");
         }
       } catch (error) {
