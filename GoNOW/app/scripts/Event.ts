@@ -17,8 +17,8 @@ interface rowData {
     workflow: number|null;
 }
 
-//const url="https://gonow-5ry2jtelsq-wn.a.run.app/api/autoschedule"
-const url="localhost:8080/api/autoschedule"
+const url="https://gonow-5ry2jtelsq-wn.a.run.app/api/autoschedule"
+//const url="http://localhost:8080/api/autoschedule"
 const headers = {
   Accept: 'application/json',
   'Content-Type': 'application/json',
@@ -167,21 +167,24 @@ export const addEvent = async (e: Event, auto_schedule:boolean, duration: number
           return e
         })
         console.log('dated events', datedEvents)
+        const body={
+          events:datedEvents,
+          workflow: wf,
+          coordinates: e.coordinates,
+          duration: duration,
+          timeZone: "America/Los_Angeles", //placeholder
+          name: e.name,
+          description: e.description,
+          transporation: e.transportationMode
+        }
+        console.log('autoschedule body', body)
         const autoScheduledEvent = await fetch(url, {
           method: 'POST',
           headers: headers,
-          body: JSON.stringify({
-            events:datedEvents,
-            workflow: wf,
-            coordinates: e.coordinates,
-            duration: duration,
-            timeZone: "America/Los_Angeles", //placeholder
-            name: e.name,
-            description: e.description,
-            transporation: e.transportationMode
-          })
+          body: JSON.stringify(body)
         })
-        console.log('autoscheduledeventt', autoScheduledEvent)
+        const result = autoScheduledEvent.json()
+        console.log('autoscheduledeventt', result)
       }
       else{
         throw new Error('tried to autoschedule event without a workflow')

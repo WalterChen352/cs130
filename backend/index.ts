@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import fetch, { Headers } from 'node-fetch';
 import { autoschedule } from './schedule';
-import type {Workflow,Coordinates, Event, SchedulingStyle} from './types'
+import type {Workflow,Coordinates, Event} from './types'
 import { computeTravelTime } from './mapsQueries';
 import bodyParser from 'body-parser';
 
@@ -46,11 +46,11 @@ app.use((req:Request, res:Response, next) => {
 
 app.post('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleRequestBody>, res: Response) => {
     //parse incoming parameters
-    const style =req.body.workflow.schedulingStyle;
+    const style =req.body.workflow.schedulingStyle.id;
     const {events, workflow, coordinates, duration, timeZone, name, description, transportation}=req.body
     let result:null|Event = null;
     //get event
-    switch(style.id){
+    switch(style){
         case (0):
             //one per day
             result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, true, transportation)

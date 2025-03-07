@@ -19,7 +19,7 @@ import { Event } from '../models/Event';
 import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
-import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
+import { getWorkflowById, getWorkflows, tryFilterWfId } from '../scripts/Workflow';
 import APP_TRANSPORTATION_MODES from '../models/TransportationMode';
 
 import { TabParamList } from './Navigator';
@@ -134,7 +134,6 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
       setEndDate(new Date(eventData.endTime));
       setCoordinates(eventData.coordinates)
       setTransportationMode(eventData.transportationMode);
-      
       if (eventData.workflow) {
         const workflowObj = tryFilterWfId(workflows, eventData.workflow);
         if (workflowObj) {
