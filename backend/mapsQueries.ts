@@ -20,7 +20,7 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
         'X-Goog-FieldMask': 'routes.duration'
     });
     //set params based on departure or arrive
-    const params = departureTime!==null?{
+    const params = arrivalTime===null?{
         origin: {
             location: { latLng: { latitude: origin.latitude, longitude: origin.longitude } }
         },
@@ -28,6 +28,7 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
             location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } }
         },
         travelMode: travelMode,
+        routingPreference: "TRAFFIC_AWARE",
         departureTime: departureTime
         }
         :
@@ -39,6 +40,7 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
             location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } }
         },
         travelMode: travelMode,
+        routingPreference: "TRAFFIC_AWARE",
         arrivalTime:arrivalTime
         }
     const body=JSON.stringify(params);

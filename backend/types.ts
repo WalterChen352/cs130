@@ -31,6 +31,6 @@ export interface Coordinates {
 }
 
 export interface Time {
-    Hours: number,
-    Minutes: number
+    hours: number,
+    minutes: number
 }

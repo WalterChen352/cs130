@@ -51,10 +51,10 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
     // Try to schedule an event on each available day
     for (const date of availableDates) {
         // Convert workflow time bounds to Date objects for this specific date in the given timezone
-        const startHour = w.timeStart.Hours;
-        const startMinute = w.timeStart.Minutes;
-        const endHour = w.timeEnd.Hours;
-        const endMinute = w.timeEnd.Minutes;
+        const startHour = w.timeStart.hours;
+        const startMinute = w.timeStart.minutes;
+        const endHour = w.timeEnd.hours;
+        const endMinute = w.timeEnd.minutes;
         
         // Get year, month, day in the specified timezone
         const dateParts = date.toLocaleDateString('en-US', { 
@@ -138,7 +138,7 @@ const findAvailableTime=async(
             apiKey,
             {latitude: event.coordinates.latitude, longitude: event.coordinates.longitude},
             coordinates,
-            transportationMode, null, String(eventStart.getTime())
+            transportationMode, null, eventStart.toISOString()
         );
         
         // Estimate travel time from our location to event location
@@ -146,7 +146,7 @@ const findAvailableTime=async(
             apiKey,
             coordinates,
             {latitude: event.coordinates.latitude, longitude: event.coordinates.longitude},
-            transportationMode, String(eventEnd.getTime()), null
+            transportationMode, eventEnd.toISOString(), null
         );
         
         // Add buffer for travel time
