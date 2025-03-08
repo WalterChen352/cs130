@@ -4,10 +4,10 @@ import { computeTravelTime } from "./mapsQueries";
 export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], coordinates: Coordinates, duration: number, timeZone: string, name: string, description: string, onePerDay:boolean, transportation='DRIVE'): Promise<Event | null> => {
     // Get the current date in the specified timezone
     const now = new Date();
-    
+    const DATES_MAX=14
     // Generate dates for the next 14 days
     const nextTwoWeeks: Date[] = [];
-    for (let i = 0; i < 14; i++) {
+    for (let i = 1; i < DATES_MAX; i++) {
         const date = new Date(now);
         date.setDate(date.getDate() + i);
         nextTwoWeeks.push(date);
@@ -25,6 +25,7 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
     else
          allowedDates= nextTwoWeeks;
     
+    console.log(allowedDates)
     // Filter out days that already have an event for this workflow
     const availableDates = allowedDates.filter(date => {
         // Format date in the specified timezone
