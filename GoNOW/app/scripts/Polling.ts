@@ -64,7 +64,15 @@ export const poll = async (): Promise<void> => {
         const min_to_event = ms_to_event/(MS_PER_S*S_PER_MIN); // minutes
         const min_to_leave = min_to_event - travelTime;
         if (min_to_leave < POLLING_INTERVAL_MIN){ // If we need to leave before the next poll, notify the user and schedule notification
-          console.log(`Leave in ${min_to_leave.toString()} minutes to arrive on time`);
+          if(min_to_leave < 0) {
+            console.log(`You are running ${Math.abs(min_to_leave).toString()} minutes late for ${next_event.name}!`);
+          }
+          else if (Math.floor(min_to_leave) === 0){
+            console.log(`Leave now to arrive on time for ${next_event.name}`);
+          }
+          else{
+            console.log(`Leave in ${min_to_leave.toString()} minutes to arrive on time for ${next_event.name}`);
+          }
           //TODO:: Add notification now
           //TODO:: Schedule notification for min_to_leave minutes from now
         }
