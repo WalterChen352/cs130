@@ -1,4 +1,4 @@
-import { RouteRequestBody } from '../../../backend/index';
+import { travelTimeRequestBody } from '../../../backend/index';
 import { getNextEvent } from './Event';
 import { getMyLocation } from './Geo';
 
@@ -37,7 +37,7 @@ export const poll = async (): Promise<void> => {
         return;
     }
     else{
-        const requestBody: RouteRequestBody = {
+        const requestBody: travelTimeRequestBody = {
             event: next_event,
             coordinates: current_location.coordinates,
         }
