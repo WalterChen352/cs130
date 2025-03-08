@@ -278,7 +278,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
           />
         </View>
     
-        <View style={styles.switchRow}>
+        {isEditMode?<></>:<View style={styles.switchRow}>
           <Switch 
             trackColor={switchColors.trackColor}
             value={autoSchedule} 
@@ -286,7 +286,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
             testID="Autoschedule"
           />
           <Text style={styles.switchLabel}>Autoschedule</Text>
-        </View>
+        </View>}
     
         <View style={styles.dropdownSection2}>
           <DropdownPicker
