@@ -1,9 +1,9 @@
-import { RouteRequestBody } from '../../../backend/index';
+import { travelTimeRequestBody } from '../../../backend/index';
 import { getNextEvent } from './Event';
 import { getMyLocation } from './Geo';
 
 interface routeResponse {
-    travelTime: number;
+  travelTime: number;
 }
 
 export const POLLING_INTERVAL_MIN = 15; // 15 minutes, minimum recommended interval for background fetch is 15 minutes
@@ -37,9 +37,9 @@ export const poll = async (): Promise<void> => {
         return;
     }
     else{
-        const requestBody: RouteRequestBody = {
-            event: next_event,
-            coordinates: current_location.coordinates,
+        const requestBody: travelTimeRequestBody = {
+          event: next_event,
+          coordinates: current_location.coordinates,
         }
 
         try {
