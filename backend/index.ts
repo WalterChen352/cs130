@@ -1,6 +1,5 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import fetch, { Headers } from 'node-fetch';
 import { autoschedule } from './schedule';
 import type {Workflow,Coordinates, Event, SchedulingStyle} from './types'
 import { computeTravelTime } from './mapsQueries';
@@ -65,48 +64,6 @@ app.get('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordin
     res.status(200).json({travelTime: result});
 });
 
-app.get('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, res: Response) => {
-    //TODO
-    //parse incoming task for location
-    console.log(req.body)
-    const { origin, destination, travelMode } = req.body;
-    
-    //construct request
-    const url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
-
-    const headers = new Headers({
-        'Content-Type': 'application/json',
-        'X-Goog-Api-Key': apiKey,
-        'X-Goog-FieldMask': 'routes.polyline.encodedPolyline'
-    });
-
-    const body = JSON.stringify({
-        origin: {
-            location: { latLng: { latitude: origin.latitude, longitude: origin.longitude } }
-        },
-        destination: {
-            location: { latLng: { latitude: destination.latitude, longitude: destination.latitude } }
-        },
-        travelMode: travelMode
-    });
-
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: headers,
-            body: body
-        });
-
-        if (!response.ok) throw new Error(`HTTP Error: ${String(response.status)}`);
-
-        const responseData = await response.json() as Record<string, unknown>;
-        res.send(responseData);
-
-    } catch (error) {
-        console.error('Error fetching route:', error);
-        res.status(500).send('');
-    }
-});
 
 app.listen(PORT,() => {
     console.log(`Backend listening on port ${String(PORT)}`);

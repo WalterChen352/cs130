@@ -15,7 +15,7 @@ export const poll = async (): Promise<void> => {
     const url = "https://gonow-5ry2jtelsq-wn.a.run.app/api/poll";
     const current_location = await getMyLocation()
     const next_event = await getNextEvent();
-    const access_token = process.env.EXPO_PUBLIC_ACCESS_TOKEN;
+    const access_token:string|undefined = process.env.EXPO_PUBLIC_ACCESS_TOKEN;
 
     if (next_event !== null) {
         next_event.startTime = new Date(next_event.startTime).toISOString();    //hacky fix to convert to compatible time string for google maps api (RFC 3339)
