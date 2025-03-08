@@ -15,13 +15,13 @@ const apiKey = process.env.API_KEY??'';
 
 export interface travelTimeRequestBody {
     event:Event,
-    coordinates:Coordinates,
+    coordinates:Coordinates;
 }
 
 interface RouteRequestBody {
-    origin:Coordinates,
-    destination:Coordinates,
-    travelMode: string,
+    origin: Coordinates,
+    destination: Coordinates,
+    travelMode: string
 }
 
 interface AutoscheduleRequestBody {
@@ -68,6 +68,51 @@ app.get('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordin
     //send send back to user
     console.log('result')
     res.status(200).json({travelTime: result});
+});
+
+app.post('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, res: Response) => {
+    //TODO
+    //parse incoming task for location
+    console.log(req.body)
+    const { origin, destination, travelMode } = req.body;
+    
+    //construct request
+    const url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
+
+    const headers = new Headers({
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': apiKey,
+        'X-Goog-FieldMask': '*'
+    });
+
+    const body = JSON.stringify({
+        origin: {
+            location: { latLng: { latitude: origin.latitude, longitude: origin.longitude } }
+        },
+        destination: {
+            location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } }
+        },
+        travelMode: travelMode
+    });
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: body
+        });
+
+        if (!response.ok) throw new Error(`HTTP Error: ${String(response.status)}`);
+        //const responseText = await response.text();
+        //console.log('Raw response:', responseText);
+        const responseData = await response.json();
+        console.log('response data', responseData);
+        res.status(200).send(responseData); 
+
+    } catch (error) {
+        console.error('Error fetching route:', error);
+        res.status(500).send('');
+    }
 });
 
 
