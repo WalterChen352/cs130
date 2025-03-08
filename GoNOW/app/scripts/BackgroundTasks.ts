@@ -7,7 +7,7 @@ const BACKGROUND_FETCH_TASK = 'background-fetch';
 
 // 1. Define the task by providing a name and the function that should be executed
 // Note: This needs to be called in the global scope (e.g outside of your React components)
-TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () : Promise<BackgroundFetch.BackgroundFetchResult> => {  
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () : Promise<BackgroundFetch.BackgroundFetchResult> => {  // eslint-disable-line
   const now = Date.now();
   
   console.log(`Got background fetch call at date: ${new Date(now).toISOString()}`);
