@@ -178,20 +178,23 @@ export const addEvent = async (e: Event, auto_schedule:boolean, duration: number
           transporation: e.transportationMode
         }
         console.log('autoschedule body', body)
-        const autoScheduledEvent = await fetch(url, {
+        const response = await fetch(url, {
           method: 'POST',
           headers: headers,
           body: JSON.stringify(body)
         })
-        const result = autoScheduledEvent.json()
+        const result :string= await response.json()
         console.log('autoscheduledeventt', result)
+        const event:Event = JSON.parse(result)
+        event.startTime=formatDateForSQLite(new Date(event.startTime))
+        event.endTime=formatDateForSQLite(new Date(event.endTime))
+        e=event
       }
       else{
         throw new Error('tried to autoschedule event without a workflow')
       }
     }
     const DB = await SQLite.openDatabaseAsync(DB_NAME);
-    console.log('db', DB);
     // Since workflow is number|null, we don't need to check for undefined
     const query = `INSERT INTO events
       (name, description, startTime, endTime, coordinates, transportationMode, workflow)
