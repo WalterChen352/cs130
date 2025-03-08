@@ -1,4 +1,4 @@
-import { poll } from "../scripts/Polling";
+import { MS_PER_S, poll, POLLING_INTERVAL_MIN, S_PER_MIN } from "../scripts/Polling";
 import { useEffect } from "react";
 
 const ForegroundTask: React.FC = () => {
@@ -7,7 +7,7 @@ const ForegroundTask: React.FC = () => {
     const interval = setInterval(() => {
         void poll();
         console.log(`Foreground task executed at ${new Date().toISOString()}`);
-    }, 1 * 60 * 1000); // 10 minutes in milliseconds
+    }, POLLING_INTERVAL_MIN * S_PER_MIN * MS_PER_S);
 
     return () => { clearInterval(interval); }; // Cleanup when component unmounts
   }, []);
