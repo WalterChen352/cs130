@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Text, View, Button, Platform } from "react-native";
+import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
 
 Notifications.setNotificationHandler({
@@ -10,16 +10,19 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export default function NotificationDisplay() {
-  const [notification, setNotification] = useState<Notifications.Notification | undefined>(
-    undefined
-  );
+const NotificationDisplay: React.FC = () => {
+  const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
+  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>([]);
 
   const notificationListener = useRef<Notifications.EventSubscription>();
   const responseListener = useRef<Notifications.EventSubscription>();
 
   useEffect(() => {
     requestNotificationPermission();
+
+    if (Platform.OS === 'android') {
+      Notifications.getNotificationChannelsAsync().then(value => setChannels(value ?? []));
+    }
 
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
       setNotification(notification);
@@ -53,25 +56,12 @@ export default function NotificationDisplay() {
         body: "This is a test local notification!",
         data: { customData: "some data" },
       },
-      trigger: { seconds: 5 }, // Will trigger after 5 seconds
+      trigger: {
+        seconds: 2,
+        channelId: 'new_emails',
+      },
     });
   }
 
-  return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "space-around",
-      }}
-    >
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text>Title: {notification?.request.content.title} </Text>
-        <Text>Body: {notification?.request.content.body}</Text>
-        <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
-      </View>
-
-      <Button title="Trigger Local Notification" onPress={scheduleLocalNotification} />
-    </View>
-  );
+  return null;
 }
