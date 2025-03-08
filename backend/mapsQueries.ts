@@ -30,7 +30,6 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
             location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } }
         },
         travelMode: travelMode,
-        routingPreference: "TRAFFIC_AWARE",
         departureTime: departureTime
         }
         :
@@ -42,9 +41,11 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
             location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } }
         },
         travelMode: travelMode,
-        routingPreference: "TRAFFIC_AWARE",
         arrivalTime:arrivalTime
         }
+    if(travelMode!=='WALK'&&travelMode!=='BICYCLE'){
+        params.routingPreference="TRAFFIC_AWARE";
+    }
     console.log('params', params)
     const body=JSON.stringify(params);
     try {
@@ -54,8 +55,11 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
                 body: body
             });
     
-            if (!response.ok)
-                 throw new Error(`HTTP Error: ${String(response.status)}`);
+            if (!response.ok){
+                const err=await response.json()
+                console.log(err)
+                throw new Error(`HTTP Error: ${String(response.status)}`);
+            }
             const data = await response.json() as {routes:[{duration:string}]};
             console.log('data from api req', data)
             const duration = data.routes[0].duration
