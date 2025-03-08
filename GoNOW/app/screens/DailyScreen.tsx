@@ -8,7 +8,7 @@ import { RouteProp, useFocusEffect, useNavigation, NavigationProp } from '@react
 import { tryFilterWfId, getWorkflows } from '../scripts/Workflow';
 import { Colors } from '../styles/Common.styles';
 import { Workflow } from '../models/Workflow';
-
+import * as Haptics from 'expo-haptics';
 interface DailyScreenProps {
   route: RouteProp<TabParamList, 'Daily'>;
 }
@@ -76,10 +76,12 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
   };
 
   const handleEdit = (event: Event) => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('CreateTask', { mode: 'edit', eventData: event });
   };
 
   const handleDelete = (eventId: number) => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Alert.alert(
       'Delete Event',
       'Are you sure you want to delete this event?',
@@ -97,9 +99,15 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
                 setEvents(currentEvents => currentEvents.filter(event => event.id !== eventId));
                 setSelectedEventId(null);
                 await deleteEvent(eventId);
+                void Haptics.notificationAsync(
+                  Haptics.NotificationFeedbackType.Success
+                )
               } catch (error) {
                 console.error('Failed to delete event', error);
                 Alert.alert('Error', 'Failed to delete event. Please try again.');
+                void Haptics.notificationAsync(
+                  Haptics.NotificationFeedbackType.Error
+                )
                 void loadEvents();
               }
             })();
@@ -109,7 +117,8 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
     );
   };
 
-  const handleEventPress = (eventId: number) => {
+  const handleEventPress = async (eventId: number) :Promise<void>=> {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedEventId(currentId => currentId === eventId ? null : eventId);
   };
 
@@ -119,7 +128,7 @@ const DailyScreen = ({ route }: DailyScreenProps): JSX.Element => {
     return (
       <TouchableOpacity 
         testID={item.name}
-        onPress={() => { handleEventPress(item.id); }}
+        onPress={() => { void handleEventPress(item.id); }}
         style={[
           styles.eventCard,
           isHighlighted && styles.highlightedEventCard,

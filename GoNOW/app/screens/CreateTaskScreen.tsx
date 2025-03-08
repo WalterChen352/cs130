@@ -30,6 +30,9 @@ import { styles } from '../styles/CreateTaskScreen.styles';
 // Navigation imports
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
+//Haptics
+import * as Haptics from 'expo-haptics';
+
 
 interface CreateTaskScreenProps {
   route: RouteProp<TabParamList, 'CreateTask'>;
@@ -198,11 +201,16 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
         await addEvent(e);
         Alert.alert('Success', 'Task created successfully');
       }
-      
+      void Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Success
+      )
       resetForm();
       navigation.navigate('Daily', { date: e.startTime });
       
     } catch (error) {
+      void Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Error
+      )
       Alert.alert('Validation Error', error instanceof Error ? error.message : 'Unknown error');
     }
   };

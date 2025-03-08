@@ -14,6 +14,7 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
         throw new Error('cannot call getTime with both arrival and departure time or provided neither')
     }
     //set headers
+    console.log(origin, destination)
     const getTimeHeaders = new Headers({
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,
