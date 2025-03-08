@@ -9,6 +9,7 @@ interface routeResponse {
 export const POLLING_INTERVAL_MIN = 15; // 15 minutes, minimum recommended interval for background fetch is 15 minutes
 export const MS_PER_S = 1000;
 export const S_PER_MIN = 60;
+const NOTIFICATION_INTERVAL_MIN = POLLING_INTERVAL_MIN*2;
 
 export const poll = async (): Promise<void> => {
     const url = "https://gonow-5ry2jtelsq-wn.a.run.app/api/poll";
@@ -62,8 +63,8 @@ export const poll = async (): Promise<void> => {
         const cur_time = +new Date();
         const ms_to_event = +new Date(next_event.startTime) - cur_time; // Date - Date = ms difference
         const min_to_event = ms_to_event/(MS_PER_S*S_PER_MIN); // minutes
-        const min_to_leave = min_to_event - travelTime;
-        if (min_to_leave < POLLING_INTERVAL_MIN){ // If we need to leave before the next poll, notify the user and schedule notification
+        const min_to_leave = Math.floor(min_to_event - travelTime);
+        if (min_to_leave < NOTIFICATION_INTERVAL_MIN){ // If we need to leave before the next poll, notify the user and schedule notification
           if(min_to_leave < 0) {
             console.log(`You are running ${Math.abs(min_to_leave).toString()} minutes late for ${next_event.name}!`);
           }
