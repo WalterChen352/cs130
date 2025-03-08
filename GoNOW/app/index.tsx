@@ -2,6 +2,7 @@ import { JSX, useEffect, useState, Fragment } from 'react';
 import { ActivityIndicator, Linking, Text, TouchableOpacity, View } from 'react-native';
 import * as TaskManager from 'expo-task-manager';
 
+import { scheduleLocalNotification } from './components/Notifications';
 import { initDatabase } from './scripts/Database';
 import { IndexStyles as styles } from './styles/Index.styles';
 import Navigator from './screens/Navigator';
@@ -18,6 +19,7 @@ export default function Index(): JSX.Element {
         await registerBackgroundFetchAsync();
         const tasks:TaskManager.TaskManagerTask[] = await TaskManager.getRegisteredTasksAsync();
         console.log('Registered tasks:', tasks);
+        await scheduleLocalNotification();
         setStatus(1);
       } catch (error) {
         setStatus(2);

@@ -48,20 +48,21 @@ const NotificationDisplay: React.FC = () => {
       alert("Permission to receive notifications is required!");
     }
   }
-
-  async function scheduleLocalNotification() {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Local Notification",
-        body: "This is a test local notification!",
-        data: { customData: "some data" },
-      },
-      trigger: {
-        seconds: 2,
-        channelId: 'new_emails',
-      },
-    });
-  }
-
   return null;
 }
+
+export async function scheduleLocalNotification() {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "Local Notification",
+      body: "This is a test local notification!",
+      data: { customData: "some data" },
+    },
+    trigger: {
+      seconds: 2,
+      channelId: 'GoNOW Notifications',
+    },
+  });
+}
+
+export default NotificationDisplay;
