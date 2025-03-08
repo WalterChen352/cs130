@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, TextInput, Switch, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, Switch, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 // Component imports
@@ -60,6 +60,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
   const [description, setDescription] = useState<string>('');
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [duration, setDuration] = useState(0);
+  const [submittingEvent, setSubmittingEvent]= useState(false);
 
   /** Dropdown options for transportation modes */
   const transportModeOptions = APP_TRANSPORTATION_MODES.map(tm=>({
@@ -183,6 +184,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
    */
   const saveEvent = async (): Promise<void> => {
     try {
+      setSubmittingEvent(true);
       const e:Event = {
         id:0,
         name: title,
@@ -211,6 +213,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
     } catch (error) {
       Alert.alert('Validation Error', error instanceof Error ? error.message : 'Unknown error');
     }
+    setSubmittingEvent(false);
   };
 
   /**
@@ -228,7 +231,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {opacity: submittingEvent ? 0.5 : 1 }]} pointerEvents={submittingEvent ? 'none' : 'auto'}>
       <ScrollView style={styles.scrollContainer}>
         <Text style={styles.title}>{isEditMode ? 'Edit Task' : 'Add a Task'}</Text>
     
@@ -318,15 +321,18 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
           onChangeText={setDescription}
           multiline
         />
-  
+    <ActivityIndicator animating={submittingEvent} size="large"></ActivityIndicator>
         <View style={styles.footer} />
+        
       </ScrollView>
   
       <ButtonSave
         onPress={() => { void saveEvent(); }}
         testID="Save-Task"
       />
+      
     </View>
+
   );
 };
 
