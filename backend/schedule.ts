@@ -103,7 +103,7 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
                     longitude:coordinates.longitude,
                     latitude: coordinates.latitude
                 },
-                transportationMode: "driving", // Default transportation mode
+                transportationMode: transportation,
                 workflow: w.id
             } as Event
         }
