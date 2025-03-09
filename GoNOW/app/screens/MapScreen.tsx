@@ -258,12 +258,12 @@ const MapScreen = (): JSX.Element => {
         points: [departure, destination]
       }]
     };
-    setMapRoute(defaultRoute);
 
     // If the event is within a short distance (under 300 feet),
     // no need to request GIS api.
     if (approxDistanceFeets(departure, destination) < 300) {
       console.log("Skip routing.");
+      setMapRoute(defaultRoute);
       return;
     }
 
@@ -308,10 +308,12 @@ const MapScreen = (): JSX.Element => {
           tmpRoute.steps.push(tmpStep);
         });
         setMapRoute(tmpRoute);
+        return;
       }
     } else {
       console.log("WARNING MapScreen: Route is empty");
     }
+    setMapRoute(defaultRoute);
   }
 
   /**
