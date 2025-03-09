@@ -93,10 +93,10 @@ app.post('/api/autoschedule', async (req: Request<unknown, unknown, Autoschedule
     switch(style.id){
         case (0):
             //one per day
-            result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, true, transportation, startSearch, daysAhead)
+            result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, false, transportation, startSearch, daysAhead)
             break;
         case(1):
-            result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, false, transportation, startSearch, daysAhead)
+            result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, true, transportation, startSearch, daysAhead)
     }
     if(result===null){
         //failed to autoschedule
