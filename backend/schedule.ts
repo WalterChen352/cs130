@@ -24,6 +24,7 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
     }) 
     else
          allowedDates= nextTwoWeeks;
+    console.log(allowedDates)
     
     // Filter out days that already have an event for this workflow
     const availableDates = allowedDates.filter(date => {
@@ -51,11 +52,12 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
     // Try to schedule an event on each available day
     for (const date of availableDates) {
         // Convert workflow time bounds to Date objects for this specific date in the given timezone
-        const startHour = w.timeStart.Hours;
-        const startMinute = w.timeStart.Minutes;
-        const endHour = w.timeEnd.Hours;
-        const endMinute = w.timeEnd.Minutes;
-        
+        const startHour = w.timeStart.hours;
+        const startMinute = w.timeStart.minutes;
+        const endHour = w.timeEnd.hours;
+        const endMinute = w.timeEnd.minutes;
+        console.log('timeStart', w.timeStart);
+        console.log('timeEnd', w.timeEnd)
         // Get year, month, day in the specified timezone
         const dateParts = date.toLocaleDateString('en-US', { 
             timeZone,
@@ -67,7 +69,8 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
         // Create ISO strings for the start and end times in the correct timezone
         const startISODate = `${dateParts[2]}-${dateParts[0].padStart(2, '0')}-${dateParts[1].padStart(2, '0')}T${String(startHour).padStart(2, '0')}:${String(startMinute).padStart(2, '0')}:00`;
         const endISODate = `${dateParts[2]}-${dateParts[0].padStart(2, '0')}-${dateParts[1].padStart(2, '0')}T${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}:00`;
-        
+        console.log('START',startISODate)
+        console.log('END', endISODate)
         // Convert to specific timezone
         const dayStart = new Date(new Date(startISODate).toLocaleString('en-US', { timeZone }));
         const dayEnd = new Date(new Date(endISODate).toLocaleString('en-US', { timeZone }));
@@ -124,6 +127,7 @@ const findAvailableTime=async(
     transportationMode: string
 
 ): Promise<Date | null>=> {
+    console.log('finding date for', dayStart, dayEnd)
     // Create an array of busy periods
     const busyPeriods: {start: Date, end: Date}[] = [];
     
@@ -138,7 +142,7 @@ const findAvailableTime=async(
             apiKey,
             {latitude: event.coordinates.latitude, longitude: event.coordinates.longitude},
             coordinates,
-            transportationMode, null, String(eventStart.getTime())
+            transportationMode, null, eventStart.toISOString()
         );
         
         // Estimate travel time from our location to event location
@@ -146,10 +150,12 @@ const findAvailableTime=async(
             apiKey,
             coordinates,
             {latitude: event.coordinates.latitude, longitude: event.coordinates.longitude},
-            transportationMode, String(eventEnd.getTime()), null
+            transportationMode, eventEnd.toISOString(), null
         );
         
         // Add buffer for travel time
+
+    
         const bufferStart = new Date(eventStart);
         bufferStart.setMinutes(bufferStart.getMinutes() - travelTimeBefore);
         

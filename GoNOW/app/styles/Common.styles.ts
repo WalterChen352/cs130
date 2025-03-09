@@ -41,3 +41,8 @@ export const Colors = {
       elevation: 2.5, // For Android
     }
   };
+
+  
+  export const switchColors={
+    trackColor:{false: Colors.BACKGROUND, true: Colors.DEFAULT_BLUE}
+  }

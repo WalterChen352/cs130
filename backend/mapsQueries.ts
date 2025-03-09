@@ -13,6 +13,12 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
         //request must take one, but not both of these
         throw new Error('cannot call getTime with both arrival and departure time or provided neither')
     }
+    if(departureTime===null)
+         console.log('querying google maps with arrival time', arrivalTime)
+    else
+         console.log('querying google maps with depart time', departureTime)
+    console.log('destination is', destination)
+    console.log('origin is', origin);
     //set headers
     console.log(origin, destination)
     const getTimeHeaders = new Headers({
@@ -21,7 +27,7 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
         'X-Goog-FieldMask': 'routes.duration'
     });
     //set params based on departure or arrive
-    const params = departureTime!==null?{
+    const params = arrivalTime===null?{
         origin: {
             location: { latLng: { latitude: origin.latitude, longitude: origin.longitude } }
         },
@@ -29,17 +35,19 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
             location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } }
         },
         travelMode: travelMode,
+        routingPreference: "TRAFFIC_AWARE",
         departureTime: departureTime
         }
         :
         {
-            origin: {
+        origin: {
             location: { latLng: { latitude: origin.latitude, longitude: origin.longitude } }
         },
         destination: {
             location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } }
         },
         travelMode: travelMode,
+        routingPreference: "TRAFFIC_AWARE",
         arrivalTime:arrivalTime
         }
     const body=JSON.stringify(params);
