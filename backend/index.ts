@@ -67,14 +67,17 @@ app.get('/ping',(req:Request, res: Response)=>{
 
 app.get('/createTask',(req:Request, res: Response)=>{
     taskCreated++;
+    console.log(`total tasks ${taskCreated}`)
 })
 
 app.get('/createWorkflow',(req:Request, res: Response)=>{
     workflowCreated++;
+    console.log(`total workflows ${workflowCreated}`)
 })
 
 app.post('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleRequestBody>, res: Response) => {
     //parse incoming parameters
+    autoscheduleRequests++;
     const style =req.body.workflow.schedulingStyle;
     const {events, workflow, coordinates, duration, timeZone, name, description, transportation}=req.body
     let result:null|Event = null;
@@ -97,7 +100,7 @@ app.post('/api/autoschedule', async (req: Request<unknown, unknown, Autoschedule
         res.status(200).json(JSON.stringify(result))
         autoscheduledTasks++;
     }   
-    autoscheduleRequests++;
+    console.log(`success rate of autoscheduling is ${autoscheduledTasks/autoscheduleRequests}`)
 });
 
 app.post('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordinates:Coordinates}>, res: Response) => {
