@@ -3,8 +3,8 @@ import { Platform } from 'react-native';
 
 import Route from '../models/Geo';
 import { Coordinates, Location } from '../models/Location';
-import { GOOGLE_API_KEY } from '../scripts/Config';
-import {TransportationMode} from '../models/TransportationMode';
+import { APP_HOST, ACCESS_TOKEN, WEB_USER_AGENT } from '../scripts/Config';
+import { TransportationMode } from '../models/TransportationMode';
 
 /**
  * Returns current geolocation of the user.
@@ -176,31 +176,40 @@ export const getRoute = async (
   if (routeCache.has(cacheKey)) {
     return routeCache.get(cacheKey);
   }
-  if (GOOGLE_API_KEY === '') {
-    console.error("ERROR Map.getRoute failed: GOOGLE_API_KEY not set.");
+  if (APP_HOST === '') {
+    console.error("ERROR Map.getRoute failed: APP_HOST not set.");
     return null;
   }
-  const params: string [] = [
-    `?origin=${departure.latitude.toString()},${departure.longitude.toString()}`,
-    `&destination=${destination.latitude.toString()},${destination.longitude.toString()}`,
-    `&mode=${transportationMode.apiName}`,
-    `&key=${GOOGLE_API_KEY}`
-  ];
-  const url = `https://maps.googleapis.com/maps/api/directions/json${params.join('')}`;
-
-  console.log("-------------------------------------------------------------------------------------");
-  console.log("ROUTE REUEST: ", url);
-  console.log("-------------------------------------------------------------------------------------");
+  if (ACCESS_TOKEN === '') {
+    console.error("ERROR Map.getRoute failed: ACCESS_TOKEN not set.");
+    return null;
+  }
+  const url = `${APP_HOST}/api/route`;
+  const headers = {
+    'access-token': ACCESS_TOKEN,
+    'Content-Type': 'application/json',
+    'User-Agent': WEB_USER_AGENT,
+  }
+  const params = {
+    origin: departure,
+    destination: destination,
+    travelMode:transportationMode.googleMapsName,
+  };
 
   try {
-    const response = await fetch(url);
-    const data = (await response.json()) as { 
-      routes: Route[], status: string, error_message?: string };
-    if (data.status === 'OK') {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(params),
+    });
+    
+    if (response.ok) {
+      const data = (await response.json()) as { 
+        routes: Route[], status: string, error_message?: string };
       routeCache.set(cacheKey, data.routes);
       return data.routes;
     } else {
-      throw new Error(data.error_message ?? 'Could not build route');
+      throw new Error(`HTTP Error: ${String(response.status)} ${String(response.statusText)}`);
     }
   } catch (error) {
     console.error("ERROR Map.getRoute: ", error);
