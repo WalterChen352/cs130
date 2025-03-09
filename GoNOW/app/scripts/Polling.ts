@@ -11,7 +11,7 @@ interface routeResponse {
 export const POLLING_INTERVAL_MIN = 15; // 15 minutes, minimum recommended interval for background fetch is 15 minutes
 export const MS_PER_S = 1000;
 export const S_PER_MIN = 60;
-const NO_DELAY_MIN = 0;
+const NO_DELAY_S = 1; //needs to be >0
 const NOTIFICATION_INTERVAL_MIN = POLLING_INTERVAL_MIN*2;
 
 export const poll = async (): Promise<void> => {
@@ -81,9 +81,9 @@ export const poll = async (): Promise<void> => {
             immediate_notification_body = `Leave in ${min_to_leave.toString()} minutes to arrive on time for ${next_event.name}`;
             const delayed_notification_title = "GoNOW Notification";
             const delayed_notification_body = `Leave now to arrive on time for ${next_event.name}`;
-            await scheduleLocalNotification(delayed_notification_title, delayed_notification_body, min_to_leave);
+            await scheduleLocalNotification(delayed_notification_title, delayed_notification_body, min_to_leave * S_PER_MIN);
           }
-          await scheduleLocalNotification(immediate_notification_title, immediate_notification_body, NO_DELAY_MIN);
+          await scheduleLocalNotification(immediate_notification_title, immediate_notification_body, NO_DELAY_S);
         }
       } catch (error) {
         console.error("Error making request:", error);

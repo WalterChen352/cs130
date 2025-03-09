@@ -30,8 +30,8 @@ const NotificationDisplay: React.FC = () => {
   return null;
 };
 
-export async function scheduleLocalNotification(title: string, body: string, min_in_future: number) {
-  console.log(`Scheduling notification: ${title}, ${body}, in ${min_in_future.toString()} minutes`);
+export async function scheduleLocalNotification(title: string, body: string, s_in_future: number) {
+  console.log(`Scheduling notification: ${title}, ${body}, in ${(s_in_future*S_PER_MIN).toString()} minutes`);
   await Notifications.scheduleNotificationAsync({
     content: {
       title: title,
@@ -39,8 +39,8 @@ export async function scheduleLocalNotification(title: string, body: string, min
       data: { customData: 'some data' },
     },
     trigger: {
-      seconds: min_in_future * S_PER_MIN,
-      channelId: 'GoNOW Notifications',
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      seconds: s_in_future,
     },
   });
   console.log('Notification scheduled');

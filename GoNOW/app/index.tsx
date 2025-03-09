@@ -58,7 +58,7 @@ export default function Index(): JSX.Element {
 
         // --- Notification Setup Moved Here ---
         Notifications.setNotificationHandler({
-          handleNotification: async () => ({
+          handleNotification: async () => ({  //eslint-disable-line
             shouldShowAlert: true,
             shouldPlaySound: false,
             shouldSetBadge: false
