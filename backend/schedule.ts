@@ -1,30 +1,31 @@
 import type{ Event, Workflow, Coordinates } from "./types";
 import { computeTravelTime } from "./mapsQueries";
 
-export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], coordinates: Coordinates, duration: number, timeZone: string, name: string, description: string, onePerDay:boolean, transportation:string): Promise<Event | null> => {
+export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], coordinates: Coordinates, duration: number, timeZone: string, name: string, description: string, onePerDay:boolean, transportation:string, searchStart:string, daysAhead:number): Promise<Event | null> => {
     // Get the current date in the specified timezone
     //console.log('transportation', transportation)
-    const now = new Date();
-    const DATES_MAX=14
+    console.log('searchStart', searchStart)
+    const start = new Date(searchStart);
     // Generate dates for the next 14 days
-    const nextTwoWeeks: Date[] = [];
-    for (let i = 1; i < DATES_MAX; i++) {
-        const date = new Date(now);
+    console.log('start of search is', start)
+    const days: Date[] = [];
+    for (let i = 0; i < daysAhead; i++) {
+        const date = new Date(start);
         date.setDate(date.getDate() + i);
-        nextTwoWeeks.push(date);
+        days.push(date);
     }
     
     // Filter days based on workflow's daysOfWeek setting
     let allowedDates=[];
     if(onePerDay)
-        allowedDates = nextTwoWeeks.filter(date => {
+        allowedDates = days.filter(date => {
         // Convert to the specified timezone to get the correct day of week
         const dateInTZ = new Date(date.toLocaleString('en-US', { timeZone }));
         const dayOfWeek = dateInTZ.getDay();
         return w.daysOfWeek[dayOfWeek];
     }) 
     else
-         allowedDates= nextTwoWeeks;
+         allowedDates= days;
     console.log(allowedDates)
     
     console.log(allowedDates)

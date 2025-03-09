@@ -48,8 +48,8 @@ interface AutoscheduleRequestBody {
     name:string,
     description:string,
     transportation:string,
-    searchStart: string, //ISO string
-    searchEnd: string //ISO string
+    startSearch: string,
+    daysAhead: number
 }
 
 app.use((req:Request, res:Response, next) => {
@@ -86,17 +86,17 @@ app.post('/api/autoschedule', async (req: Request<unknown, unknown, Autoschedule
     //parse incoming parameters
     autoscheduleRequests++;
     const style =req.body.workflow.schedulingStyle;
-    const {events, workflow, coordinates, duration, timeZone, name, description, transportation}=req.body
+    const {events, workflow, coordinates, duration, timeZone, name, description, transportation, startSearch, daysAhead}=req.body
     let result:null|Event = null;
     //get event
     console.log('transportation', transportation);
     switch(style.id){
         case (0):
             //one per day
-            result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, true, transportation)
+            result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, true, transportation, startSearch, daysAhead)
             break;
         case(1):
-            result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, false, transportation)
+            result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, false, transportation, startSearch, daysAhead)
     }
     if(result===null){
         //failed to autoschedule
