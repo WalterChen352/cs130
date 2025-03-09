@@ -1,4 +1,4 @@
-import { RouteRequestBody } from '../../../backend/index';
+import { PollRequestBody } from '../../../backend/index';
 import { getNextEvent } from './Event';
 import { getMyLocation } from './Geo';
 import { getUID } from './Profile';
@@ -6,6 +6,7 @@ import { getUID } from './Profile';
 interface routeResponse {
     travelTime: number;
 }
+
 
 export const POLLING_INTERVAL_MIN = 15; // 15 minutes, minimum recommended interval for background fetch is 15 minutes
 export const MS_PER_S = 1000;
@@ -38,7 +39,7 @@ export const poll = async (): Promise<void> => {
         return;
     }
     else{
-        const requestBody: RouteRequestBody = {
+        const requestBody: PollRequestBody = {
             event: next_event,
             coordinates: current_location.coordinates,
         }
