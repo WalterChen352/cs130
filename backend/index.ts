@@ -68,11 +68,13 @@ app.get('/ping',(req:Request, res: Response)=>{
 app.get('/createTask',(req:Request, res: Response)=>{
     taskCreated++;
     console.log(`total tasks ${taskCreated}`)
+    res.status(200).send()
 })
 
 app.get('/createWorkflow',(req:Request, res: Response)=>{
     workflowCreated++;
     console.log(`total workflows ${workflowCreated}`)
+    res.status(200).send()
 })
 
 app.post('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleRequestBody>, res: Response) => {
