@@ -15,8 +15,12 @@ const headers={
   'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN??''
 }
 
+
+
 export default function Index(): JSX.Element {
   const [status, setStatus] = useState<number>(0); // 0 - loading; 1 - ready; 2 - error
+
+
 
   useEffect(() => {
     const appInit = async (): Promise<void> => {
