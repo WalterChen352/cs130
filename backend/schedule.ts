@@ -78,7 +78,7 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
         const dayStartOffset= new Date(dayStart.getTime()+offset);
         const dayEndOffset = new Date(dayEnd.getTime()+offset)
         // Check if we can fit the event between workflow bounds
-        console.log(`finding available times between ${dayStartOffset}, ${dayEndOffset}` )
+        console.log(`finding available times between ${String(dayStartOffset)}, ${String(dayEndOffset)}` )
         const eventStartTime =await  findAvailableTime(
             apiKey,
             events,

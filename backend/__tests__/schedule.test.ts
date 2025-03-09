@@ -1,9 +1,11 @@
 import { autoschedule } from '../schedule'; // Update with your actual module path
 import type { Workflow, Time, Coordinates, Event} from '../types'
+import APP_SCHEDULING_STYLES from '../../GoNOW/app/models/SchedulingStyle'
+
 // Mock the current date to ensure consistent test results
 const mockDate = new Date('2025-03-03T12:00:00Z'); // Using the current date from your session
 jest.useFakeTimers().setSystemTime(mockDate);
-// The rest of the code remains the same...
+
 
 jest.mock('../mapsQueries', ()=>({
    
@@ -32,11 +34,11 @@ describe('autoschedule function', () => {
 
 
   // Time objects for workflow time bounds
-  const morning9am: Time = { Hours: 9, Minutes: 0 };
-  const noon: Time = { Hours: 12, Minutes: 0 };
-  const afternoon2pm: Time = { Hours: 14, Minutes: 0 };
-  const evening5pm: Time = { Hours: 17, Minutes: 0 };
-  const evening8pm: Time = { Hours: 20, Minutes: 0 };
+  const morning9am: Time = { hours: 9, minutes: 0 };
+  const noon: Time = { hours: 12, minutes: 0 };
+  const afternoon2pm: Time = { hours: 14, minutes: 0 };
+  const evening5pm: Time = { hours: 17, minutes: 0 };
+  const evening8pm: Time = { hours: 20, minutes: 0 };
 
   // Test locations
   const homeLocation: Coordinates = { latitude: 37.7749, longitude: -122.4194 }; // San Francisco
@@ -77,7 +79,7 @@ describe('autoschedule function', () => {
       timeStart: morning9am,
       timeEnd: noon,
       daysOfWeek: [false, true, true, true, true, true, false], // Mon-Fri
-      schedulingStyle: null,
+      schedulingStyle: APP_SCHEDULING_STYLES[0],
 
     }
 
@@ -89,7 +91,7 @@ describe('autoschedule function', () => {
       timeStart:afternoon2pm,
       timeEnd:evening8pm,
       daysOfWeek:[true, true, true, true, true, false, false], // Sun-Thu
-      schedulingStyle:null
+      schedulingStyle:APP_SCHEDULING_STYLES[0]
     }
 
     workflowWeekendOutings = {
@@ -100,7 +102,7 @@ describe('autoschedule function', () => {
       timeStart:noon,
       timeEnd:evening5pm,
       daysOfWeek:[true, false, false, false, false, false, true], // Sat-Sun
-      schedulingStyle:null
+      schedulingStyle:APP_SCHEDULING_STYLES[0]
     }
 
     // Initialize existing events
@@ -228,7 +230,8 @@ describe('autoschedule function', () => {
       "America/New_York", // Different timezone
       'test2',
       'desc2',
-      true
+      true,
+       "DRIVE"
     );
 
     expect(result).not.toBeNull();
@@ -265,7 +268,8 @@ describe('autoschedule function', () => {
       "Europe/London", // Different timezone
       'test3',
       'desc3',
-      true
+      true,
+       "DRIVE"
     );
 
     expect(result).not.toBeNull();
@@ -297,7 +301,8 @@ describe('autoschedule function', () => {
       "America/Los_Angeles",
       'test4',
       'desc4',
-      true
+      true,
+       "DRIVE"
     );
 
     expect(result).toBeNull();
@@ -379,7 +384,8 @@ describe('autoschedule function', () => {
       "America/Los_Angeles",
       'test6',
       'desc6',
-      true
+      true,
+       "DRIVE"
     );
     
     expect(result).not.toBeNull();

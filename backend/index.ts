@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import fetch, { Headers } from 'node-fetch';
 import { autoschedule } from './schedule';
-import type {Workflow,Coordinates, Event, SchedulingStyle} from './types'
+import type {Workflow,Coordinates, Event} from './types'
 import { computeTravelTime } from './mapsQueries';
 import bodyParser from 'body-parser';
 
@@ -55,25 +55,24 @@ app.use((req:Request, res:Response, next) => {
         res.status(500).json({message:'unable to authenticate request'})
         return;
     }
-    const uid = req.headers['uid']
     next();
 })
 
 app.get('/ping',(req:Request, res: Response)=>{
     res.status(200).json({uid: users});
     users++;
-    console.log(`new users ${users}`)
+    console.log(`new users ${String(users)}`)
 })
 
 app.get('/createTask',(req:Request, res: Response)=>{
     taskCreated++;
-    console.log(`total tasks ${taskCreated}`)
+    console.log(`total tasks ${String(taskCreated)}`)
     res.status(200).send()
 })
 
 app.get('/createWorkflow',(req:Request, res: Response)=>{
     workflowCreated++;
-    console.log(`total workflows ${workflowCreated}`)
+    console.log(`total workflows ${String(workflowCreated)}`)
     res.status(200).send()
 })
 
@@ -102,7 +101,7 @@ app.post('/api/autoschedule', async (req: Request<unknown, unknown, Autoschedule
         res.status(200).json(JSON.stringify(result))
         autoscheduledTasks++;
     }   
-    console.log(`success rate of autoscheduling is ${autoscheduledTasks/autoscheduleRequests}`)
+    console.log(`success rate of autoscheduling is ${String(autoscheduledTasks/autoscheduleRequests)}`)
 });
 
 app.post('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordinates:Coordinates}>, res: Response) => {
@@ -157,6 +156,7 @@ app.post('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, 
         res.status(500).send('');
     }
     routeRequests++;
+    console.log(`successful roue response rat ${String(routeSuccess-routeRequests)}`)
 });
 
 app.listen(PORT,() => {
