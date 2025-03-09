@@ -1,9 +1,12 @@
-import { JSX, useEffect, useState } from 'react';
+import { JSX, useEffect, useState, Fragment } from 'react';
 import { ActivityIndicator, Linking, Text, TouchableOpacity, View } from 'react-native';
+import * as TaskManager from 'expo-task-manager';
 
 import { initDatabase } from './scripts/Database';
 import { IndexStyles as styles } from './styles/Index.styles';
 import Navigator from './screens/Navigator';
+import { registerBackgroundFetchAsync } from './scripts/BackgroundTasks';
+import ForegroundTask from './components/ForegroundTask';
 
 export default function Index(): JSX.Element {
   const [status, setStatus] = useState<number>(0); // 0 - loading; 1 - ready; 2 - error
@@ -12,6 +15,9 @@ export default function Index(): JSX.Element {
     const appInit = async (): Promise<void> => {
       try {
         await initDatabase();
+        await registerBackgroundFetchAsync();
+        const tasks:TaskManager.TaskManagerTask[] = await TaskManager.getRegisteredTasksAsync();
+        console.log('Registered tasks:', tasks);
         setStatus(1);
       } catch (error) {
         setStatus(2);
@@ -22,7 +28,12 @@ export default function Index(): JSX.Element {
   }, []);
 
   return status === 1 // 0 - loading; 1 - ready; 2 - error
-    ? (<Navigator/>)
+    ? (
+        <Fragment>
+          <Navigator/>
+          <ForegroundTask/>
+        </Fragment>
+      )
     : status === 0
       ? (
           <View style={styles.loading}>

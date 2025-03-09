@@ -11,6 +11,7 @@ import { Workflow } from '../models/Workflow';
 import { TabParamList } from './Navigator';
 import { getWorkflows, tryFilterWfId , getWorkflowById} from '../scripts/Workflow';
 import { Colors } from '../styles/Common.styles'
+import * as Haptics from 'expo-haptics';
 
 const HOUR_HEIGHT = 20;
 const START_HOUR = 0;
@@ -77,7 +78,8 @@ const CalendarScreen = (): JSX.Element => {
 
     const days = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
 
-    const nextWeek = Gesture.Fling().direction(Directions.LEFT).onEnd(() => {
+    const nextWeek = Gesture.Fling().direction(Directions.LEFT).onEnd( () => {
+        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setStartDate(prev => {
             const newDate = new Date(prev);
             newDate.setDate(prev.getDate() + 7);
@@ -85,7 +87,8 @@ const CalendarScreen = (): JSX.Element => {
         });
     }).runOnJS(true);
     
-    const nextWeekPress = (): void => {
+    const nextWeekPress =async (): Promise<void> => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setStartDate(prev => {
             const newDate = new Date(prev);
             newDate.setDate(prev.getDate() + 7);
@@ -93,7 +96,8 @@ const CalendarScreen = (): JSX.Element => {
         });
     };
 
-    const prevWeekPress = (): void => {
+    const prevWeekPress = async(): Promise<void> => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setStartDate(prev => {
             const newDate = new Date(prev);
             newDate.setDate(prev.getDate() - 7);
@@ -101,7 +105,8 @@ const CalendarScreen = (): JSX.Element => {
         });
     };
 
-    const prevWeek = Gesture.Fling().direction(Directions.RIGHT).onEnd(() => {
+    const prevWeek = Gesture.Fling().direction(Directions.RIGHT).onEnd( () => {
+        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setStartDate(prev => {
             const newDate = new Date(prev);
             newDate.setDate(prev.getDate() - 7);
@@ -220,13 +225,13 @@ const CalendarScreen = (): JSX.Element => {
     <GestureDetector gesture={Gesture.Exclusive(prevWeek, nextWeek)}>
         <View style={CalendarStyles.container}>
         <View style={CalendarStyles.header}>
-            <TouchableOpacity onPress={prevWeekPress} testID="back-button">
+            <TouchableOpacity onPress={void prevWeekPress} testID="back-button">
             <Ionicons name={'caret-back-outline'} size={27} />
             </TouchableOpacity>
             <Text style={CalendarStyles.headerText} testID="WeekHeader">
             {`${weekRange.start} - ${weekRange.end}`}
             </Text>
-            <TouchableOpacity onPress={nextWeekPress} testID="forward-button">
+            <TouchableOpacity onPress={void nextWeekPress} testID="forward-button">
             <Ionicons name={'caret-forward-outline'} size={27} />
             </TouchableOpacity>
         </View>
@@ -286,7 +291,8 @@ const CalendarScreen = (): JSX.Element => {
                                                     Colors.LIGHT_BLUE
                                             }
                                         ]}
-                                        onPress={() => {
+                                        onPress={ () => {
+                                            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                             const eventDate = new Date(event.startTime);
                                             navigateToDaily(eventDate, event.id);
                                         }}

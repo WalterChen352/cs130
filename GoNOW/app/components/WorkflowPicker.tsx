@@ -5,7 +5,6 @@ import { Picker } from '@react-native-picker/picker';
 import { Workflow } from '../models/Workflow';
 
 import { WorkflowPickerStyles } from '../styles/WorkflowPicker.styles';
-
 interface WorkflowPickerProps {
   workflows: Workflow[];
   onSelect: (workflow_id: number) => void;

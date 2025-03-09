@@ -32,6 +32,9 @@ import { switchColors } from '../styles/Common.styles';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 
+//Haptics
+import * as Haptics from 'expo-haptics';
+
 
 interface CreateTaskScreenProps {
   route: RouteProp<TabParamList, 'CreateTask'>;
@@ -206,11 +209,16 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
         await addEvent(e, autoSchedule, duration);
         Alert.alert('Success', 'Task created successfully');
       }
-      
+      void Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Success
+      )
       resetForm();
       navigation.navigate('Daily', { date: e.startTime });
       
     } catch (error) {
+      void Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Error
+      )
       Alert.alert('Validation Error', error instanceof Error ? error.message : 'Unknown error');
     }
     setSubmittingEvent(false);

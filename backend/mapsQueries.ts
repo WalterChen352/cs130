@@ -17,6 +17,7 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
     console.log('destination is', destination)
     console.log('origin is', origin);
     //set headers
+    console.log(origin, destination)
     const getTimeHeaders = new Headers({
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,

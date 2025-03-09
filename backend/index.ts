@@ -1,6 +1,5 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import fetch, { Headers } from 'node-fetch';
 import { autoschedule } from './schedule';
 import type {Workflow,Coordinates, Event} from './types'
 import { computeTravelTime } from './mapsQueries';
@@ -15,10 +14,9 @@ app.use(bodyParser.json())
 const apiKey = process.env.API_KEY??'';   
 const accessToken = process.env.ACCESS_TOKEN??'';
 
-interface RouteRequestBody {
-    origin:Coordinates;
-    destination:Coordinates;
-    travelMode: string;
+export interface RouteRequestBody {
+    event:Event,
+    coordinates:Coordinates;
 }
 
 interface AutoscheduleRequestBody {

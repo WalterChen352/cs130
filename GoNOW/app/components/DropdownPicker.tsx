@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import DropdownPickerStyles from '../styles/DropdownPicker.styles';
 
+import * as Haptics from 'expo-haptics';
+
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
@@ -60,6 +62,9 @@ const DropdownPicker: React.FC<DropdownPickerProps> = ({
 
   const selectItem = (value: string | number) => {
     onValueChange(value);
+    void Haptics.notificationAsync(
+      Haptics.NotificationFeedbackType.Success
+    )
     toggleDropdown();
   };
 
