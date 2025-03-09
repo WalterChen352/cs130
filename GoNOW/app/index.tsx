@@ -19,7 +19,6 @@ export default function Index(): JSX.Element {
         await registerBackgroundFetchAsync();
         const tasks:TaskManager.TaskManagerTask[] = await TaskManager.getRegisteredTasksAsync();
         console.log('Registered tasks:', tasks);
-        await scheduleLocalNotification();
         setStatus(1);
       } catch (error) {
         setStatus(2);

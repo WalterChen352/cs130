@@ -1,3 +1,4 @@
+import { scheduleLocalNotification } from '../components/Notifications';
 import { RouteRequestBody } from '../../../backend/index';
 import { getNextEvent } from './Event';
 import { getMyLocation } from './Geo';
@@ -9,6 +10,7 @@ interface routeResponse {
 export const POLLING_INTERVAL_MIN = 15; // 15 minutes, minimum recommended interval for background fetch is 15 minutes
 export const MS_PER_S = 1000;
 export const S_PER_MIN = 60;
+const NO_DELAY_MIN = 0;
 const NOTIFICATION_INTERVAL_MIN = POLLING_INTERVAL_MIN*2;
 
 export const poll = async (): Promise<void> => {
@@ -66,17 +68,21 @@ export const poll = async (): Promise<void> => {
         const min_to_event = ms_to_event/(MS_PER_S*S_PER_MIN); // minutes
         const min_to_leave = Math.floor(min_to_event - travelTime);
         if (min_to_leave < NOTIFICATION_INTERVAL_MIN){ // If we need to leave before the next poll, notify the user and schedule notification
+          let immediate_notification_title = "GoNOW Notification";
+          let immediate_notification_body = "";
           if(min_to_leave < 0) {
-            console.log(`You are running ${Math.abs(min_to_leave).toString()} minutes late for ${next_event.name}!`);
+            immediate_notification_body = `You are running ${Math.abs(min_to_leave).toString()} minutes late for ${next_event.name}!`;
           }
           else if (Math.floor(min_to_leave) === 0){
-            console.log(`Leave now to arrive on time for ${next_event.name}`);
+            immediate_notification_body = `Leave now to arrive on time for ${next_event.name}`;
           }
           else{
-            console.log(`Leave in ${min_to_leave.toString()} minutes to arrive on time for ${next_event.name}`);
+            immediate_notification_body = `Leave in ${min_to_leave.toString()} minutes to arrive on time for ${next_event.name}`;
+            let delayed_notification_title = "GoNOW Notification";
+            let delayed_notification_body = `Leave now to arrive on time for ${next_event.name}`;
+            scheduleLocalNotification(delayed_notification_title, delayed_notification_body, min_to_leave);
           }
-          //TODO:: Add notification now
-          //TODO:: Schedule notification for min_to_leave minutes from now
+          scheduleLocalNotification(immediate_notification_title, immediate_notification_body, NO_DELAY_MIN);
         }
       } catch (error) {
         console.error("Error making request:", error);

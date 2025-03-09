@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
+import { S_PER_MIN } from "../scripts/Polling";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -51,15 +52,15 @@ const NotificationDisplay: React.FC = () => {
   return null;
 }
 
-export async function scheduleLocalNotification() {
+export async function scheduleLocalNotification(title: string, body: string, min_in_future: number) {
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: "Local Notification",
-      body: "This is a test local notification!",
+      title: title,
+      body: body,
       data: { customData: "some data" },
     },
     trigger: {
-      seconds: 2,
+      seconds: min_in_future * S_PER_MIN,
       channelId: 'GoNOW Notifications',
     },
   });
