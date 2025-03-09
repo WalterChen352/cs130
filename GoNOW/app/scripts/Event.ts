@@ -175,7 +175,7 @@ export const addEvent = async (e: Event, auto_schedule:boolean, duration: number
           timeZone: "America/Los_Angeles", //placeholder
           name: e.name,
           description: e.description,
-          transporation: e.transportationMode
+          transportation: e.transportationMode
         }
         console.log('autoschedule body', body)
         const response = await fetch(url, {
