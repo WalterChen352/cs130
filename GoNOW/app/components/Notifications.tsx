@@ -19,7 +19,6 @@ const NotificationDisplay: React.FC = () => {
   const responseListener = useRef<Notifications.EventSubscription>();
 
   useEffect(() => {
-    // requestNotificationPermission();
     if (Platform.OS === 'android') {
       Notifications.getNotificationChannelsAsync().then(value => { setChannels(value ?? []); });  //eslint-disable-line
     }
@@ -41,13 +40,6 @@ const NotificationDisplay: React.FC = () => {
       }
     };
   }, []);
-
-  // async function requestNotificationPermission() {
-  //   const { status } = await Notifications.requestPermissionsAsync();
-  //   if (status !== "granted") {
-  //     alert("Permission to receive notifications is required!");
-  //   }
-  // }
   
   return null;
 }
@@ -65,6 +57,13 @@ export async function scheduleLocalNotification(title: string, body: string, s_i
       seconds: s_in_future,
     },
   });
+}
+
+export async function requestNotificationPermission() {
+  const { status } = await Notifications.requestPermissionsAsync();
+  if (status !== "granted") { //eslint-disable-line
+    alert("Permission to receive notifications is required!");
+  }
 }
 
 export default NotificationDisplay;
