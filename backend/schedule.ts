@@ -1,8 +1,9 @@
 import type{ Event, Workflow, Coordinates } from "./types";
 import { computeTravelTime } from "./mapsQueries";
 
-export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], coordinates: Coordinates, duration: number, timeZone: string, name: string, description: string, onePerDay:boolean, transportation='DRIVE'): Promise<Event | null> => {
+export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], coordinates: Coordinates, duration: number, timeZone: string, name: string, description: string, onePerDay:boolean, transportation:string): Promise<Event | null> => {
     // Get the current date in the specified timezone
+    //console.log('transportation', transportation)
     const now = new Date();
     const DATES_MAX=14
     // Generate dates for the next 14 days
@@ -74,6 +75,7 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
         const dayEnd = new Date(new Date(endISODate).toLocaleString('en-US', { timeZone }));
         
         // Check if we can fit the event between workflow bounds
+        console.log(`finding available times between ${dayStart}, ${dayEnd}` )
         const eventStartTime =await  findAvailableTime(
             apiKey,
             events,

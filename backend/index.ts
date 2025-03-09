@@ -38,7 +38,7 @@ app.use((req:Request, res:Response, next) => {
     // console.log(req.headers)
     console.log(req.headers['access-token'])
     if(req.headers['access-token']===undefined || req.headers['access-token']!== accessToken){
-        res.status(500).send('unable to authenticate request')
+        res.status(500).json({message:'unable to authenticate request'})
         return;
     }
     next();
@@ -50,6 +50,7 @@ app.post('/api/autoschedule', async (req: Request<unknown, unknown, Autoschedule
     const {events, workflow, coordinates, duration, timeZone, name, description, transportation}=req.body
     let result:null|Event = null;
     //get event
+    console.log('transportation', transportation);
     switch(style.id){
         case (0):
             //one per day
@@ -60,7 +61,7 @@ app.post('/api/autoschedule', async (req: Request<unknown, unknown, Autoschedule
     }
     if(result===null){
         //failed to autoschedule
-        res.status(500).send('Unable to autoschedule');
+        res.status(500).json({message:'Unable to autoschedule'});
     }
     else{
         console.log('travel time in minutes:', result)
