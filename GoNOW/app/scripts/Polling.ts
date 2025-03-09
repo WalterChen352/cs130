@@ -1,6 +1,7 @@
 import { RouteRequestBody } from '../../../backend/index';
 import { getNextEvent } from './Event';
 import { getMyLocation } from './Geo';
+import { getUID } from './Profile';
 
 interface routeResponse {
     travelTime: number;
@@ -48,6 +49,7 @@ export const poll = async (): Promise<void> => {
           headers: {
             "Content-Type": "application/json",
             "access-token": access_token,
+            "uid" : String(getUID())
           },
           body: JSON.stringify(requestBody),
         });
