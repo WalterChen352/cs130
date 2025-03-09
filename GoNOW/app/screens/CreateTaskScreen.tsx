@@ -219,7 +219,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
         Alert.alert('Success', 'Task updated successfully');
       } else {
         if (isRecurring) {
-          await addRecurringEvent(e, recurringTimes, recurringInterval);
+          await addRecurringEvent(e, recurringTimes, recurringInterval, autoSchedule, duration);
         } else {
           await addEvent(e, autoSchedule, duration);
         }
@@ -307,7 +307,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
             <View style={styles.dropdownSection1}>
               <DropdownPicker
                 selectedValue={recurringInterval}
-                onValueChange={(value) => setRecurringInterval(value.toString())}
+                onValueChange={(value) => { setRecurringInterval(value.toString()); }}
                 items={recurringIntervalOptions}
                 testID="Recurring-Interval"
                 placeholder="Select Interval"

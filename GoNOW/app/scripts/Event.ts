@@ -4,6 +4,7 @@ import { DB_NAME } from './Database';
 import { formatDate } from './Date';
 import Coordinates from '../models/Location';
 import { getWorkflowById } from './Workflow';
+import { Workflow } from '../models/Workflow';
 
 
 interface rowData {
@@ -68,15 +69,39 @@ export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
   }
 };
 
-export const addRecurringEvent = async (e: Event, times: number, interval: string
+export const addRecurringEvent = async (e: Event, times: number, interval: string, auto_schedule:boolean, duration:number
 ): Promise<void> => {
   // add event times times, incrementing the event time by interval each time
   // e.g. if times = 5 and interval = 'day', add event once for current event time,
   // then add 1 day to event time and add event again, and so on until times = 0
-
+  //init variables for autoscheduling recurring
+  const wfStartTime:Date=new Date(Date.now())
+  let daysAhead= 0;
+  switch(interval){
+    case 'day':
+      daysAhead=1;
+      break;
+    case 'week':
+      daysAhead=7;
+      break;
+    case 'month':
+      daysAhead=30;
+      break;
+    case 'year':
+      daysAhead=365;
+      break;
+    default:
+        throw new Error('Invalid interval for recurring event');
+  }
+  if(auto_schedule&&e.workflow===null)
+    throw new Error('tried to autoschedule event without a workflow')
+  const wf =await getWorkflowById(e.workflow!);
+    
   while (times > 0) {
-    await addEvent(e, false, null);
+    if(!auto_schedule){
+
     const startTime = new Date(e.startTime);
+    await addEvent(e, false, null);
     switch (interval) {
       case 'day':
         startTime.setDate(startTime.getDate() + 1);
@@ -94,9 +119,18 @@ export const addRecurringEvent = async (e: Event, times: number, interval: strin
         throw new Error('Invalid interval for recurring event');
     }
     e.startTime = startTime.toISOString();
-    times--;
   }
+  else{
+    console.log(`recurring autoschedule call with ${String(wfStartTime)} and ${String(daysAhead)} days ahead`)
+    const autoScheduledEvent =await autoSchedule(e,wf!, duration, wfStartTime, daysAhead)
+    //modify wfStartTime,
+    wfStartTime.setDate(wfStartTime.getDate()+daysAhead)
+    if(autoScheduledEvent!==null)
+      await addEvent(autoScheduledEvent, false, null)
+  }
+  times--;
 };
+}
 
 export const getWeeklyEvents= async(date: Date): Promise<Event[]>=>{
   console.log('getting weekly events for ', date);
@@ -172,19 +206,11 @@ export const clearEvents = async():Promise<void>=>{ //just for clearing local st
   return Promise.resolve();
 };
 
-
-
-export const addEvent = async (e: Event, auto_schedule:boolean, duration: number|null): Promise<void> => {
-  try {
-    
-    //autoschedule first
-    if(auto_schedule){
-      if (duration===null)
-        throw new Error('tried to call autoschedule without a duration')
-      if(e.workflow!==null){
-    //query all events coming up in 14 days and corresponding workflow
-        const [wf, events] =await Promise.all([getWorkflowById(e.workflow), getFutureEvents(new Date(Date.now()), 14)] ) ;
-        if(wf!==null &&wf.timeEnd.toInt()-wf.timeStart.toInt()<duration){
+const autoSchedule = async(e:Event, wf:Workflow, duration: number, startSearch:Date, daysAhead:number):Promise<Event|null>=>{
+  
+    //query all events coming up in days ahead
+        const events:Event[] =await getFutureEvents(startSearch, daysAhead)
+        if(wf.timeEnd.toInt()-wf.timeStart.toInt()<duration){
           throw new Error('tried to schedule event lasting longer than the workflow bounds')
         }
         const datedEvents = events.map(e=>{
@@ -212,15 +238,38 @@ export const addEvent = async (e: Event, auto_schedule:boolean, duration: number
           headers: headers,
           body: JSON.stringify(body)
         })
+        if(response.ok){
         const result :string= await response.json() as string;
         console.log('autoscheduledeventt', result)
         const event:Event = JSON.parse(result) as Event;
         event.startTime=formatDateForSQLite(new Date(event.startTime))
         event.endTime=formatDateForSQLite(new Date(event.endTime))
-        e=event
+        return event
+        }
+        else{
+          return null
+        }
+      }
+
+
+
+export const addEvent = async (e: Event, auto_schedule:boolean, duration: number|null): Promise<void> => {
+  try {
+    
+    //autoschedule first
+    if(auto_schedule){
+      if (duration===null)
+        throw new Error('tried to call autoschedule without a duration')
+      if(e.workflow==null)
+        throw new Error('tried to autoschedule event without a workflow')
+      const wf =await getWorkflowById(e.workflow);
+      const autoscheduledEvent= await autoSchedule(e, wf!, duration, new Date(Date.now()),14 );
+      if(autoscheduledEvent===null){
+        console.error('unable to autoschedule event')
+        return;
       }
       else{
-        throw new Error('tried to autoschedule event without a workflow')
+        e=autoscheduledEvent;
       }
     }
     const DB = await SQLite.openDatabaseAsync(DB_NAME);
