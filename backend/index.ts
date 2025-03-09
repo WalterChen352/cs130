@@ -23,6 +23,18 @@ interface RouteRequestBody {
 
 let users=0;
 
+// Autoschedule Metrics
+let autoscheduleRequests = 0;
+let autoscheduledTasks=0;
+
+// Route Metrics
+let routeRequests = 0;
+let routeSuccess = 0;
+
+// Other Metrics
+let workflowCreated = 0;
+let taskCreated = 0;
+
 interface AutoscheduleRequestBody {
     events:Event[],
     workflow: Workflow,
@@ -47,10 +59,18 @@ app.use((req:Request, res:Response, next) => {
     next();
 })
 
-app.get( '/ping',(req:Request, res: Response)=>{
+app.get('/ping',(req:Request, res: Response)=>{
     res.status(200).json({uid: users});
     users++;
     console.log(`new users ${users}`)
+})
+
+app.get('/createTask',(req:Request, res: Response)=>{
+    taskCreated++;
+})
+
+app.get('/createWorkflow',(req:Request, res: Response)=>{
+    workflowCreated++;
 })
 
 app.post('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleRequestBody>, res: Response) => {
@@ -75,7 +95,9 @@ app.post('/api/autoschedule', async (req: Request<unknown, unknown, Autoschedule
     else{
         console.log('travel time in minutes:', result)
         res.status(200).json(JSON.stringify(result))
+        autoscheduledTasks++;
     }   
+    autoscheduleRequests++;
 });
 
 app.post('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordinates:Coordinates}>, res: Response) => {
@@ -123,11 +145,13 @@ app.post('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, 
         const responseData = await response.json();
         console.log('response data', responseData);
         res.status(200).send(responseData); 
+        routeSuccess++;
 
     } catch (error) {
         console.error('Error fetching route:', error);
         res.status(500).send('');
     }
+    routeRequests++;
 });
 
 app.listen(PORT,() => {
