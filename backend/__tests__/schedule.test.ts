@@ -1,7 +1,6 @@
 import { autoschedule } from '../schedule'; // Update with your actual module path
 import type { Workflow, Time, Coordinates, Event} from '../types'
-import APP_SCHEDULING_STYLES from '../../GoNOW/app/models/SchedulingStyle'
-
+import APP_SCHEDLING_STYLES from '../types';
 // Mock the current date to ensure consistent test results
 const mockDate = new Date('2025-03-03T12:00:00Z'); // Using the current date from your session
 jest.useFakeTimers().setSystemTime(mockDate);
@@ -79,7 +78,7 @@ describe('autoschedule function', () => {
       timeStart: morning9am,
       timeEnd: noon,
       daysOfWeek: [false, true, true, true, true, true, false], // Mon-Fri
-      schedulingStyle: APP_SCHEDULING_STYLES[0],
+      schedulingStyle: APP_SCHEDLING_STYLES[0]
 
     }
 
@@ -91,7 +90,7 @@ describe('autoschedule function', () => {
       timeStart:afternoon2pm,
       timeEnd:evening8pm,
       daysOfWeek:[true, true, true, true, true, false, false], // Sun-Thu
-      schedulingStyle:APP_SCHEDULING_STYLES[0]
+      schedulingStyle:APP_SCHEDLING_STYLES[0]
     }
 
     workflowWeekendOutings = {
@@ -102,7 +101,7 @@ describe('autoschedule function', () => {
       timeStart:noon,
       timeEnd:evening5pm,
       daysOfWeek:[true, false, false, false, false, false, true], // Sat-Sun
-      schedulingStyle:APP_SCHEDULING_STYLES[0]
+      schedulingStyle:APP_SCHEDLING_STYLES[0]
     }
 
     // Initialize existing events

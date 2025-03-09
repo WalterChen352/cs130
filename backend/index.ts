@@ -1,6 +1,5 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import fetch, { Headers } from 'node-fetch';
 import { autoschedule } from './schedule';
 import type {Workflow,Coordinates, Event} from './types'
 import { computeTravelTime } from './mapsQueries';
@@ -15,10 +14,15 @@ app.use(bodyParser.json())
 const apiKey = process.env.API_KEY??'';   
 const accessToken = process.env.ACCESS_TOKEN??'';
 
-interface RouteRequestBody {
-    origin:Coordinates;
-    destination:Coordinates;
-    travelMode: string;
+export interface PollRequestBody {
+    event:Event,
+    coordinates:Coordinates;
+}
+
+export interface RouteRequestBody{
+    origin: Coordinates,
+    destination: Coordinates,
+    travelMode: string
 }
 
 let users=0;
@@ -104,11 +108,12 @@ app.post('/api/autoschedule', async (req: Request<unknown, unknown, Autoschedule
     console.log(`success rate of autoscheduling is ${String(autoscheduledTasks/autoscheduleRequests)}`)
 });
 
-app.post('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordinates:Coordinates}>, res: Response) => {
+app.post('/api/poll', async (req: Request<unknown, unknown, PollRequestBody>, res: Response) => {
     const result =await computeTravelTime(apiKey, req.body.coordinates, req.body.event.coordinates, req.body.event.transportationMode, null, req.body.event.startTime)
     //send send back to user
-    console.log('result')
+    console.log('result', result);
     res.status(200).json({travelTime: result});
+    console.log()
 });
 
 app.post('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, res: Response) => {

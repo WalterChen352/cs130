@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, TextInput, Switch, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, Switch, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 // Component imports
@@ -8,6 +8,7 @@ import DropdownPicker from '../components/DropdownPicker';
 import TimeSelector from '../components/TimeSelector';
 import ButtonSave from '../components/ButtonSave';
 import DateSelector from '../components/DateSelector';
+import DurationPicker from '../components/DurationPicker';
 
 // Model imports
 import { Workflow } from '../models/Workflow';
@@ -26,9 +27,12 @@ import { formatDate } from '../scripts/Date';
 
 //styles imports
 import { styles } from '../styles/CreateTaskScreen.styles';
-
+import { switchColors } from '../styles/Common.styles';
 // Navigation imports
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+
+//Haptics
+import * as Haptics from 'expo-haptics';
 
 
 interface CreateTaskScreenProps {
@@ -57,6 +61,8 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
   const [coordinates, setCoordinates] = useState<Coordinates>({latitude: 0, longitude: 0});
   const [description, setDescription] = useState<string>('');
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  const [duration, setDuration] = useState(0);
+  const [submittingEvent, setSubmittingEvent]= useState(false);
 
   /** Dropdown options for transportation modes */
   const transportModeOptions = APP_TRANSPORTATION_MODES.map(tm=>({
@@ -118,6 +124,10 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
     setEndDate(newEndDate);
   };
 
+  //**
+  // handles change of autoschedule switch
+  //  */
+
   // Populate form with event data if in edit mode
   useEffect(() => {
     if (isEditMode && eventData) {
@@ -127,7 +137,6 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
       setEndDate(new Date(eventData.endTime));
       setCoordinates(eventData.coordinates)
       setTransportationMode(eventData.transportationMode);
-      
       if (eventData.workflow) {
         const workflowObj = tryFilterWfId(workflows, eventData.workflow);
         if (workflowObj) {
@@ -177,6 +186,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
    */
   const saveEvent = async (): Promise<void> => {
     try {
+      setSubmittingEvent(true);
       const e:Event = {
         id:0,
         name: title,
@@ -195,16 +205,22 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
         await updateEvent(e);
         Alert.alert('Success', 'Task updated successfully');
       } else {
-        await addEvent(e);
+        await addEvent(e, autoSchedule, duration);
         Alert.alert('Success', 'Task created successfully');
       }
-      
+      void Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Success
+      )
       resetForm();
       navigation.navigate('Daily', { date: e.startTime });
       
     } catch (error) {
+      void Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Error
+      )
       Alert.alert('Validation Error', error instanceof Error ? error.message : 'Unknown error');
     }
+    setSubmittingEvent(false);
   };
 
   /**
@@ -222,7 +238,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {opacity: submittingEvent ? 0.5 : 1 }]} pointerEvents={submittingEvent ? 'none' : 'auto'}>
       <ScrollView style={styles.scrollContainer}>
         <Text style={styles.title}>{isEditMode ? 'Edit Task' : 'Add a Task'}</Text>
     
@@ -234,7 +250,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
           onChangeText={setTitle}
         />
     
-        <View style={styles.dateContainer}>
+        <View style={[styles.dateContainer, {opacity: autoSchedule ? 0.5 : 1 } ]} pointerEvents={autoSchedule ? 'none' : 'auto'}>
           <DateSelector
             value={startDate}
             onChange={handleStartDateChange}
@@ -242,7 +258,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
           />
         </View>
     
-        <View style={styles.timeRow}>
+        <View style={[styles.timeRow, {opacity: autoSchedule ? 0.5 : 1 }]} pointerEvents={autoSchedule ? 'none' : 'auto'}>
           <TimeSelector
             value={startDate}
             onChange={handleStartTimeChange}
@@ -257,6 +273,10 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
             testID="End-Time-Selector"
           />
         </View>
+        <View>
+          {autoSchedule?<DurationPicker setDuration={setDuration}/>
+          :<></>}
+        </View>
     
         <View style={styles.dropdownSection1}>
           <DropdownPicker
@@ -268,14 +288,15 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
           />
         </View>
     
-        <View style={styles.switchRow}>
+        {isEditMode?<></>:<View style={styles.switchRow}>
           <Switch 
+            trackColor={switchColors.trackColor}
             value={autoSchedule} 
             onValueChange={setAutoSchedule}
             testID="Autoschedule"
           />
           <Text style={styles.switchLabel}>Autoschedule</Text>
-        </View>
+        </View>}
     
         <View style={styles.dropdownSection2}>
           <DropdownPicker
@@ -307,15 +328,18 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
           onChangeText={setDescription}
           multiline
         />
-  
+    <ActivityIndicator animating={submittingEvent} size="large"></ActivityIndicator>
         <View style={styles.footer} />
+        
       </ScrollView>
   
       <ButtonSave
         onPress={() => { void saveEvent(); }}
         testID="Save-Task"
       />
+      
     </View>
+
   );
 };
 

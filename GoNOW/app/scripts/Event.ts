@@ -3,6 +3,7 @@ import { Event } from '../models/Event';
 import { DB_NAME } from './Database';
 import { formatDate } from './Date';
 import Coordinates from '../models/Location';
+import { getWorkflowById } from './Workflow';
 
 
 interface rowData {
@@ -14,6 +15,14 @@ interface rowData {
     coordinates: string
     transportationMode: string;
     workflow: number|null;
+}
+
+const url="https://gonow-5ry2jtelsq-wn.a.run.app/api/autoschedule"
+//const url="http://localhost:8080/api/autoschedule"
+const headers = {
+  Accept: 'application/json',
+  'Content-Type': 'application/json',
+  'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN ?? ''
 }
 
 
@@ -60,12 +69,16 @@ export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
   }
 };
 
-export const getWeeklyEvents = async(date: Date): Promise<Event[]> => {
+export const getWeeklyEvents= async(date: Date): Promise<Event[]>=>{
   console.log('getting weekly events for ', date);
-  
+  const results = await getFutureEvents(date, 7);
+  return results;
+}
+
+export const getFutureEvents = async(date: Date, daysAhead: number): Promise<Event[]> => {
   const startDate = new Date(date);
   const endDate = new Date(date);
-  endDate.setDate(endDate.getDate() + 7);
+  endDate.setDate(endDate.getDate() + daysAhead);
   
   const startStr = formatDateForSQLite(startDate);
   const endStr = formatDateForSQLite(endDate);
@@ -132,11 +145,56 @@ export const clearEvents = async():Promise<void>=>{ //just for clearing local st
 
 
 
-export const addEvent = async (e: Event): Promise<void> => {
+export const addEvent = async (e: Event, auto_schedule:boolean, duration: number|null): Promise<void> => {
   try {
-    const DB = await SQLite.openDatabaseAsync(DB_NAME);
-    console.log('db', DB);
     
+    //autoschedule first
+    if(auto_schedule){
+      if (duration===null)
+        throw new Error('tried to call autoschedule without a duration')
+      if(e.workflow!==null){
+    //query all events coming up in 14 days and corresponding workflow
+        const [wf, events] =await Promise.all([getWorkflowById(e.workflow), getFutureEvents(new Date(Date.now()), 14)] ) ;
+        if(wf!==null &&wf.timeEnd.toInt()-wf.timeStart.toInt()<duration){
+          throw new Error('tried to schedule event lasting longer than the workflow bounds')
+        }
+        const datedEvents = events.map(e=>{
+          const newStart= new Date(e.startTime).toISOString()
+          e.startTime=newStart
+          const newEnd = new Date(e.endTime).toISOString()
+          e.endTime=newEnd
+          
+          return e
+        })
+        console.log('dated events', datedEvents)
+        const body={
+          events:datedEvents,
+          workflow: wf,
+          coordinates: e.coordinates,
+          duration: duration,
+          timeZone: "America/Los_Angeles", //placeholder
+          name: e.name,
+          description: e.description,
+          transportation: e.transportationMode
+        }
+        console.log('autoschedule body', body)
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(body)
+        })
+        const result :string= await response.json() as string;
+        console.log('autoscheduledeventt', result)
+        const event:Event = JSON.parse(result) as Event;
+        event.startTime=formatDateForSQLite(new Date(event.startTime))
+        event.endTime=formatDateForSQLite(new Date(event.endTime))
+        e=event
+      }
+      else{
+        throw new Error('tried to autoschedule event without a workflow')
+      }
+    }
+    const DB = await SQLite.openDatabaseAsync(DB_NAME);
     // Since workflow is number|null, we don't need to check for undefined
     const query = `INSERT INTO events
       (name, description, startTime, endTime, coordinates, transportationMode, workflow)
@@ -153,6 +211,10 @@ export const addEvent = async (e: Event): Promise<void> => {
     ];
     
     await DB.runAsync(query, params);
+    await fetch("https://gonow-5ry2jtelsq-wn.a.run.app/createTask", {
+      method: 'GET',
+      headers: headers
+    });
   } catch (error) {
     console.error('Error in addEvent function:', error);
   }
@@ -169,8 +231,7 @@ export const updateEvent = async (e: Event): Promise<void> => {
           description = ?, 
           startTime = ?,
           endTime = ?,
-          latitude = ?,
-          longitude = ?,
+          coordinates =?,
           transportationMode = ?,
           workflow = ?
       WHERE id = ?;`;
@@ -211,18 +272,27 @@ export const getNextEvent = async() : Promise<Event|null> => {
   try{
     const DB = await SQLite.openDatabaseAsync(DB_NAME);
     console.log('time', new Date().toLocaleTimeString())
-    const result = await DB.getAllAsync(`SELECT * FROM events
+    const results:rowData[] = await DB.getAllAsync(`SELECT * FROM events
     WHERE datetime(startTime) >= datetime(?)
     ORDER BY startTime
     LIMIT 1;`, [formatDate(new Date())]);
-    console.log('result', result);
-    if (result.length === 0) {
+    if (results.length === 0) {
       console.log('no events found');
       return null;
     }
     else{
-      console.log('next event:', result[0]);
-      return result[0] as Event;
+      const result = results[0]; // unwrap the array
+      const event:Event = ({
+        id:result.id,
+        name:result.name,
+        description:result.description,
+        startTime:result.startTime,
+        endTime:result.endTime,
+        coordinates: JSON.parse(result.coordinates) as Coordinates,
+        transportationMode:result.transportationMode,
+        workflow:result.workflow
+      });
+      return event;
     }
   }
   catch(error){
@@ -246,38 +316,35 @@ export const validateEvent = (event: Event, auto_schedule: boolean): void => {
   if (!event.name) {
     errors.push('The Event Name field is required.');
   }
-  
-  // Check time consistency
-  if (event.startTime && !event.endTime) {
-    errors.push('The event has a start time but no end time.');
+  if(auto_schedule){ //if autoschedule we dont care about enforcing any of the time constraints
+    const hasWorkflow = event.workflow !== null;
+    // Core validation: Either time is set OR (autoschedule is enabled AND workflow is selected)
+    if ( !hasWorkflow) {
+      errors.push('An autoscheduled task must be assigned to a workflow.');
+    }
+    
   }
-  
-  if (event.endTime && !event.startTime) {
-    errors.push('The event has an end time but no start time.');
-  }
-  
-  // Check if event end time is after start time
-  if (event.startTime && event.endTime) {
-    const startTimeDate = new Date(event.startTime);
-    const endTimeDate = new Date(event.endTime);
-    if (startTimeDate > endTimeDate) {
-      errors.push('The end time of the event must be later than the start time. Overnight events are not supported.');
+  else{
+    // Check time consistency
+    if (event.startTime && !event.endTime) {
+      errors.push('The event has a start time but no end time.');
+    }
+    
+    if (event.endTime && !event.startTime) {
+      errors.push('The event has an end time but no start time.');
+    }
+    
+    // Check if event end time is after start time
+    if (event.startTime && event.endTime) {
+      const startTimeDate = new Date(event.startTime);
+      const endTimeDate = new Date(event.endTime);
+      if (startTimeDate > endTimeDate) {
+        errors.push('The end time of the event must be later than the start time. Overnight events are not supported.');
+      }
     }
   }
-  
   // Check the core requirement: Either set time OR (autoschedule AND workflow)
-  const hasTimeSet = Boolean(event.startTime) && Boolean(event.endTime);
-  const hasWorkflow = event.workflow !== -1;
   
-  // Core validation: Either time is set OR (autoschedule is enabled AND workflow is selected)
-  if (!hasTimeSet && !(auto_schedule && hasWorkflow)) {
-    errors.push('You must either set a time for the event OR enable autoschedule and select a workflow.');
-  }
-  
-  // Additional check: If autoschedule is enabled, a workflow must be selected (for clarity)
-  if (auto_schedule && !hasWorkflow) {
-    errors.push('Please select a workflow when autoschedule is enabled.');
-  }
   
   if (errors.length > 0) {
     throw new Error(errors.join('\n'));
