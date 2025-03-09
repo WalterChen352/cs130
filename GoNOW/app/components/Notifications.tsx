@@ -31,7 +31,7 @@ const NotificationDisplay: React.FC = () => {
 };
 
 export async function scheduleLocalNotification(title: string, body: string, min_in_future: number) {
-  console.log(`Scheduling notification: ${title}, ${body}, in ${min_in_future} minutes`);
+  console.log(`Scheduling notification: ${title}, ${body}, in ${min_in_future.toString()} minutes`);
   await Notifications.scheduleNotificationAsync({
     content: {
       title: title,
