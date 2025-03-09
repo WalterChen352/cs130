@@ -20,7 +20,8 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
     console.log('destination is', destination)
     console.log('origin is', origin);
     //set headers
-    console.log(origin, destination)
+    console.log('origin', origin);
+    console.log('destination', destination);
     const getTimeHeaders = new Headers({
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,
@@ -50,6 +51,10 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
         routingPreference: "TRAFFIC_AWARE",
         arrivalTime:arrivalTime
         }
+    if(travelMode!=='WALK'&&travelMode!=='BICYCLE'){
+        params.routingPreference="TRAFFIC_AWARE";
+    }
+    console.log('params', params)
     const body=JSON.stringify(params);
     try {
             const response = await fetch(url, {
@@ -58,7 +63,11 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
                 body: body
             });
     
-            if (!response.ok) throw new Error(`HTTP Error: ${String(response.status)}`);
+            if (!response.ok){
+                const err=await response.json()
+                console.log(err)
+                throw new Error(`HTTP Error: ${String(response.status)}`);
+            }
             const data = await response.json() as {routes:[{duration:string}]};
             console.log('data from api req', data)
             const duration = data.routes[0].duration

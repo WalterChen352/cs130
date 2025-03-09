@@ -13,7 +13,7 @@ export const MapScreenStyles = StyleSheet.create({
   },
   routePanel: {
     position: 'absolute',
-    top: 70, 
+    top: 20,
     left: '5%',
     right: '5%',
     padding: Spacing.PADDING_MEDIUM,

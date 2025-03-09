@@ -1,6 +1,6 @@
 import { Alert, Platform, ScrollView, Switch, Text, TextInput, View, TouchableOpacity } from 'react-native';
-import {  useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
-import {  useEffect, useRef, useState } from 'react';
+import { useFocusEffect, useNavigation, NavigationProp, RouteProp } from '@react-navigation/native';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import WheelPicker from 'react-native-wheel-color-picker';
 
@@ -191,6 +191,11 @@ const WorkflowScreen: React.FC<WorkflowScreenProps> = ({ route }) => {
         setSchedulingStyle(workflow.schedulingStyle.id.toString());
     }, [workflow]);
 
+    useFocusEffect(
+        useCallback(() => {
+            scrollRef.current?.scrollTo({ y: 0, animated: true });
+        },[])
+    );
 
     return (
         <View style={WorkflowScreenStyles.container}>

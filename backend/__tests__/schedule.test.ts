@@ -4,7 +4,7 @@ import APP_SCHEDLING_STYLES from '../types';
 // Mock the current date to ensure consistent test results
 const mockDate = new Date('2025-03-03T12:00:00Z'); // Using the current date from your session
 jest.useFakeTimers().setSystemTime(mockDate);
-// The rest of the code remains the same...
+
 
 jest.mock('../mapsQueries', ()=>({
    
@@ -229,7 +229,8 @@ describe('autoschedule function', () => {
       "America/New_York", // Different timezone
       'test2',
       'desc2',
-      true
+      true,
+       "DRIVE"
     );
 
     expect(result).not.toBeNull();
@@ -266,7 +267,8 @@ describe('autoschedule function', () => {
       "Europe/London", // Different timezone
       'test3',
       'desc3',
-      true
+      true,
+       "DRIVE"
     );
 
     expect(result).not.toBeNull();
@@ -298,7 +300,8 @@ describe('autoschedule function', () => {
       "America/Los_Angeles",
       'test4',
       'desc4',
-      true
+      true,
+       "DRIVE"
     );
 
     expect(result).toBeNull();
@@ -380,7 +383,8 @@ describe('autoschedule function', () => {
       "America/Los_Angeles",
       'test6',
       'desc6',
-      true
+      true,
+       "DRIVE"
     );
     
     expect(result).not.toBeNull();
