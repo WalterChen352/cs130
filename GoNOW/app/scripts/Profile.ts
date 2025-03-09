@@ -1,5 +1,31 @@
 import { openDatabase } from './Database';
 import { Location} from '../models/Location';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+/**
+ * Check if we have a UID header
+ */
+export const getUID = async (): Promise<number | null> => {
+  try {
+    const uid = await AsyncStorage.getItem('uid');
+    if(uid !==null)
+      return Number(uid);
+    else
+      return null;
+  } catch (error) {
+    console.error('AsyncStorage error:', error);
+    return null;
+  }
+};
+
+export const setUID = async (uid: number): Promise<void> => {
+  try {
+    await AsyncStorage.setItem('uid', uid.toString());
+  } catch (error) {
+    console.error('AsyncStorage error:', error);
+  }
+};
+
 
 /**
  * Returns home geolocation of the user from DB.

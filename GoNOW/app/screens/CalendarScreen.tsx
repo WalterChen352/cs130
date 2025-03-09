@@ -9,7 +9,7 @@ import {CalendarStyles} from '../styles/CalendarScreen.styles';
 import {Event} from '../models/Event';
 import { Workflow } from '../models/Workflow';
 import { TabParamList } from './Navigator';
-import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
+import { getWorkflows, tryFilterWfId , getWorkflowById} from '../scripts/Workflow';
 import { Colors } from '../styles/Common.styles'
 import * as Haptics from 'expo-haptics';
 
@@ -55,6 +55,8 @@ const CalendarScreen = (): JSX.Element => {
             const w: Workflow[] = await getWorkflows();
             setWorkflows(w);
             console.log('workflows in calendar', workflows);
+            const wf=await getWorkflowById(1);
+            console.log('wf0', wf)
         } catch(error) {
             console.error('error fetching events', error);
         }
