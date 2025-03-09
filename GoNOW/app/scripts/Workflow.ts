@@ -180,7 +180,7 @@ export const addWorkflow = async (workflow: Workflow): Promise<void> => {
         workflow.schedulingStyle.id
       ]
     );
-    await fetch("https://gonow-5ry2jtelsq-wn.a.run.app/createTask", {
+    await fetch("https://gonow-5ry2jtelsq-wn.a.run.app/createWorkflow", {
       method: 'GET',
       headers: headers
     });
