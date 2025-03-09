@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-// import { Platform } from "react-native";
+import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
 import { S_PER_MIN } from "../scripts/Polling";
 
@@ -20,9 +20,9 @@ const NotificationDisplay: React.FC = () => {
 
   useEffect(() => {
     // requestNotificationPermission();
-    // if (Platform.OS === 'android') {
-    //   Notifications.getNotificationChannelsAsync().then(value => { setChannels(value ?? []); });
-    // }
+    if (Platform.OS === 'android') {
+      Notifications.getNotificationChannelsAsync().then(value => { setChannels(value ?? []); });  //eslint-disable-line
+    }
 
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
       setNotification(notification);
