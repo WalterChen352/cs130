@@ -21,6 +21,8 @@ interface RouteRequestBody {
     travelMode: string;
 }
 
+let users=0;
+
 interface AutoscheduleRequestBody {
     events:Event[],
     workflow: Workflow,
@@ -41,7 +43,14 @@ app.use((req:Request, res:Response, next) => {
         res.status(500).json({message:'unable to authenticate request'})
         return;
     }
+    const uid = req.headers['uid']
     next();
+})
+
+app.get( '/ping',(req:Request, res: Response)=>{
+    res.status(200).json({uid: users});
+    users++;
+    console.log(`new users ${users}`)
 })
 
 app.post('/api/autoschedule', async (req: Request<unknown, unknown, AutoscheduleRequestBody>, res: Response) => {

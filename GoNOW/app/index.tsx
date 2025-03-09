@@ -5,12 +5,17 @@ import { initDatabase } from './scripts/Database';
 import { IndexStyles as styles } from './styles/Index.styles';
 import Navigator from './screens/Navigator';
 
+
+
 export default function Index(): JSX.Element {
   const [status, setStatus] = useState<number>(0); // 0 - loading; 1 - ready; 2 - error
+
+
 
   useEffect(() => {
     const appInit = async (): Promise<void> => {
       try {
+        // 
         await initDatabase();
         setStatus(1);
       } catch (error) {
