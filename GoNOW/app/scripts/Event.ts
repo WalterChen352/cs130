@@ -24,7 +24,7 @@ const headers = {
   Accept: 'application/json',
   'Content-Type': 'application/json',
   'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN ?? '',
-  'uid': getUID()
+  'uid': String(getUID())
 }
 
 
@@ -213,6 +213,10 @@ export const addEvent = async (e: Event, auto_schedule:boolean, duration: number
     ];
     
     await DB.runAsync(query, params);
+    await fetch("https://gonow-5ry2jtelsq-wn.a.run.app/createTask", {
+      method: 'GET',
+      headers: headers
+    });
   } catch (error) {
     console.error('Error in addEvent function:', error);
   }

@@ -3,6 +3,14 @@ import { Time, DaysOfWeekNames } from '../models/Time';
 import { Workflow } from '../models/Workflow';
 import  { SS_ASAP } from '../models/SchedulingStyle';
 import APP_SCHEDLING_STYLES from '../models/SchedulingStyle';
+import { getUID } from '../scripts/Profile';
+
+const headers = {
+  Accept: 'application/json',
+  'Content-Type': 'application/json',
+  'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN ?? '',
+  'uid': String(getUID())
+}
 
 /**
  * DB record representing a workflow.
@@ -172,6 +180,10 @@ export const addWorkflow = async (workflow: Workflow): Promise<void> => {
         workflow.schedulingStyle.id
       ]
     );
+    await fetch("https://gonow-5ry2jtelsq-wn.a.run.app/createTask", {
+      method: 'GET',
+      headers: headers
+    });
   }
   catch (error) {
     console.error('Error adding workflow: ', error);
