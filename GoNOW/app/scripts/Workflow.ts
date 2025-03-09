@@ -3,13 +3,11 @@ import { Time, DaysOfWeekNames } from '../models/Time';
 import { Workflow } from '../models/Workflow';
 import  { SS_ASAP } from '../models/SchedulingStyle';
 import APP_SCHEDLING_STYLES from '../models/SchedulingStyle';
-import { getUID } from '../scripts/Profile';
 
 const headers = {
   Accept: 'application/json',
   'Content-Type': 'application/json',
-  'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN ?? '',
-  'uid': String(getUID())
+  'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN ?? ''
 }
 
 /**
