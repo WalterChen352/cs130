@@ -20,6 +20,13 @@ jest.mock('../app/scripts/Profile');
 jest.mock('../app/scripts/TransportationMode');
 jest.mock('polyline');
 
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  setItem: jest.fn(),
+  getItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+}));
+
 jest.mock('../app/scripts/Geo', () => ({
   getMyLocation: jest.fn() as jest.Mock<Promise<Location>>,
   getRoute: jest.fn() as jest.Mock<Promise<Route[] | null>>,
