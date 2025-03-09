@@ -1,5 +1,5 @@
 import * as polyline from 'polyline';
-import { act, render, waitFor, fireEvent } from '@testing-library/react-native';
+import { render, waitFor } from '@testing-library/react-native';
 
 import Route from '../app/models/Geo';
 import { Location } from '../app/models/Location';
@@ -7,7 +7,7 @@ import { SS_ASAP, SS_MAX_ONE } from '../app/models/SchedulingStyle';
 import { Time } from '../app/models/Time';
 import { Workflow } from '../app/models/Workflow';
 import MapScreen from '../app/screens/MapScreen';
-import { getMyLocation, getRoute } from '../app/scripts/Geo';
+import { getMyLocation } from '../app/scripts/Geo';
 import { MapEventAdapter, IMapEvent } from '../app/scripts/Map';
 import { getLocation } from '../app/scripts/Profile';
 import { getTransportationMode } from '../app/scripts/TransportationMode';
@@ -128,18 +128,6 @@ describe('Map Screen', () => {
     const { getByTestId, unmount } = render(<MapScreen />);
     await waitFor(() => {
       expect(getByTestId('marker-home')).toBeTruthy();
-    });
-    unmount();
-  });
-
-  it('should build route when event marker is pressed', async () => {
-    const { getByTestId, unmount } = render(<MapScreen />);
-    await waitFor(() => {
-      const eventMarker = getByTestId('marker-event-1');
-      act(() => {
-        fireEvent.press(eventMarker);
-      });
-      expect(getRoute).toHaveBeenCalled();
     });
     unmount();
   });

@@ -186,7 +186,7 @@ const MapScreen = (): JSX.Element => {
      *
      * @type {number}
      */
-    distanceValue: number;
+    distanceMeters: number;
 
     /**
      * Human-readable estimated duration to complete the route (e.g., "15 min").
@@ -200,7 +200,7 @@ const MapScreen = (): JSX.Element => {
      *
      * @type {number}
      */
-    durationValue: number;
+    duration: number;
 
     /**
      * Estimated time left (in seconds) before reaching the destination.
@@ -239,74 +239,81 @@ const MapScreen = (): JSX.Element => {
     const departure: Coordinates = deviceLocation;
     const destination: Coordinates = event.coordinates;
 
+    const defaultRoute: MapRoute = {
+      event: event,
+      departureName: 'Your location',
+      destinationName: `${event.name}, start at: ${event.startTime.toLocaleTimeString().replace(/:\d\d\s/,' ')}`,
+      distanceText: `${(approxDistanceFeets(departure, destination) / 5280).toFixed(3)} ml.`,
+      distanceMeters: Math.round(approxDistanceFeets(departure, destination) * 0.3048),
+      durationText: '?',
+      duration: -1,
+      leftTime: 0,
+      transportationMode: getTransportationMode(0),
+      steps: [{
+        startPoint: departure,
+        endPoint: destination,
+        travelMode: getTransportationMode(0),
+        title: '',
+        description: '',
+        points: [departure, destination]
+      }]
+    };
+
     // If the event is within a short distance (under 300 feet),
-    // no need to request GIS api. Jump in 5 min.
+    // no need to request GIS api.
     if (approxDistanceFeets(departure, destination) < 300) {
-      const jumpRoute: MapRoute = {
-        event: event,
-        departureName: 'Your location',
-        destinationName: `${event.name}, Scheduled time: ${event.startTime.toLocaleTimeString().replace(/:\d\d\s/,' ')}`,
-        distanceText: `${approxDistanceFeets(departure, destination).toString()} ft.`,
-        distanceValue: Math.round(approxDistanceFeets(departure, destination) * 0.3048),
-        durationText: '5 mins',
-        durationValue: 300,
-        leftTime: Math.round((event.startTime.getTime() - (new Date()).getTime()) / 1000) - 300,
-        transportationMode: getTransportationMode(0),
-        steps: [{
-          startPoint: departure,
-          endPoint: destination,
-          travelMode: getTransportationMode(0),
-          title: '',
-          description: '',
-          points: [departure, destination]
-        }]
-      };
-      setMapRoute(jumpRoute);
+      console.log("Skip routing.");
+      setMapRoute(defaultRoute);
       return;
     }
 
     const routesResult = await getRoute(departure, destination, event.transportationMode);
+    
     if (routesResult && Array.isArray(routesResult) && routesResult.length > 0) {
       if (Array.isArray(routesResult[0].legs) && routesResult[0].legs.length > 0) {
         const leg: Leg = routesResult[0].legs[0];
+        console.log(JSON.stringify(leg, null, 2));
         const mapSteps: MapStep[] = [];
+        const durationSec = parseInt(leg.duration.replaceAll('s',''));
         const tmpRoute: MapRoute = {
           event: event,
           departureName: 'Your location',
-          destinationName: `${event.name}, Scheduled time: ${event.startTime.toLocaleTimeString().replace(/:\d\d\s/,' ')}`,
-          distanceText: leg.distance.text,
-          distanceValue: leg.distance.value,
-          durationText: leg.duration.text,
-          durationValue: leg.duration.value,
-          leftTime: Math.round((event.startTime.getTime() - (new Date()).getTime()) / 1000) - leg.duration.value,
+          destinationName: `${event.name}, start at: ${event.startTime.toLocaleTimeString().replace(/:\d\d\s/,' ')}`,
+          distanceMeters: leg.distanceMeters,
+          distanceText: (Math.floor(leg.distanceMeters * 0.000621371 * 1000) / 1000).toFixed(3) + ' mi',
+          duration: parseInt(leg.duration.replaceAll('s','')),
+          durationText: Math.floor(durationSec / 3600).toString().padStart(2, '0')
+            + ':' + Math.floor((durationSec % 3600) / 60).toString().padStart(2, '0')
+            + ':' + Math.floor(durationSec % 60).toString().padStart(2, '0'),
+          leftTime: Math.round((event.startTime.getTime() - (new Date()).getTime()) / 1000) - durationSec,
           transportationMode: event.transportationMode,
           steps: mapSteps
         };
+
         leg.steps.forEach(step => {
           const tmpPoints: Coordinates[] = [];
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-          const decodedPoints = polyline.decode(step.polyline.points) as number[][];
+          const decodedPoints = polyline.decode(step.polyline.encodedPolyline) as number[][];
           decodedPoints.forEach((dp:number[]) => {
             tmpPoints.push({latitude:dp[0], longitude:dp[1]});
           });
           const tmpStep: MapStep = {
-            
-            startPoint: {latitude:step.start_location.lat, longitude:step.start_location.lng},
-            endPoint:  {latitude:step.end_location.lat, longitude:step.end_location.lng},
-            travelMode: getTransportationModeByGisName(step.travel_mode ?? ""),
-            title: `${step.distance.text}, ${step.duration.text}`,
-            description: step.html_instructions.replace(/<[^>]*>/g, ''), // cut all html tags
+            startPoint: step.startLocation.latLng,
+            endPoint: step.endLocation.latLng,
+            travelMode: getTransportationModeByGisName(step.travelMode ?? ""),
+            title: step.navigationInstruction.maneuver,
+            description: step.navigationInstruction.instructions,
             points: tmpPoints
           }
           tmpRoute.steps.push(tmpStep);
         });
         setMapRoute(tmpRoute);
-      } else {
-        setMapRoute(null);
+        return;
       }
     } else {
       console.log("WARNING MapScreen: Route is empty");
     }
+    setMapRoute(defaultRoute);
   }
 
   /**
@@ -444,7 +451,12 @@ const MapScreen = (): JSX.Element => {
               }
             </Text>
             <Text style={styles.routeText}>Distance: {mapRoute.distanceText}</Text>
-            <Text style={styles.routeText}>Transport: {mapRoute.transportationMode.name}</Text>
+            <Text style={styles.routeText}>Transport: {
+              mapRoute.transportationMode.name !== ''
+              ? mapRoute.transportationMode.name
+              : 'ANY'
+            }
+            </Text>
           </View>
         </React.Fragment>
       }

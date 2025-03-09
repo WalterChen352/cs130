@@ -11,8 +11,8 @@ const app: Express = express();
 const PORT = process.env.PORT??8080;
 app.use(bodyParser.json())
 
-const apiKey = process.env.API_KEY??'';   
-const accessToken = process.env.ACCESS_TOKEN??'';
+const apiKey = process.env.API_KEY ?? '';
+const accessToken = process.env.ACCESS_TOKEN ?? '';
 
 export interface PollRequestBody {
     event:Event,
@@ -125,13 +125,13 @@ app.post('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, 
     //construct request
     const url = 'https://routes.googleapis.com/directions/v2:computeRoutes';
 
-    const headers = new Headers({
+    const headers = {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': apiKey,
         'X-Goog-FieldMask': '*'
-    });
+    };
 
-    const body = JSON.stringify({
+    const body = {
         origin: {
             location: { latLng: { latitude: origin.latitude, longitude: origin.longitude } }
         },
@@ -139,20 +139,19 @@ app.post('/api/route', async (req: Request<unknown, unknown, RouteRequestBody>, 
             location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } }
         },
         travelMode: travelMode
-    });
-
+    };
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers: headers,
-            body: body
+            body: JSON.stringify(body)
         });
 
         if (!response.ok) throw new Error(`HTTP Error: ${String(response.status)}`);
         //const responseText = await response.text();
         //console.log('Raw response:', responseText);
         const responseData = await response.json();
-        console.log('response data', responseData);
+        //console.log('response data', responseData);
         res.status(200).send(responseData); 
         routeSuccess++;
 

@@ -41,15 +41,14 @@ export const getTransportationMode = (id: number):TransportationMode => {
 };
 
 /**
- * Returns a `TransportationMode` object with certain GIS api name.
+ * Returns a `TransportationMode` object with certain GIS name.
  *
- * @param {string} apiName - The GIS api name of the travel mode.
+ * @param {string} name - The GIS name of the travel mode.
  * @returns {TransportationMode} - The `TransportationMode` object with given name.
  */
-export const getTransportationModeByGisName = (apiName: string):TransportationMode => {
-  const name = apiName.toLowerCase();
+export const getTransportationModeByGisName = (name: string):TransportationMode => {
   for (const transportationMode of APP_TRANSPORTATION_MODES){
-    if(transportationMode.apiName === name)
+    if(transportationMode.googleMapsName === name)
       return transportationMode;
   }
   return APP_TRANSPORTATION_MODES[0]; // default value
