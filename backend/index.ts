@@ -14,9 +14,15 @@ app.use(bodyParser.json())
 const apiKey = process.env.API_KEY??'';   
 const accessToken = process.env.ACCESS_TOKEN??'';
 
-export interface RouteRequestBody {
+export interface PollRequestBody {
     event:Event,
     coordinates:Coordinates;
+}
+
+export interface RouteRequestBody{
+    origin: Coordinates,
+    destination: Coordinates,
+    travelMode: string
 }
 
 interface AutoscheduleRequestBody {
@@ -66,7 +72,7 @@ app.post('/api/autoschedule', async (req: Request<unknown, unknown, Autoschedule
     }   
 });
 
-app.post('/api/poll', async (req: Request<unknown, unknown, {event:Event, coordinates:Coordinates}>, res: Response) => {
+app.post('/api/poll', async (req: Request<unknown, unknown, PollRequestBody>, res: Response) => {
     const result =await computeTravelTime(apiKey, req.body.coordinates, req.body.event.coordinates, req.body.event.transportationMode, null, req.body.event.startTime)
     //send send back to user
     console.log('result', result);

@@ -13,7 +13,10 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
         //request must take one, but not both of these
         throw new Error('cannot call getTime with both arrival and departure time or provided neither')
     }
-    departureTime===null? console.log('querying google maps with arrival time', arrivalTime) : console.log('querying google maps with depart time', departureTime)
+    if(departureTime===null)
+         console.log('querying google maps with arrival time', arrivalTime)
+    else
+         console.log('querying google maps with depart time', departureTime)
     console.log('destination is', destination)
     console.log('origin is', origin);
     //set headers
