@@ -19,7 +19,7 @@ import { Event } from '../models/Event';
 import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
-import { getWorkflowById, getWorkflows, tryFilterWfId } from '../scripts/Workflow';
+import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
 import APP_TRANSPORTATION_MODES from '../models/TransportationMode';
 
 import { TabParamList } from './Navigator';
@@ -30,7 +30,6 @@ import { styles } from '../styles/CreateTaskScreen.styles';
 import { switchColors } from '../styles/Common.styles';
 // Navigation imports
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 
 //Haptics
 import * as Haptics from 'expo-haptics';

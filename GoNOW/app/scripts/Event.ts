@@ -22,7 +22,7 @@ const url="https://gonow-5ry2jtelsq-wn.a.run.app/api/autoschedule"
 const headers = {
   Accept: 'application/json',
   'Content-Type': 'application/json',
-  'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN || ''
+  'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN ?? ''
 }
 
 
@@ -183,9 +183,9 @@ export const addEvent = async (e: Event, auto_schedule:boolean, duration: number
           headers: headers,
           body: JSON.stringify(body)
         })
-        const result :string= await response.json()
+        const result :string= await response.json() as string;
         console.log('autoscheduledeventt', result)
-        const event:Event = JSON.parse(result)
+        const event:Event = JSON.parse(result) as Event;
         event.startTime=formatDateForSQLite(new Date(event.startTime))
         event.endTime=formatDateForSQLite(new Date(event.endTime))
         e=event

@@ -15,11 +15,11 @@ const DurationPicker:React.FC<DurationPickerProps> = ({
   // Generate hours (1-12)
   const hours = Array.from({ length: 24 }, (_, i) => {
     const hour = i;
-    return hour < 10 ? `0${hour}` : `${hour}`;
+    return hour < 10 ? `0${String(hour)}` : String(hour);
   });
   // Generate minutes (00-59)
   const minutes = Array.from({ length: 60 }, (_, i) => {
-    return i < 10 ? `0${i}` : `${i}`;
+    return i < 10 ? `0${String(i)}` : String(i);
   });
 
   const handleHourChange=(itemValue:string)=>{
@@ -42,7 +42,7 @@ const DurationPicker:React.FC<DurationPickerProps> = ({
           <View style={styles.picker}>
             <Picker
               selectedValue={selectedHour}
-              onValueChange={(itemValue) => handleHourChange(itemValue)}
+              onValueChange={(itemValue) => { handleHourChange(itemValue); }}
               style={{ height: 120 }}
             >
               {hours.map((hour) => (
@@ -60,7 +60,7 @@ const DurationPicker:React.FC<DurationPickerProps> = ({
           <View style={styles.picker}>
             <Picker
               selectedValue={selectedMinute}
-              onValueChange={(itemValue) => handleMinuteChange(itemValue)}
+              onValueChange={(itemValue) => { handleMinuteChange(itemValue); }}
               style={{ height: 120 }}
             >
               {minutes.map((minute) => (
