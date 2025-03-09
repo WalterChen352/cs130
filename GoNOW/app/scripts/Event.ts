@@ -230,7 +230,9 @@ const autoSchedule = async(e:Event, wf:Workflow, duration: number, startSearch:D
           timeZone: "America/Los_Angeles", //placeholder
           name: e.name,
           description: e.description,
-          transportation: e.transportationMode
+          transportation: e.transportationMode,
+          startSearch: startSearch,
+          daysAhead: daysAhead
         }
         console.log('autoschedule body', body)
         const response = await fetch(url, {
