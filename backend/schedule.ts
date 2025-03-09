@@ -74,13 +74,16 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
         const dayStart = new Date(new Date(startISODate).toLocaleString('en-US', { timeZone }));
         const dayEnd = new Date(new Date(endISODate).toLocaleString('en-US', { timeZone }));
         
+        const offset= getOffset(timeZone);
+        const dayStartOffset= new Date(dayStart.getTime()+offset);
+        const dayEndOffset = new Date(dayEnd.getTime()+offset)
         // Check if we can fit the event between workflow bounds
-        console.log(`finding available times between ${dayStart}, ${dayEnd}` )
+        console.log(`finding available times between ${dayStartOffset}, ${dayEndOffset}` )
         const eventStartTime =await  findAvailableTime(
             apiKey,
             events,
-            dayStart,
-            dayEnd,
+            dayStartOffset,
+            dayEndOffset,
             duration,
             coordinates,
             timeZone,
@@ -194,6 +197,33 @@ const findAvailableTime=async(
     return null;
 }
 
+
+function getOffset(timezone:string) {
+    // Get the current date and time in the local timezone
+    const now = new Date();
+
+    // Format the current time in the inputted timezone
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: false,
+    });
+
+    // Get the time in the inputted timezone as a string
+    const timeInInputTimezone = formatter.format(now);
+
+    // Parse the time string into a Date object
+    const [hours, minutes, seconds] = timeInInputTimezone.split(':').map(Number);
+    const dateInInputTimezone = new Date(now);
+    dateInInputTimezone.setHours(hours, minutes, seconds);
+
+    // Calculate the difference in milliseconds
+    const offsetMilliseconds = now.getMilliseconds() - dateInInputTimezone.getMilliseconds();
+
+    return offsetMilliseconds;
+}
 
 
 
