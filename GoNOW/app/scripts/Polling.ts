@@ -1,5 +1,4 @@
 import { scheduleLocalNotification } from '../components/Notifications';
-import { RouteRequestBody } from '../../../backend/index';
 import { PollRequestBody } from '../../../backend/index';
 import { getNextEvent } from './Event';
 import { getMyLocation } from './Geo';
