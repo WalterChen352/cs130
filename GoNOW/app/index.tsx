@@ -7,6 +7,14 @@ import { IndexStyles as styles } from './styles/Index.styles';
 import Navigator from './screens/Navigator';
 import { registerBackgroundFetchAsync } from './scripts/BackgroundTasks';
 import ForegroundTask from './components/ForegroundTask';
+import { getUID, setUID } from './scripts/Profile';
+
+const url='https://gonow-5ry2jtelsq-wn.a.run.app/ping';
+const headers={
+  'Content-Type':'application/json',
+  'Accept':'application/json',
+  'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN??''
+}
 
 export default function Index(): JSX.Element {
   const [status, setStatus] = useState<number>(0); // 0 - loading; 1 - ready; 2 - error
@@ -14,6 +22,17 @@ export default function Index(): JSX.Element {
   useEffect(() => {
     const appInit = async (): Promise<void> => {
       try {
+        const uid = await getUID();
+        if (uid === null) {
+          //ping
+          const response = await fetch(url, {
+            method:'GET',
+            headers:headers
+          });
+          const data = await response.json() as{uid:number};
+          console.log(`uid data is ${data}`);
+          setUID(data.uid);
+        }
         await initDatabase();
         await registerBackgroundFetchAsync();
         const tasks:TaskManager.TaskManagerTask[] = await TaskManager.getRegisteredTasksAsync();
