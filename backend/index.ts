@@ -87,6 +87,10 @@ const updateAutoschedule=(req:Request<unknown, unknown, AutoscheduleRequestBody>
     autoscheduleRequests++;
     if(result !==null)
         autoscheduledTasks++;
+    if(autoscheduleRequests > 100 && (autoscheduledTasks/autoscheduleRequests)>.01){
+        console.error(`ERROR: success rate of autoscheduling has dropped below 1% to ${String(autoscheduledTasks/autoscheduleRequests)}`)
+        return
+    }
     console.log(`success rate of autoscheduling is ${String(autoscheduledTasks/autoscheduleRequests)}`)
 }
 
@@ -96,6 +100,10 @@ const updateRoute=(req:Request<unknown, unknown, RouteRequestBody>, success:bool
     routeRequests++;
     if(success)
         routeSuccess++;
+    if(routeRequests > 100 && (routeSuccess/routeRequests)>.01){
+        console.error(`ERROR: success rate of routes has dropped below 1% to ${String(routeSuccess/routeRequests)}`)
+        return
+    }
     console.log(`successful route response rate ${String(routeSuccess/routeRequests)}`)
 }
 interface AutoscheduleRequestBody {
