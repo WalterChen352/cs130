@@ -2,7 +2,7 @@ import { JSX, useEffect, useState, Fragment } from 'react';
 import { ActivityIndicator, Linking, Text, TouchableOpacity, View } from 'react-native';
 import * as TaskManager from 'expo-task-manager';
 
-import NotificationDisplay, { scheduleLocalNotification } from './components/Notifications';
+import NotificationDisplay from './components/Notifications';
 import { initDatabase } from './scripts/Database';
 import { IndexStyles as styles } from './styles/Index.styles';
 import Navigator from './screens/Navigator';

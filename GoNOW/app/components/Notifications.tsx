@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { Platform } from "react-native";
+// import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
 import { S_PER_MIN } from "../scripts/Polling";
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
+  handleNotification: async () => ({  //eslint-disable-line
     shouldShowAlert: true,
     shouldPlaySound: false,
     shouldSetBadge: false,
@@ -12,18 +12,17 @@ Notifications.setNotificationHandler({
 });
 
 const NotificationDisplay: React.FC = () => {
-  const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
-  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>([]);
+  const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);  //eslint-disable-line
+  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>([]);  //eslint-disable-line
 
   const notificationListener = useRef<Notifications.EventSubscription>();
   const responseListener = useRef<Notifications.EventSubscription>();
 
   useEffect(() => {
-    requestNotificationPermission();
-
-    if (Platform.OS === 'android') {
-      Notifications.getNotificationChannelsAsync().then(value => setChannels(value ?? []));
-    }
+    // requestNotificationPermission();
+    // if (Platform.OS === 'android') {
+    //   Notifications.getNotificationChannelsAsync().then(value => { setChannels(value ?? []); });
+    // }
 
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
       setNotification(notification);
@@ -43,12 +42,13 @@ const NotificationDisplay: React.FC = () => {
     };
   }, []);
 
-  async function requestNotificationPermission() {
-    const { status } = await Notifications.requestPermissionsAsync();
-    if (status !== "granted") {
-      alert("Permission to receive notifications is required!");
-    }
-  }
+  // async function requestNotificationPermission() {
+  //   const { status } = await Notifications.requestPermissionsAsync();
+  //   if (status !== "granted") {
+  //     alert("Permission to receive notifications is required!");
+  //   }
+  // }
+  
   return null;
 }
 

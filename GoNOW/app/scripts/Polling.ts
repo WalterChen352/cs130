@@ -68,7 +68,7 @@ export const poll = async (): Promise<void> => {
         const min_to_event = ms_to_event/(MS_PER_S*S_PER_MIN); // minutes
         const min_to_leave = Math.floor(min_to_event - travelTime);
         if (min_to_leave < NOTIFICATION_INTERVAL_MIN){ // If we need to leave before the next poll, notify the user and schedule notification
-          let immediate_notification_title = "GoNOW Notification";
+          const immediate_notification_title = "GoNOW Notification";
           let immediate_notification_body = "";
           if(min_to_leave < 0) {
             immediate_notification_body = `You are running ${Math.abs(min_to_leave).toString()} minutes late for ${next_event.name}!`;
@@ -78,11 +78,11 @@ export const poll = async (): Promise<void> => {
           }
           else{
             immediate_notification_body = `Leave in ${min_to_leave.toString()} minutes to arrive on time for ${next_event.name}`;
-            let delayed_notification_title = "GoNOW Notification";
-            let delayed_notification_body = `Leave now to arrive on time for ${next_event.name}`;
-            scheduleLocalNotification(delayed_notification_title, delayed_notification_body, min_to_leave);
+            const delayed_notification_title = "GoNOW Notification";
+            const delayed_notification_body = `Leave now to arrive on time for ${next_event.name}`;
+            await scheduleLocalNotification(delayed_notification_title, delayed_notification_body, min_to_leave);
           }
-          scheduleLocalNotification(immediate_notification_title, immediate_notification_body, NO_DELAY_MIN);
+          await scheduleLocalNotification(immediate_notification_title, immediate_notification_body, NO_DELAY_MIN);
         }
       } catch (error) {
         console.error("Error making request:", error);
