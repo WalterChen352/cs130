@@ -18,13 +18,12 @@ interface rowData {
 }
 
 const url="https://gonow-5ry2jtelsq-wn.a.run.app/api/autoschedule"
-//const url="http://localhost:8080/api/autoschedule"
+
 const headers = {
   Accept: 'application/json',
   'Content-Type': 'application/json',
   'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN ?? ''
 }
-
 
 export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
   console.log('getting events for date:', eventDate);
@@ -66,6 +65,36 @@ export const getDailyEvents = async(eventDate?: Date): Promise<Event[]> => {
   } catch (error) {
     console.error('error getting daily events', error);
     return [];
+  }
+};
+
+export const addRecurringEvent = async (e: Event, times: number, interval: string
+): Promise<void> => {
+  // add event times times, incrementing the event time by interval each time
+  // e.g. if times = 5 and interval = 'day', add event once for current event time,
+  // then add 1 day to event time and add event again, and so on until times = 0
+
+  while (times > 0) {
+    await addEvent(e, false, null);
+    const startTime = new Date(e.startTime);
+    switch (interval) {
+      case 'day':
+        startTime.setDate(startTime.getDate() + 1);
+        break;
+      case 'week':
+        startTime.setDate(startTime.getDate() + 7);
+        break;
+      case 'month':
+        startTime.setMonth(startTime.getMonth() + 1);
+        break;
+      case 'year':
+        startTime.setFullYear(startTime.getFullYear() + 1);
+        break;
+      default:
+        throw new Error('Invalid interval for recurring event');
+    }
+    e.startTime = startTime.toISOString();
+    times--;
   }
 };
 

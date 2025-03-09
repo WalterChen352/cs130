@@ -16,7 +16,7 @@ import Coordinates, { Location } from '../models/Location';
 import { Event } from '../models/Event';
 
 // Script imports
-import { addEvent, updateEvent, validateEvent } from '../scripts/Event';
+import { addEvent, updateEvent, validateEvent, addRecurringEvent } from '../scripts/Event';
 import { getMyLocation } from '../scripts/Geo';
 import { getLocation } from '../scripts/Profile';
 import { getWorkflows, tryFilterWfId } from '../scripts/Workflow';
@@ -64,9 +64,14 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
   const [duration, setDuration] = useState(0);
   const [submittingEvent, setSubmittingEvent]= useState(false);
 
+  // New state variables for recurring tasks
+  const [isRecurring, setIsRecurring] = useState<boolean>(false);
+  const [recurringTimes, setRecurringTimes] = useState<number>(1);
+  const [recurringInterval, setRecurringInterval] = useState<string>('day');
+
   /** Dropdown options for transportation modes */
-  const transportModeOptions = APP_TRANSPORTATION_MODES.map(tm=>({
-    label:tm.name,
+  const transportModeOptions = APP_TRANSPORTATION_MODES.map(tm => ({
+    label: tm.name,
     value: tm.googleMapsName
   }));
 
@@ -77,6 +82,14 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
       value: wf.id.toString()
     }))
   , [workflows]);
+
+  /** Dropdown options for recurring intervals */
+  const recurringIntervalOptions = [
+    { label: 'Once a day', value: 'day', key: 'interval-day' },
+    { label: 'Once a week', value: 'week', key: 'interval-week' },
+    { label: 'Once a month', value: 'month', key: 'interval-month' },
+    { label: 'Once a year', value: 'year', key: 'interval-year' },
+  ];
 
   /**
    * Sets the destination coordinates based on the selected location.
@@ -205,7 +218,11 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
         await updateEvent(e);
         Alert.alert('Success', 'Task updated successfully');
       } else {
-        await addEvent(e, autoSchedule, duration);
+        if (isRecurring) {
+          await addRecurringEvent(e, recurringTimes, recurringInterval);
+        } else {
+          await addEvent(e, autoSchedule, duration);
+        }
         Alert.alert('Success', 'Task created successfully');
       }
       void Haptics.notificationAsync(
@@ -235,6 +252,9 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
     setWorkflow(null);
     setCoordinates({longitude:0, latitude:0})
     setAutoSchedule(false);
+    setIsRecurring(false);
+    setRecurringTimes(1);
+    setRecurringInterval('day');
   };
 
   return (
@@ -250,13 +270,51 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
           onChangeText={setTitle}
         />
     
-        <View style={[styles.dateContainer, {opacity: autoSchedule ? 0.5 : 1 } ]} pointerEvents={autoSchedule ? 'none' : 'auto'}>
+        <View style={[styles.dateContainer, {opacity: autoSchedule ? 0.5 : 1 }]} pointerEvents={autoSchedule ? 'none' : 'auto'}>
           <DateSelector
             value={startDate}
             onChange={handleStartDateChange}
             testID="Date-Selector"
           />
         </View>
+        
+        {/* Recurring section - moved up here */}
+        <View style={styles.switchRow}>
+          <Switch 
+            trackColor={switchColors.trackColor}
+            value={isRecurring} 
+            onValueChange={setIsRecurring}
+            testID="Recurring"
+          />
+          <Text style={styles.switchLabel}>Recurring?</Text>
+        </View>
+
+        {isRecurring && (
+          <View style={styles.recurringOptions}>
+            <TextInput
+              style={styles.input}
+              placeholder="total times"
+              keyboardType="numeric"
+              value={recurringTimes === 1 ? "" : recurringTimes.toString()}
+              onChangeText={(text) => {
+                // Only update if text is a valid number or empty
+                const num = text === '' ? 1 : parseInt(text);
+                if (!isNaN(num)) {
+                  setRecurringTimes(num);
+                }
+              }}
+            />
+            <View style={styles.dropdownSection1}>
+              <DropdownPicker
+                selectedValue={recurringInterval}
+                onValueChange={(value) => setRecurringInterval(value.toString())}
+                items={recurringIntervalOptions}
+                testID="Recurring-Interval"
+                placeholder="Select Interval"
+              />
+            </View>
+          </View>
+        )}
     
         <View style={[styles.timeRow, {opacity: autoSchedule ? 0.5 : 1 }]} pointerEvents={autoSchedule ? 'none' : 'auto'}>
           <TimeSelector
@@ -278,13 +336,13 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
           :<></>}
         </View>
     
-        <View style={styles.dropdownSection1}>
+        <View style={styles.dropdownSection2}>
           <DropdownPicker
             selectedValue={transportationMode}
             onValueChange={(value) => { setTransportationMode(value.toString()); }}
             items={transportModeOptions}
             testID="Transportation-Mode"
-            placeholder="Select Transportation Mode"
+            placeholder="Transportation Mode"
           />
         </View>
     
@@ -298,7 +356,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
           <Text style={styles.switchLabel}>Autoschedule</Text>
         </View>}
     
-        <View style={styles.dropdownSection2}>
+        <View style={styles.dropdownSection3}>
           <DropdownPicker
             selectedValue={workflow?.id.toString()}
             onValueChange={(value) => {
@@ -328,7 +386,8 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
           onChangeText={setDescription}
           multiline
         />
-    <ActivityIndicator animating={submittingEvent} size="large"></ActivityIndicator>
+
+        <ActivityIndicator animating={submittingEvent} size="large"></ActivityIndicator>
         <View style={styles.footer} />
         
       </ScrollView>

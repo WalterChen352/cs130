@@ -39,11 +39,17 @@ export const styles = StyleSheet.create({
   },
   dropdownSection1: {
     position: 'relative',
-    zIndex: 3000,
+    zIndex: 4000,
     marginBottom: Spacing.PADDING_MEDIUM,
     width: '100%',
   },
   dropdownSection2: {
+    position: 'relative',
+    zIndex: 3000,
+    marginBottom: Spacing.PADDING_MEDIUM,
+    width: '100%',
+  },
+  dropdownSection3: {
     position: 'relative',
     zIndex: 2000,
     marginBottom: Spacing.PADDING_MEDIUM,
