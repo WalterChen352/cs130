@@ -4,6 +4,7 @@ import { DB_NAME } from './Database';
 import { formatDate } from './Date';
 import Coordinates from '../models/Location';
 import { getWorkflowById } from './Workflow';
+import { getUID } from './Profile';
 
 
 interface rowData {
@@ -22,7 +23,8 @@ const url="https://gonow-5ry2jtelsq-wn.a.run.app/api/autoschedule"
 const headers = {
   Accept: 'application/json',
   'Content-Type': 'application/json',
-  'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN ?? ''
+  'access-token': process.env.EXPO_PUBLIC_ACCESS_TOKEN ?? '',
+  'uid': getUID()
 }
 
 
