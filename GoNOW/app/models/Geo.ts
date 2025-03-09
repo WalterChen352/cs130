@@ -1,3 +1,5 @@
+import Coordinates from "./Location";
+
 //  Format is based on geo object types from response of Google API.
 //  https://developers.google.com/maps/documentation/directions/get-directions
 
@@ -58,18 +60,27 @@ export interface Duration {
  */
 export interface Loc {
   /**
-   * Latitude.
+   * Coordinates.
    *
-   * @type {number}
+   * @type {Coordinates}
    */
-  lat: number;
+  latLng: Coordinates;
+}
+
+export interface navigationInstruction {
+  /**
+   * Maneuver type.
+   *
+   * @type {string}
+   */
+  maneuver: string;
 
   /**
-   * Longitude.
+   * Instructions text.
    *
-   * @type {number}
+   * @type {string}
    */
-  lng: number;
+  instructions: string;
 }
 
 /**
@@ -83,52 +94,49 @@ export interface Step {
   /**
    * Distance covered in this step.
    *
-   * @type {Distance}
+   * @type {number}
    */
-  distance: Distance;
+  distanceMeters: number;
 
   /**
    * Duration required to complete this step.
    *
-   * @type {Duration}
-   */
-  duration: Duration;
-
-  /**
-   * HTML-formatted instructions for this step
-   * (e.g., "Turn right onto Main Street").
-   *
    * @type {string}
    */
-  html_instructions: string;
+  staticDuration: string;
+
+  /**
+   * Navifation Instructions
+   *
+   * @type {navigationInstruction}
+   */
+  navigationInstruction: navigationInstruction;
 
   /**
    * Step start location.
    *
    * @type {Loc}
    */
-  start_location: Loc;
+  startLocation: Loc;
 
   /**
    * Step end location.
    *
    * @type {Loc}
    */
-  end_location: Loc;
+  endLocation: Loc;
 
   /**
    * Traveling mode, should correspond to TransportationMode.apiName
    *
    * @type {?string}
    */
-  travel_mode?: string;
+  travelMode?: string;
 
   /**
    * Polyline for drawing the route on the map.
    *
-   * @type {{
-   *     points: string;
-   *   }}
+   * @type {{points: string}}
    */
   polyline: {
     
@@ -137,7 +145,7 @@ export interface Step {
      *
      * @type {string}
      */
-    points: string;
+    encodedPolyline: string;
   };
 }
 
@@ -152,30 +160,30 @@ export interface Leg {
   /**
    * Total distance for this leg.
    *
-   * @type {Distance}
+   * @type {number}
    */
-  distance: Distance;
+  distanceMeters: number;
   
   /**
-   * Total duration for this leg.
-   *
-   * @type {Duration}
-   */
-  duration: Duration;
-  
-  /**
-   * Address of the starting point for this leg.
+   * Total duration in sec for this leg.
    *
    * @type {string}
    */
-  start_address: string;
+  duration: string;
   
   /**
-   * Address of the endpoint for this leg.
+   * Location of the starting point for this leg.
    *
-   * @type {string}
+   * @type {Loc}
    */
-  end_address: string;
+  startLocation: Loc;
+  
+  /**
+   * Location of the endpoint for this leg.
+   *
+   * @type {Loc}
+   */
+  endLocation: Loc;
   
   /**
    * List of steps for this leg.

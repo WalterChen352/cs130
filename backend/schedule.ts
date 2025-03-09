@@ -1,13 +1,14 @@
 import type{ Event, Workflow, Coordinates } from "./types";
 import { computeTravelTime } from "./mapsQueries";
 
-export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], coordinates: Coordinates, duration: number, timeZone: string, name: string, description: string, onePerDay:boolean, transportation='DRIVE'): Promise<Event | null> => {
+export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], coordinates: Coordinates, duration: number, timeZone: string, name: string, description: string, onePerDay:boolean, transportation:string): Promise<Event | null> => {
     // Get the current date in the specified timezone
+    //console.log('transportation', transportation)
     const now = new Date();
-    
+    const DATES_MAX=14
     // Generate dates for the next 14 days
     const nextTwoWeeks: Date[] = [];
-    for (let i = 0; i < 14; i++) {
+    for (let i = 1; i < DATES_MAX; i++) {
         const date = new Date(now);
         date.setDate(date.getDate() + i);
         nextTwoWeeks.push(date);
@@ -24,7 +25,9 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
     }) 
     else
          allowedDates= nextTwoWeeks;
+    console.log(allowedDates)
     
+    console.log(allowedDates)
     // Filter out days that already have an event for this workflow
     const availableDates = allowedDates.filter(date => {
         // Format date in the specified timezone
@@ -51,11 +54,12 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
     // Try to schedule an event on each available day
     for (const date of availableDates) {
         // Convert workflow time bounds to Date objects for this specific date in the given timezone
-        const startHour = w.timeStart.Hours;
-        const startMinute = w.timeStart.Minutes;
-        const endHour = w.timeEnd.Hours;
-        const endMinute = w.timeEnd.Minutes;
-        
+        const startHour = w.timeStart.hours;
+        const startMinute = w.timeStart.minutes;
+        const endHour = w.timeEnd.hours;
+        const endMinute = w.timeEnd.minutes;
+        console.log('timeStart', w.timeStart);
+        console.log('timeEnd', w.timeEnd)
         // Get year, month, day in the specified timezone
         const dateParts = date.toLocaleDateString('en-US', { 
             timeZone,
@@ -67,17 +71,22 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
         // Create ISO strings for the start and end times in the correct timezone
         const startISODate = `${dateParts[2]}-${dateParts[0].padStart(2, '0')}-${dateParts[1].padStart(2, '0')}T${String(startHour).padStart(2, '0')}:${String(startMinute).padStart(2, '0')}:00`;
         const endISODate = `${dateParts[2]}-${dateParts[0].padStart(2, '0')}-${dateParts[1].padStart(2, '0')}T${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}:00`;
-        
+        console.log('START',startISODate)
+        console.log('END', endISODate)
         // Convert to specific timezone
         const dayStart = new Date(new Date(startISODate).toLocaleString('en-US', { timeZone }));
         const dayEnd = new Date(new Date(endISODate).toLocaleString('en-US', { timeZone }));
         
+        const offset= getOffset(timeZone);
+        const dayStartOffset= new Date(dayStart.getTime()+offset);
+        const dayEndOffset = new Date(dayEnd.getTime()+offset)
         // Check if we can fit the event between workflow bounds
+        console.log(`finding available times between ${String(dayStartOffset)}, ${String(dayEndOffset)}` )
         const eventStartTime =await  findAvailableTime(
             apiKey,
             events,
-            dayStart,
-            dayEnd,
+            dayStartOffset,
+            dayEndOffset,
             duration,
             coordinates,
             timeZone,
@@ -102,7 +111,7 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
                     longitude:coordinates.longitude,
                     latitude: coordinates.latitude
                 },
-                transportationMode: "driving", // Default transportation mode
+                transportationMode: transportation,
                 workflow: w.id
             } as Event
         }
@@ -124,6 +133,7 @@ const findAvailableTime=async(
     transportationMode: string
 
 ): Promise<Date | null>=> {
+    console.log('finding date for', dayStart, dayEnd)
     // Create an array of busy periods
     const busyPeriods: {start: Date, end: Date}[] = [];
     
@@ -138,7 +148,7 @@ const findAvailableTime=async(
             apiKey,
             {latitude: event.coordinates.latitude, longitude: event.coordinates.longitude},
             coordinates,
-            transportationMode, null, String(eventStart.getTime())
+            transportationMode, null, eventStart.toISOString()
         );
         
         // Estimate travel time from our location to event location
@@ -146,10 +156,12 @@ const findAvailableTime=async(
             apiKey,
             coordinates,
             {latitude: event.coordinates.latitude, longitude: event.coordinates.longitude},
-            transportationMode, String(eventEnd.getTime()), null
+            transportationMode, eventEnd.toISOString(), null
         );
         
         // Add buffer for travel time
+
+    
         const bufferStart = new Date(eventStart);
         bufferStart.setMinutes(bufferStart.getMinutes() - travelTimeBefore);
         
@@ -191,6 +203,33 @@ const findAvailableTime=async(
     return null;
 }
 
+
+function getOffset(timezone:string) {
+    // Get the current date and time in the local timezone
+    const now = new Date();
+
+    // Format the current time in the inputted timezone
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: false,
+    });
+
+    // Get the time in the inputted timezone as a string
+    const timeInInputTimezone = formatter.format(now);
+
+    // Parse the time string into a Date object
+    const [hours, minutes, seconds] = timeInInputTimezone.split(':').map(Number);
+    const dateInInputTimezone = new Date(now);
+    dateInInputTimezone.setHours(hours, minutes, seconds);
+
+    // Calculate the difference in milliseconds
+    const offsetMilliseconds = now.getMilliseconds() - dateInInputTimezone.getMilliseconds();
+
+    return offsetMilliseconds;
+}
 
 
 

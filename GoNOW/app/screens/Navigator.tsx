@@ -64,7 +64,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) => {
         return (
           <TouchableOpacity
             key={index}
-            onPress={void onPress}
+            onPress={onPress} // eslint-disable-line @typescript-eslint/no-misused-promises
             style={NavigatorStyles.tabButton}
           >
             <Ionicons

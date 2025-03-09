@@ -3,7 +3,7 @@ import { Coordinates } from '../models/Location';
 import { TransportationMode } from '../models/TransportationMode';
 import { Workflow } from '../models/Workflow';
 import { getDailyEvents } from '../scripts/Event';
-import { getTransportationMode, getTransportationModeByName } from '../scripts/TransportationMode';
+import { getTransportationModeByGisName } from '../scripts/TransportationMode';
 import { getWorkflowById } from '../scripts/Workflow';
 
 /**
@@ -81,10 +81,9 @@ export interface IMapEvent {
  */
 const convertToMapEvent = async (event: Event): Promise<IMapEvent> => {
   const coords: Coordinates = event.coordinates;
-  const transportationMode: TransportationMode =
-    event.transportationMode !== '' && !isNaN(Number(event.transportationMode))
-    ? getTransportationMode(parseInt(event.transportationMode))
-    : getTransportationModeByName(event.transportationMode);
+  //const transportationMode: TransportationMode = getTransportationMode(parseInt(event.transportationMode)); // it was a second option
+  //const transportationMode: TransportationMode = getTransportationModeByName(event.transportationMode); // it was a first option
+  const transportationMode: TransportationMode = getTransportationModeByGisName(event.transportationMode);  // it is the current option ¯\_(ツ)_/¯
   const workflow: Workflow | null = 
     event.workflow !== null
     ? await getWorkflowById(event.workflow)

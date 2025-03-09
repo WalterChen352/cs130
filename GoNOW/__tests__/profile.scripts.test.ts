@@ -2,6 +2,13 @@ import { getLocation, updateLocation } from '../app/scripts/Profile';
 import { Location } from '../app/models/Location';
 import { openDatabase } from '../app/scripts/Database';
 
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  setItem: jest.fn(),
+  getItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+}));
+
 jest.mock('../app/scripts/Database', () => ({
   openDatabase: jest.fn(),
 }));
