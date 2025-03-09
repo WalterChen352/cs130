@@ -47,7 +47,9 @@ interface AutoscheduleRequestBody {
     timeZone:string,
     name:string,
     description:string,
-    transportation:string
+    transportation:string,
+    searchStart: string, //ISO string
+    searchEnd: string //ISO string
 }
 
 app.use((req:Request, res:Response, next) => {
