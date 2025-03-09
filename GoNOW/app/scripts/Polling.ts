@@ -1,4 +1,4 @@
-import { RouteRequestBody } from '../../../backend/index';
+import { PollRequestBody} from '../../../backend/index';
 import { getNextEvent } from './Event';
 import { getMyLocation } from './Geo';
 
@@ -23,7 +23,6 @@ export const poll = async (): Promise<void> => {
         console.log("next_event.startTime, ", next_event.startTime);
     }
     else {
-        console.error("No future events to poll for");
         return;
     }
 
@@ -37,7 +36,7 @@ export const poll = async (): Promise<void> => {
         return;
     }
     else{
-        const requestBody: RouteRequestBody = {
+        const requestBody: PollRequestBody = {
             event: next_event,
             coordinates: current_location.coordinates,
         }
