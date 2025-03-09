@@ -2,6 +2,8 @@ import { JSX, useEffect, useState, Fragment } from 'react';
 import { ActivityIndicator, Linking, Text, TouchableOpacity, View } from 'react-native';
 import * as TaskManager from 'expo-task-manager';
 import { initDatabase } from './scripts/Database';
+import { getMyLocation } from './scripts/Geo';
+import { getLocation, updateLocation } from './scripts/Profile';
 import { IndexStyles as styles } from './styles/Index.styles';
 import Navigator from './screens/Navigator';
 import { registerBackgroundFetchAsync } from './scripts/BackgroundTasks';
@@ -37,6 +39,19 @@ export default function Index(): JSX.Element {
           await setUID(data.uid);
         }
         await initDatabase();
+
+        const location = await getLocation();
+        if (location === null
+            || !location.address
+            && location.coordinates.latitude === 0
+            && location.coordinates.longitude === 0
+        ) {
+            const currentLocation = await getMyLocation();
+            if (currentLocation !== null) {
+                await updateLocation(currentLocation);
+            }
+        }
+        
         await registerBackgroundFetchAsync();
         const tasks:TaskManager.TaskManagerTask[] = await TaskManager.getRegisteredTasksAsync();
         console.log('Registered tasks:', tasks);
