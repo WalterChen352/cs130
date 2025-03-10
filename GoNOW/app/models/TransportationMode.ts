@@ -63,7 +63,7 @@ const APP_TRANSPORTATION_MODES: TransportationMode[] = [
     apiName: '',
     color: '#666666',
     googleMapsName: ''
-  } ,     // no need Transportation
+  } ,     // for cases when TransportationMode is not specified
   {
     id: 1,
     name: 'Walk',

@@ -29,7 +29,7 @@ import { formatDate } from '../scripts/Date';
 import { styles } from '../styles/CreateTaskScreen.styles';
 import { switchColors } from '../styles/Common.styles';
 // Navigation imports
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation, useFocusEffect } from '@react-navigation/native';
 
 //Haptics
 import * as Haptics from 'expo-haptics';
@@ -70,7 +70,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
   const [recurringInterval, setRecurringInterval] = useState<string>('day');
 
   /** Dropdown options for transportation modes */
-  const transportModeOptions = APP_TRANSPORTATION_MODES.map(tm => ({
+  const transportModeOptions = APP_TRANSPORTATION_MODES.filter(tm => tm.id > 0).map(tm => ({
     label: tm.name,
     value: tm.googleMapsName
   }));
@@ -159,6 +159,20 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
     }
   }, [isEditMode, eventData, workflows]);
 
+  // Fetch workflows every time the screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchWorkflows = async (): Promise<void> => {
+        setWorkflows(await getWorkflows());
+      };
+      void fetchWorkflows();
+      
+      return () => {
+        // Optional cleanup if needed
+      };
+    }, [])
+  );
+
   // Fetch location if not in edit mode
   useEffect(() => {
     const fetchLocation = async (): Promise<void> => {
@@ -180,11 +194,6 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
       }
     };
     void fetchLocation();
-
-    const fetchWorkflows = async (): Promise<void> => {
-      setWorkflows(await getWorkflows());
-    }
-    void fetchWorkflows();
   }, [isEditMode]);
 
   // Update destination coordinates when location changes
