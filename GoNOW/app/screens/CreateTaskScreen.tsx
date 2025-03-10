@@ -70,7 +70,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
   const [recurringInterval, setRecurringInterval] = useState<string>('day');
 
   /** Dropdown options for transportation modes */
-  const transportModeOptions = APP_TRANSPORTATION_MODES.map(tm => ({
+  const transportModeOptions = APP_TRANSPORTATION_MODES.filter(tm => tm.id > 0).map(tm => ({
     label: tm.name,
     value: tm.googleMapsName
   }));
