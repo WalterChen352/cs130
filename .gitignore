@@ -39,3 +39,5 @@ yarn-error.*
 app-example
 GoNOW/.gitignore
 GoNOW/docs/**
+
+backend/node_modules
