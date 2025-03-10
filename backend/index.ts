@@ -140,11 +140,11 @@ app.use((req, res, next) => {
   });
 
 //Metrics tracking functions
-app.get('/ping',(req:Request, res:Response)=>updateUsers(req,res))
+app.get('/ping',(req:Request, res:Response)=>{ updateUsers(req,res); })
 
-app.get('/createTask',(req:Request, res: Response)=>updateTasks(req,res))
+app.get('/createTask',(req:Request, res: Response)=>{ updateTasks(req,res); })
 
-app.get('/createWorkflow',(req:Request, res: Response)=>updateWorkflows(req, res))
+app.get('/createWorkflow',(req:Request, res: Response)=>{ updateWorkflows(req, res); })
 
 
 //API Endpoints
