@@ -290,7 +290,7 @@ const CreateTaskScreen = ({ route }: CreateTaskScreenProps): React.JSX.Element =
         </View>
 
         {isRecurring && (
-          <View style={styles.recurringOptions}>
+          <View>
             <TextInput
               style={styles.input}
               placeholder="total times"

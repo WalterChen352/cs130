@@ -74,6 +74,8 @@ export const addRecurringEvent = async (e: Event, times: number, interval: strin
   // add event times times, incrementing the event time by interval each time
   // e.g. if times = 5 and interval = 'day', add event once for current event time,
   // then add 1 day to event time and add event again, and so on until times = 0
+
+  //NOTE: disabled null assertion because wf is checked for null before calling
   //init variables for autoscheduling recurring
   const wfStartTime:Date=new Date(Date.now())
   let daysAhead= 0;
@@ -95,6 +97,7 @@ export const addRecurringEvent = async (e: Event, times: number, interval: strin
   }
   if(auto_schedule&&e.workflow===null)
     throw new Error('tried to autoschedule event without a workflow')
+  //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const wf =await getWorkflowById(e.workflow!);
     
   while (times > 0) {
@@ -122,6 +125,7 @@ export const addRecurringEvent = async (e: Event, times: number, interval: strin
   }
   else{
     console.log(`recurring autoschedule call with ${String(wfStartTime)} and ${String(daysAhead)} days ahead`)
+    //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const autoScheduledEvent =await autoSchedule(e,wf!, duration, wfStartTime, daysAhead)
     //modify wfStartTime,
     wfStartTime.setDate(wfStartTime.getDate()+daysAhead)
@@ -265,6 +269,7 @@ export const addEvent = async (e: Event, auto_schedule:boolean, duration: number
       if(e.workflow==null)
         throw new Error('tried to autoschedule event without a workflow')
       const wf =await getWorkflowById(e.workflow);
+      //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const autoscheduledEvent= await autoSchedule(e, wf!, duration, new Date(Date.now()),14 );
       if(autoscheduledEvent===null){
         console.error('unable to autoschedule event')
