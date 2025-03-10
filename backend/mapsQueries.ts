@@ -36,7 +36,6 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
             location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } }
         },
         travelMode: travelMode,
-        routingPreference: "TRAFFIC_AWARE",
         departureTime: departureTime
         }
         :
@@ -48,7 +47,6 @@ export const computeTravelTime= async(apiKey:string,origin: Coordinates, destina
             location: { latLng: { latitude: destination.latitude, longitude: destination.longitude } }
         },
         travelMode: travelMode,
-        routingPreference: "TRAFFIC_AWARE",
         arrivalTime:arrivalTime
         }
     if(travelMode!=='WALK'&&travelMode!=='BICYCLE'){
