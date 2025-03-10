@@ -58,6 +58,13 @@ export interface TransportationMode {
 const APP_TRANSPORTATION_MODES: TransportationMode[] = [
   // Google Map Names are outlined here https://developers.google.com/maps/documentation/routes/reference/rest/v2/RouteTravelMode
   {
+    id: 0,
+    name:'' ,
+    apiName: '',
+    color: '#666666',
+    googleMapsName: ''
+  } ,     // for cases when TransportationMode is not specified
+  {
     id: 1,
     name: 'Walk',
     apiName: 'walking',
