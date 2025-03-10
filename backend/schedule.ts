@@ -17,20 +17,19 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
     
     // Filter days based on workflow's daysOfWeek setting
     let allowedDates=[];
-    if(onePerDay)
         allowedDates = days.filter(date => {
         // Convert to the specified timezone to get the correct day of week
         const dateInTZ = new Date(date.toLocaleString('en-US', { timeZone }));
         const dayOfWeek = dateInTZ.getDay();
         return w.daysOfWeek[dayOfWeek];
     }) 
-    else
          allowedDates= days;
-    console.log(allowedDates)
+    console.log('allowed dates', allowedDates)
+    let availableDates=allowedDates;
     
-    console.log(allowedDates)
     // Filter out days that already have an event for this workflow
-    const availableDates = allowedDates.filter(date => {
+    if(onePerDay){
+     availableDates = allowedDates.filter(date => {
         // Format date in the specified timezone
         const options: Intl.DateTimeFormatOptions = { 
             timeZone,
@@ -51,7 +50,9 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
             return eventDateStr === dateStr;
         });
     });
+}
     
+    console.log('filtered dates', availableDates)
     // Try to schedule an event on each available day
     for (const date of availableDates) {
         // Convert workflow time bounds to Date objects for this specific date in the given timezone
@@ -75,9 +76,12 @@ export const autoschedule = async(apiKey: string,w: Workflow, events: Event[], c
         console.log('START',startISODate)
         console.log('END', endISODate)
         // Convert to specific timezone
-        const dayStart = new Date(new Date(startISODate).toLocaleString('en-US', { timeZone }));
+        let dayStart = new Date(new Date(startISODate).toLocaleString('en-US', { timeZone }));
         const dayEnd = new Date(new Date(endISODate).toLocaleString('en-US', { timeZone }));
-        
+        if( dayEnd.getTime()< Date.now()) //if it exceeds the time period for this day the dont scheule it today
+            continue
+        else if(dayStart.getTime() < Date.now()) //if in middle of period, set start to now
+            dayStart= new Date( Date.now())
         const offset= getOffset(timeZone);
         const dayStartOffset= new Date(dayStart.getTime()+offset);
         const dayEndOffset = new Date(dayEnd.getTime()+offset)

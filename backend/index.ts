@@ -158,10 +158,11 @@ app.post('/api/autoschedule', async (req: Request<unknown, unknown, Autoschedule
     console.log('transportation', transportation);
     switch(style.id){
         case (0):
-            //one per day
+            //asap
             result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, false, transportation, startSearch, daysAhead)
             break;
         case(1):
+        //one per day
             result= await autoschedule(apiKey,workflow, events, coordinates, duration, timeZone, name, description, true, transportation, startSearch, daysAhead)
     }
     if(result===null){
