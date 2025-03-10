@@ -51,12 +51,12 @@ npm -v; # shold print ver
 
 ## Clone Project
 ```shell
-cd YOUR_PROJECTS_FOLDER;
+cd <YOUR_SOLUTIONS_FOLDER>;
 
-# clone the project repo
+# clone the repo
 git clone https://github.com/WalterChen352/cs130;
 
-# go to project folder
+# go to solution folder
 cd cs130;
 ```
 
