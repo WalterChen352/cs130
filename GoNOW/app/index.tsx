@@ -1,6 +1,8 @@
 import { JSX, useEffect, useState, Fragment } from 'react';
 import { ActivityIndicator, Linking, Text, TouchableOpacity, View } from 'react-native';
 import * as TaskManager from 'expo-task-manager';
+
+import NotificationDisplay, {requestNotificationPermission} from './components/Notifications';
 import { initDatabase } from './scripts/Database';
 import { getMyLocation } from './scripts/Geo';
 import { getLocation, updateLocation } from './scripts/Profile';
@@ -51,7 +53,7 @@ export default function Index(): JSX.Element {
                 await updateLocation(currentLocation);
             }
         }
-        
+        await requestNotificationPermission();
         await registerBackgroundFetchAsync();
         const tasks:TaskManager.TaskManagerTask[] = await TaskManager.getRegisteredTasksAsync();
         console.log('Registered tasks:', tasks);
@@ -68,11 +70,12 @@ export default function Index(): JSX.Element {
 
   return status === 1 // 0 - loading; 1 - ready; 2 - error
     ? (
-      <Fragment>
-        <Navigator/>
-        <ForegroundTask/>
-      </Fragment>
-    )
+        <Fragment>
+          <Navigator/>
+          <ForegroundTask/>
+          <NotificationDisplay/>
+        </Fragment>
+      )
     : status === 0
       ? (
         <View style={styles.loading}>
