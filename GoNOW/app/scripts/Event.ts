@@ -211,7 +211,7 @@ export const clearEvents = async():Promise<void>=>{ //just for clearing local st
 };
 
 const autoSchedule = async(e:Event, wf:Workflow, duration: number, startSearch:Date, daysAhead:number):Promise<Event|null>=>{
-  
+    startSearch=getNextMidnight()
     //query all events coming up in days ahead
         const events:Event[] =await getFutureEvents(startSearch, daysAhead)
         if(wf.timeEnd.toInt()-wf.timeStart.toInt()<duration){
@@ -435,3 +435,14 @@ export const validateEvent = (event: Event, auto_schedule: boolean): void => {
     throw new Error(errors.join('\n'));
   }
 };
+
+
+function getNextMidnight() {
+  const now = new Date();
+  const nextMidnight = new Date(now);
+  
+  // Set the time to midnight of the next day
+  nextMidnight.setHours(24, 0, 0, 0);
+  
+  return nextMidnight;
+}
