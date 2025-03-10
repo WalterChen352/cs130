@@ -26,7 +26,6 @@ export const poll = async (): Promise<void> => {
         console.log("next_event.startTime, ", next_event.startTime);
     }
     else {
-        console.error("No future events to poll for");
         return;
     }
 
