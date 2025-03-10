@@ -36,7 +36,7 @@ describe('autoschedule function', () => {
   const morning9am: Time = { hours: 9, minutes: 0 };
   const noon: Time = { hours: 12, minutes: 0 };
   const afternoon2pm: Time = { hours: 14, minutes: 0 };
-  const evening5pm: Time = { hours: 17, minutes: 0 };
+  //const evening5pm: Time = { hours: 17, minutes: 0 };
   const evening8pm: Time = { hours: 20, minutes: 0 };
 
   // Test locations
@@ -93,16 +93,16 @@ describe('autoschedule function', () => {
       schedulingStyle:APP_SCHEDLING_STYLES[0]
     }
 
-    workflowWeekendOutings = {
-      id:3,
-      name:"Weekend Outings",
-      color:"#2ECC71", // Green
-      pushNotifications:true,
-      timeStart:noon,
-      timeEnd:evening5pm,
-      daysOfWeek:[true, false, false, false, false, false, true], // Sat-Sun
-      schedulingStyle:APP_SCHEDLING_STYLES[0]
-    }
+    // workflowWeekendOutings = {
+    //   id:3,
+    //   name:"Weekend Outings",
+    //   color:"#2ECC71", // Green
+    //   pushNotifications:true,
+    //   timeStart:noon,
+    //   timeEnd:evening5pm,
+    //   daysOfWeek:[true, false, false, false, false, false, true], // Sat-Sun
+    //   schedulingStyle:APP_SCHEDLING_STYLES[0]
+    // }
 
     // Initialize existing events
     existingEvents = [
